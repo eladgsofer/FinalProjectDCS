@@ -1,0 +1,15 @@
+
+#
+# On branch master
+# Changes to be committed:
+#	modified:   FLASH/Sources/Bsp.o
+#	modified:   FLASH/Sources/Hal.o
+#	modified:   FLASH/Sources/UART.o
+#	modified:   FLASH/Sources/adc.o
+#	modified:   FLASH/Sources/main.o
+#	modified:   FLASH/proj.elf
+#	modified:   FLASH/proj.map
+#	modified:   Project_Headers/TFC.h
+#	modified:   Sources/Hal.c
+#	modified:   Sources/main.c
+#
