@@ -42,6 +42,7 @@ char PC_msg[40]; 			//Received message from pc
 int dataready;  		//flag which indicates if data received from UART is ready to be used 
 int char_idx;
 int cntr_end, cntr_start, range;
+int scanDegree;
 unsigned int rfile_mode;
 
 

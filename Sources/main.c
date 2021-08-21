@@ -75,7 +75,9 @@ int main(void){
 					TPM0_SC |= TPM_SC_CMOD(1); //Start the TPM0 counter
 				 */
 				break;
+				
 			case FILE_TRANS_1:
+				// START scan command - PIT_MCR &= ~PIT_MCR_MDIS_MASK; //Enable the PIT module 
 				//---------------------------------------------------------------------------------------------------------------------
 				// Files mode - AckFile
 				//---------------------------------------------------------------------------------------------------------------------

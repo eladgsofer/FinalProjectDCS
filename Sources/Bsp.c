@@ -2,6 +2,7 @@
 #include "mcg.h"
 
 #define MUDULO_REGISTER  0x2EE0
+#define MOTOR_MUDULO_REGISTER  9375 // PWM frequency of 40Hz = 24Mhz/64x9375
 
 char ready;
 
@@ -94,7 +95,24 @@ void InitTPM(char x){  // x={0,1,2}
 		TPM2_CONF = 0;
 		break;
 	}
-}//-----------------------------------------------------------------
+}
+
+
+void InitServoTPM(){  // x={0,1,2}
+	PORTD_PCR0 = PORT_PCR_MUX(4)| PORT_PCR_DSE_MASK; // 
+	
+	TPM0_SC = 0; // to ensure that the counter is not running
+	
+	TPM0_SC |= TPM_SC_PS(6) + TPM_SC_TOIE_MASK; //Prescaler =64, up-mode, counter-disable
+	
+	TPM0_MOD = MOTOR_MUDULO_REGISTER; // PWM frequency of 250Hz = 24MHz/(8x12,000)
+	TPM0_C0SC |= TPM_CnSC_MSB_MASK + TPM_CnSC_ELSB_MASK + TPM_CnSC_CHIE_MASK;
+	//TPM0_C0V = 0x0FF;
+	TPM0_C0V = (int)((0.6/25.0)*MOTOR_MUDULO_REGISTER);
+	TPM0_CONF = 0; 
+}
+
+//-----------------------------------------------------------------
 // TPMx - Clock Setup
 //-----------------------------------------------------------------
 void ClockSetup(){
@@ -117,23 +135,13 @@ void ClockSetup(){
 // PIT - Initialisation
 //-----------------------------------------------------------------
 void InitPIT(){
-	// Enable PIT clock
-	SIM_SCGC6 |= SIM_SCGC6_PIT_MASK;
-	
-	// Turn on PIT
-	PIT_MCR = 0;
-	// Stop the pit when in debug mode
-	//PIT_MCR |= PIT_MCR_FRZ_MASK; 
-	
-	
-	// Configure PIT to produce an interrupt every 1s
-	PIT_LDVAL0 = 0x1312CFF;	// 1/20Mhz = 50ns   (1s/50ns)-1= 19,999,999 cycles or 0x1312CFF
-	PIT_TCTRL0 |= PIT_TCTRL_TIE_MASK | PIT_TCTRL_TEN_MASK; // Enable interrupt and enable timer
-	
-	//Enable interrupt registers ISER and ICPR
-	//enable_irq(INT_PIT - 16);
-	
-	//set_irq_priority(INT_PIT-16,0);  // Interrupt priority = 0 = max
+	SIM_SCGC6 |= SIM_SCGC6_PIT_MASK; //Enable the Clock to the PIT Modules
+	// Timer 0
+	PIT_LDVAL0 = 0x00249F00; // setup timer 0 for maximum counting period
+	PIT_TCTRL0 = PIT_TCTRL_TEN_MASK | PIT_TCTRL_TIE_MASK; //enable PIT0 and its interrupt
+	PIT_MCR |= PIT_MCR_FRZ_MASK; // stop the pit when in debug mode
+	enable_irq(INT_PIT-16); //  //Enable PIT IRQ on the NVIC
+	set_irq_priority(INT_PIT-16,0);  // Interrupt priority = 0 = max
 }
 //------------------------------------------------------------------
 //		DMA
