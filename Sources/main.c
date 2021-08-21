@@ -69,6 +69,11 @@ int main(void){
 			switch (state)
 			{
 			case IDLE_STATE_0:
+				//sensor's TPM start:
+				/*
+					TPM2_SC |= TPM_SC_CMOD(1); //Start the TPM2 counter
+					TPM0_SC |= TPM_SC_CMOD(1); //Start the TPM0 counter
+				 */
 				break;
 			case FILE_TRANS_1:
 				//---------------------------------------------------------------------------------------------------------------------

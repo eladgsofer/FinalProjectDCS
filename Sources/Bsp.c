@@ -11,6 +11,10 @@ void InitGPIO()
 	//enable Clocks to all ports - page 206, enable clock to Ports
 	SIM_SCGC5 |= SIM_SCGC5_PORTA_MASK | SIM_SCGC5_PORTB_MASK | SIM_SCGC5_PORTC_MASK | SIM_SCGC5_PORTD_MASK | SIM_SCGC5_PORTE_MASK;
 	
+	//Setup Pins as Timer Output PWM
+	PORTE_PCR22 = PORT_PCR_MUX(3); //PTE22 pin TMP2_CH0 - ALT3, Edge Aligned PWM
+	PORTE_PCR29 = PORT_PCR_MUX(3); //PTE29 pin TMP0_CH2 - ALT3, input-capture
+		
 	//GPIO Configuration - LEDs - Output
 	PORTD_PCR1 = PORT_PCR_MUX(1) | PORT_PCR_DSE_MASK;  //Blue
 	GPIOD_PDDR |= BLUE_LED_LOC; //Setup as output pin	
@@ -69,28 +73,28 @@ void InitTPM(char x){  // x={0,1,2}
 	switch(x){
 	case 0:
 		TPM0_SC = 0; // to ensure that the counter is not running
-		TPM0_SC |= TPM_SC_PS(3)+TPM_SC_TOIE_MASK; //Prescaler =128, up-mode, counter-disable
-		TPM0_MOD = MUDULO_REGISTER; // PWM frequency of 250Hz = 24MHz/(8x12,000)
-		TPM0_C1SC |= TPM_CnSC_MSB_MASK + TPM_CnSC_ELSB_MASK + TPM_CnSC_CHIE_MASK;
-		TPM0_C1V = 0xFFFF;
-		TPM0_CONF = 0; 
+		TPM0_SC |= TPM_SC_PS(3);	//Prescaler = 8, up-mode, counter-disable
+		TPM0_MOD = 0xFFFF; 
+		TPM0_C2SC |= TPM_CnSC_ELSA_MASK + TPM_CnSC_ELSB_MASK + TPM_CnSC_CHIE_MASK;	//capture triggered on edge
+
+		TPM0_CONF = TPM_CONF_DBGMODE(3);
+		
+		enable_irq(INT_TPM0-16);
+		set_irq_priority(INT_TPM0-16,0);
 		break;
 	case 1:
 		
 		break;
 	case 2: 
 		TPM2_SC = 0; // to ensure that the counter is not running
-		TPM2_SC |= TPM_SC_PS(3)+TPM_SC_TOIE_MASK; //Prescaler =128, up-mode, counter-disable
-		TPM2_MOD = MUDULO_REGISTER; // PWM frequency of 250Hz = 24MHz/(8x12,000)
+		TPM2_SC |= TPM_SC_PS(5)+TPM_SC_TOIE_MASK; //Prescaler = 32, up-mode, counter-disable
+		TPM2_MOD = MUDULO_REGISTER; // PWM frequency of 16.66Hz = 24MHz/(32x45,008)
 		TPM2_C0SC |= TPM_CnSC_MSB_MASK + TPM_CnSC_ELSB_MASK + TPM_CnSC_CHIE_MASK;
-		TPM2_C0V = 0xFFFF; 
-		TPM2_C1SC |= TPM_CnSC_MSB_MASK + TPM_CnSC_ELSB_MASK + TPM_CnSC_CHIE_MASK;
-		TPM2_C1V = 0xFFFF;
+		TPM2_C0V = 0x8;		//Duty Cycle of 10us width 
 		TPM2_CONF = 0;
 		break;
 	}
-}
-//-----------------------------------------------------------------
+}//-----------------------------------------------------------------
 // TPMx - Clock Setup
 //-----------------------------------------------------------------
 void ClockSetup(){
