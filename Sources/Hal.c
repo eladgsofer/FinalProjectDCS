@@ -136,28 +136,25 @@ void DMA1_IRQHandler(void)
 }
 
 //-----------------------------------------------------------------
-// TPM0_C2 = Interrupt Service Routine
+// TPM2_C1 = Interrupt Service Routine
 //-----------------------------------------------------------------
-void FTM0_IRQHandler(){
+void FTM2_IRQHandler(){
 	
 	static int rising_edge = 1;
 	int cntr_snap;
 	
 	
-	if(TPM0_C2SC&TPM_CnSC_CHF_MASK)		//if channel flag raised
+	if(TPM2_C1SC&TPM_CnSC_CHF_MASK)		//if channel flag raised
 	{
-		cntr_snap = TPM0_C2V;			//capture TPM0_C2 counter
+		cntr_snap = TPM2_C1V;			//capture TPM2_C1 counter
 		if(rising_edge)
 			{
-				cntr_start = cntr_snap;		//save TPM0_C2 counter value on rising edge
+				cntr_start = cntr_snap;		//save TPM2_C1 counter value on rising edge
 			}
 			else
 			{
-				cntr_end = cntr_snap;		//save TPM0_C2 counter value on falling edge and calculate delta
-				if(cntr_end > cntr_start)
-				{
-					range = cntr_end - cntr_start;			//calculate range (delta counter)
-				}
+				cntr_end = cntr_snap;		//save TPM2_C1 counter value on falling edge and calculate delta
+				range = (cntr_end - cntr_start)&0xFFFF;			//calculate range (delta counter)
 				
 			}
 			
@@ -165,7 +162,7 @@ void FTM0_IRQHandler(){
 	}
 	
 	
-	TPM0_C2SC |= TPM_CnSC_CHF_MASK; 			//clean interrupt flag
+	TPM2_C1SC |= TPM_CnSC_CHF_MASK; 			//clean interrupt flag
 }
 
 

@@ -19,8 +19,11 @@ int main(void){
 	ClockSetup();
 	InitGPIO();
 	InitPIT();
+	InitTPM(0); // servo PWM initialisation
+	InitTPM(2); // sensor's trigger pulse initialisation
 	lcd_init();
 	dma_init();
+	
 
 	InitUARTs(9600);
 	UART0_C2 &= 0xF3; // stop bit only be changed when the transmitter(bit3) and receiver(bit2) are both disabled

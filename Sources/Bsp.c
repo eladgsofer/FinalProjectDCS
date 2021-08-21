@@ -1,7 +1,7 @@
 #include "TFC.h"
 #include "mcg.h"
 
-#define MUDULO_REGISTER  0x2EE0
+#define MUDULO_REGISTER  0xFFFF
 #define MOTOR_MUDULO_REGISTER  9375 // PWM frequency of 40Hz = 24Mhz/64x9375
 
 char ready;
@@ -13,8 +13,9 @@ void InitGPIO()
 	SIM_SCGC5 |= SIM_SCGC5_PORTA_MASK | SIM_SCGC5_PORTB_MASK | SIM_SCGC5_PORTC_MASK | SIM_SCGC5_PORTD_MASK | SIM_SCGC5_PORTE_MASK;
 	
 	//Setup Pins as Timer Output PWM
-	PORTE_PCR22 = PORT_PCR_MUX(3); //PTE22 pin TMP2_CH0 - ALT3, Edge Aligned PWM
-	PORTE_PCR29 = PORT_PCR_MUX(3); //PTE29 pin TMP0_CH2 - ALT3, input-capture
+	PORTE_PCR22 	= PORT_PCR_MUX(3)| PORT_PCR_DSE_MASK; 	//PTE22 pin TMP2_CH0 - ALT3, Edge Aligned PWM
+	PORTA_PCR2 		= PORT_PCR_MUX(3);						//PTA2  pin TMP2_CH1 - ALT3, input-capture
+	PORTD_PCR0 		= PORT_PCR_MUX(4)| PORT_PCR_DSE_MASK;	//PTE22 pin TMP0_CH0 - ALT4, Edge Aligned PWM
 		
 	//GPIO Configuration - LEDs - Output
 	PORTD_PCR1 = PORT_PCR_MUX(1) | PORT_PCR_DSE_MASK;  //Blue
@@ -74,43 +75,35 @@ void InitTPM(char x){  // x={0,1,2}
 	switch(x){
 	case 0:
 		TPM0_SC = 0; // to ensure that the counter is not running
-		TPM0_SC |= TPM_SC_PS(3);	//Prescaler = 8, up-mode, counter-disable
-		TPM0_MOD = 0xFFFF; 
-		TPM0_C2SC |= TPM_CnSC_ELSA_MASK + TPM_CnSC_ELSB_MASK + TPM_CnSC_CHIE_MASK;	//capture triggered on edge
-
-		TPM0_CONF = TPM_CONF_DBGMODE(3);
+			
+		TPM0_SC |= TPM_SC_PS(6) + TPM_SC_TOIE_MASK; //Prescaler =64, up-mode, counter-disable
 		
-		enable_irq(INT_TPM0-16);
-		set_irq_priority(INT_TPM0-16,0);
+		TPM0_MOD = MOTOR_MUDULO_REGISTER; // PWM frequency of 250Hz = 24MHz/(8x12,000)
+		TPM0_C0SC |= TPM_CnSC_MSB_MASK + TPM_CnSC_ELSB_MASK + TPM_CnSC_CHIE_MASK;
+		//TPM0_C0V = 0x0FF;
+		TPM0_C0V = (int)((0.6/25.0)*MOTOR_MUDULO_REGISTER);
+		TPM0_CONF = 0; 
 		break;
 	case 1:
 		
 		break;
 	case 2: 
 		TPM2_SC = 0; // to ensure that the counter is not running
-		TPM2_SC |= TPM_SC_PS(5)+TPM_SC_TOIE_MASK; //Prescaler = 32, up-mode, counter-disable
-		TPM2_MOD = MUDULO_REGISTER; // PWM frequency of 16.66Hz = 24MHz/(32x45,008)
-		TPM2_C0SC |= TPM_CnSC_MSB_MASK + TPM_CnSC_ELSB_MASK + TPM_CnSC_CHIE_MASK;
+		TPM2_SC |= TPM_SC_PS(5); //Prescaler = 32, up-mode, counter-disable
+		TPM2_MOD = MUDULO_REGISTER; // PWM frequency of 11.4Hz = 24MHz/(32x65,535) .... (for 16.66Hz MOD = 0xAFD0)
+		TPM2_C0SC |= TPM_CnSC_MSB_MASK + TPM_CnSC_ELSB_MASK;
 		TPM2_C0V = 0x8;		//Duty Cycle of 10us width 
-		TPM2_CONF = 0;
+		
+		TPM2_C1SC |= TPM_CnSC_ELSA_MASK + TPM_CnSC_ELSB_MASK + TPM_CnSC_CHIE_MASK;	//capture triggered on edge
+		
+		TPM2_CONF = TPM_CONF_DBGMODE(3);
+		
+		enable_irq(INT_TPM2-16);
+		set_irq_priority(INT_TPM2-16,0);
 		break;
 	}
 }
 
-
-void InitServoTPM(){  // x={0,1,2}
-	PORTD_PCR0 = PORT_PCR_MUX(4)| PORT_PCR_DSE_MASK; // 
-	
-	TPM0_SC = 0; // to ensure that the counter is not running
-	
-	TPM0_SC |= TPM_SC_PS(6) + TPM_SC_TOIE_MASK; //Prescaler =64, up-mode, counter-disable
-	
-	TPM0_MOD = MOTOR_MUDULO_REGISTER; // PWM frequency of 250Hz = 24MHz/(8x12,000)
-	TPM0_C0SC |= TPM_CnSC_MSB_MASK + TPM_CnSC_ELSB_MASK + TPM_CnSC_CHIE_MASK;
-	//TPM0_C0V = 0x0FF;
-	TPM0_C0V = (int)((0.6/25.0)*MOTOR_MUDULO_REGISTER);
-	TPM0_CONF = 0; 
-}
 
 //-----------------------------------------------------------------
 // TPMx - Clock Setup
