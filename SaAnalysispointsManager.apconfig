@@ -1,6 +1,6 @@
 <Analysispoints>
 	<Name>AnalysispointsManager</Name>
-	<ProjectPath>C:/Users/elads/workspace/Final Project/SaAnalysispointsManager.apconfig</ProjectPath>
+	<ProjectPath>C:/Users/elads/workspace/FinalProjectWorkspace/SaAnalysispointsManager.apconfig</ProjectPath>
 	<MaxNumberOfCores>1</MaxNumberOfCores>
 	<Comments>Analysispoints Manager</Comments>
 	<IgnoreAll>false</IgnoreAll>
