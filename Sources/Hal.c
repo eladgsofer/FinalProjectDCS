@@ -165,4 +165,90 @@ void FTM2_IRQHandler(){
 	TPM2_C1SC |= TPM_CnSC_CHF_MASK; 			//clean interrupt flag
 }
 
+//-------------------------------------
+//*********Commands********************
+//-------------------------------------
+//-----------------------------------------------------------------
+//  RGB Serial Show function
+//-----------------------------------------------------------------
+void blink_rgb(int x){
+	int num_of_blinks;
+	
+	num_of_blinks = x;
+	
+	while(num_of_blinks > 0)
+	{
+		RED_LED_ON;
+		//ToDo: add small delay
+		RED_LED_OFF;
+		//ToDo: add delay d
+		GREEN_LED_ON;
+		//ToDo: add small delay
+		GREEN_LED_OFF;
+		//ToDo: add delay d
+		BLUE_LED_ON;
+		//ToDo: add small delay
+		BLUE_LED_OFF;
+		//ToDo: add delay d
+		num_of_blinks--;
+	}
+}
+
+void lcd_count_up(int x){
+	int repeat_num, show_num;
+		
+	repeat_num = x;
+	
+	while(repeat_num > 0)
+	{
+		show_num = 0;
+		while(show_num <= 10)
+		{
+			lcd_clear();
+			lcd_puts('0' + show_num);
+			//ToDo: add delay d
+			show_num++;
+		}
+		repeat_num--;
+	}
+	
+}
+
+void lcd_count_down(int x){
+	int repeat_num, show_num;
+		
+	repeat_num = x;
+	
+	while(repeat_num > 0)
+	{
+		show_num = 10;
+		while(show_num >= 0)
+		{
+			lcd_clear();
+			lcd_puts('0' + show_num);
+			//ToDo: add delay d
+			show_num++;
+		}
+		repeat_num--;
+	}
+	
+}
+
+void set_delay(int d){
+	delay = d;
+}
+
+void clear_all_leds(void){
+	RED_LED_OFF;
+	GREEN_LED_OFF;
+	BLUE_LED_OFF;
+}
+
+void servo_deg(int p){
+	//ToDo: add function - use elad's
+}
+
+void servo_scan(int l, int r){
+	//ToDo: add function - use elad's (scan between l and r)
+}
 

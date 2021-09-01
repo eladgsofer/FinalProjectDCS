@@ -5,7 +5,7 @@
 int commandsParser() {
     char string[50] = "0102\n041E\n0201\n0302\n05\n0623\n0101\n07143C\n08";
     char leftDegree[3], rightDegree[3],  fullOperand[10];
-    int operandVal =0, delay=5, leftAngle, rightAngle, opcode;
+    int operandVal =0, leftAngle, rightAngle, opcode;
 
     // Extract the first token
     char * token = strtok(string, "\n");
@@ -22,22 +22,22 @@ int commandsParser() {
         {
 
             case 1  :
-                //blinkRGB(operandVal, delay);
+            	blink_rgb(operandVal);
                 break;
             case 2  :
-                //lcdCountDown(operandVal, delay);
+            	lcd_count_down(operandVal);
                 break;
             case 3:
-                //lcdCountUp(operandVal, delay);
+            	lcd_count_up(operandVal);
                 break;
             case 4:
-                delay = operandVal;
+            	set_delay(operandVal);
                 break;
             case 5:
-                //RGB_LED_OFF;
+            	clear_all_leds();
                 break;
             case 6:
-                //servoDegree(operandVal);
+            	servo_deg(operandVal);
                 break;
             case 7:
                 // Extract scanning range
@@ -45,10 +45,10 @@ int commandsParser() {
                 leftAngle = (int)strtol(leftDegree, NULL, 16);
                 rightAngle = (int)strtol(rightDegree, NULL, 16);
 
-                //servoScan(leftAngle, rightAngle);
+                servo_scan(leftAngle, rightAngle);
                 break;
             case 8:
-                //wait();
+                sleep();
                 break;
                 /* you can have any number of case statements */
             default : /* Optional */
