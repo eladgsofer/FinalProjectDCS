@@ -129,6 +129,8 @@
 
 void InitGPIO();
 void InitTPM(char x);
+void StartTPMx(char x, int start);
+void SetTPMxDutyCycle(char x, int dutyCycle);
 uint8_t TFC_GetDIP_Switch();
 void ClockSetup();
 void InitPIT();
@@ -145,5 +147,6 @@ extern uint16_t  value[ADC_READS];
 char ready;
 
 void dma_init(void);
+void InitUARTConf(void);
 
 #endif /* BSP_H_ */

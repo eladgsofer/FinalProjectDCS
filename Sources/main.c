@@ -7,6 +7,7 @@
 //#include "derivative.h" /* include peripheral declarations */
 # include "TFC.h"
 # include "servo.c"
+# include "commands_script.c"
 
 // Declarations of externs
 volatile int distance_ready = FALSE;
@@ -24,7 +25,7 @@ void state_decode();
 
 int main(void){
 	
-	int print_script_idx;
+	int print_script_idx, next_script_idx;
 
 	char_idx = 0;
 	dataready = 0;
@@ -80,12 +81,16 @@ int main(void){
 				break;
 				
 			case Script_Mode_3:
-				print_script_idx = index_last;
-				while(!done_script)
+				next_script_idx = 0;
+				start_script = scroll_pushed = 0;
+				while(!start_script)
 				{
-					print_script_idx = print_files_menu(print_script_idx);
-					//ToDo: add function that waits for button push or exit from mode
+					print_script_idx = next_script_idx;
+					next_script_idx	= print_files_menu(print_script_idx);
+					while(!(scroll_pushed || start_script));
 				}
+				commandsParser(print_script_idx);
+				
 				break;
 				
 			case Script_Receive_4:
@@ -100,8 +105,10 @@ int main(void){
 				commandsParser(index_last);
 				
 				break;
+				
+			default:
+				break;
 		}
-			
 	} // End of while(1)
 	return 0;
 }

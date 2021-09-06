@@ -16,7 +16,7 @@ void PORTD_IRQHandler(void){
 	if (PORTD_ISFR & SW7_POS) { //PTD7 - Choosing file
 		
 		if ((state == Script_Mode_3) & (files_num >= 1)) { 
-			//ToDo: Acctivate file
+			scroll_pushed = 1;
 		}
 		//Debounce or using PFE field
 		while(TFC_PUSH_BUTTON_0_PRESSED)	// wait of release the button
@@ -29,7 +29,7 @@ void PORTD_IRQHandler(void){
 	if (PORTD_ISFR & SW6_POS){  //PTD6 - Move between files in LCD
 		
 		if ((state == Script_Mode_3) & (files_num >= 2)){
-			//ToDo: raise scroll flag
+			start_script = 1;
 		}
 		
 		//Debounce or using PFE field
@@ -38,8 +38,6 @@ void PORTD_IRQHandler(void){
 		PORTD_ISFR |= TFC_PUSH_BUTT0N1_LOC; // clear interrupt flag bit of PTD6  // clear interrupt flag bit of PTD7
 		
 	}
-	
-	//ToDo: raise flag "button pushed"
 }
 
 
@@ -120,7 +118,7 @@ void DMA1_IRQHandler(void)
 	RED_LED_OFF;                // Delay
 }
 
-void dma_file_trans()
+void dma_file_trans(void)
 {
 	DMA_DAR0 = (uint32_t)hd_file_Ptr[index_last];       		// destination
 	DMA_DSR_BCR0 = DMA_DSR_BCR_BCR(file_size[index_last]);      // number of bytes to transfer

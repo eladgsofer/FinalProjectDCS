@@ -516,7 +516,7 @@ void lcd_strobe(){
 //******************************************************************
 // Init UART Configuration
 //******************************************************************
-InitUARTConf(){
+void InitUARTConf(){
 	UART0_C2 &= 0xF3; // stop bit only be changed when the transmitter(bit3) and receiver(bit2) are both disabled
 
 	UART0_C1 |= 0x02; 	// EVEN MODE PARITY
