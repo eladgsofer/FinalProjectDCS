@@ -15,18 +15,8 @@ void PORTD_IRQHandler(void){
 	// check that the interrupt was for switch
 	if (PORTD_ISFR & SW7_POS) { //PTD7 - Choosing file
 		
-		if ((state == FILE_TRANS_1) & (files_num >= 1)) { 
-			
-			rfile_mode ^= 0x01;	//Toggle - first press shows file, second sends
-			if (rfile_mode == 0)
-			{
-				print_file(curr_index);
-			}
-			else 
-			{
-				file_to_send_idx = curr_index;
-				send_file();	
-			}
+		if ((state == Script_Mode_3) & (files_num >= 1)) { 
+			//ToDo: Acctivate file
 		}
 		//Debounce or using PFE field
 		while(TFC_PUSH_BUTTON_0_PRESSED)	// wait of release the button
@@ -38,9 +28,8 @@ void PORTD_IRQHandler(void){
 	
 	if (PORTD_ISFR & SW6_POS){  //PTD6 - Move between files in LCD
 		
-		if ((state == FILE_TRANS_1) & (files_num >= 2)){
-			curr_index = next_index;
-			next_index = print_files_menu(curr_index);
+		if ((state == Script_Mode_3) & (files_num >= 2)){
+			//ToDo: raise scroll flag
 		}
 		
 		//Debounce or using PFE field
@@ -49,16 +38,10 @@ void PORTD_IRQHandler(void){
 		PORTD_ISFR |= TFC_PUSH_BUTT0N1_LOC; // clear interrupt flag bit of PTD6  // clear interrupt flag bit of PTD7
 		
 	}
+	
+	//ToDo: raise flag "button pushed"
 }
 
-
-
-//-----------------------------------------------------------------
-// ADC0 - ISR = Interrupt Service Routine
-//-----------------------------------------------------------------
-//void ADC0_IRQHandler(){
-//	
-//}
 
 
 ////-----------------------------------------------------------------
@@ -123,6 +106,8 @@ void DMA0_IRQHandler(void)
 	for (j=1000000; j>0; j--);	                    // Delay
 	RED_LED_OFF;                   // Delay
 }
+
+//ToDo: assure we need only DMA0
 void DMA1_IRQHandler(void)
 {
 	DMA_DSR_BCR1 |= DMA_DSR_BCR_DONE_MASK;		    // Clear Done Flag

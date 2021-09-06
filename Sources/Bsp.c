@@ -459,3 +459,17 @@ void lcd_strobe(){
   asm("nop");
   LCD_EN(0);
 }
+
+//******************************************************************
+// Init UART Configuration
+//******************************************************************
+InitUARTConf(){
+	UART0_C2 &= 0xF3; // stop bit only be changed when the transmitter(bit3) and receiver(bit2) are both disabled
+
+	UART0_C1 |= 0x02; 	// EVEN MODE PARITY
+	UART0_C1 &= 0xFE;	
+
+	UART0_BDH &= 0xDF; //default Stop bit = 1
+	UART0_C2 = UARTLP_C2_RE_MASK | UARTLP_C2_TE_MASK | UART_C2_RIE_MASK; // Enable Transmitter, Receiver, Receive interrupt
+	UARTprintf(UART0_BASE_PTR,"\n");
+}
