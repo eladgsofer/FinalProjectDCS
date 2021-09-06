@@ -1,8 +1,8 @@
 #include "TFC.h"
 #include "mcg.h"
 
-#define MUDULO_REGISTER  0xFFFF
-#define MOTOR_MUDULO_REGISTER  9375 // PWM frequency of 40Hz = 24Mhz/64x9375
+#define SERVO_MUDULO_REGISTER   0x9275 - 1 
+#define TRIGGER_MODULO_REGISTER 0xC350 - 1 // 50,000
 
 char ready;
 
@@ -209,39 +209,97 @@ uint8_t TFC_GetDIP_Switch()
 //-----------------------------------------------------------------
 // TPMx - Initialization
 //-----------------------------------------------------------------
-void InitTPM(char x){  // x={0,1,2}
-	switch(x){
-	case 0:
+void InitTPM(char x) {  // x={0,1,2}
+	switch (x) {
+	case 0: // Echo
 		TPM0_SC = 0; // to ensure that the counter is not running
-			
-		TPM0_SC |= TPM_SC_PS(6) + TPM_SC_TOIE_MASK; //Prescaler =64, up-mode, counter-disable
-		
-		TPM0_MOD = MOTOR_MUDULO_REGISTER; // PWM frequency of 250Hz = 24MHz/(8x12,000)
-		TPM0_C0SC |= TPM_CnSC_MSB_MASK + TPM_CnSC_ELSB_MASK + TPM_CnSC_CHIE_MASK;
-		//TPM0_C0V = 0x0FF;
-		TPM0_C0V = (int)((0.6/25.0)*MOTOR_MUDULO_REGISTER);
-		TPM0_CONF = 0; 
+		TPM0_SC = TPM_SC_PS(5); //Prescaler 32
+		TPM0_MOD = 0xFFFF;
+		TPM0_C2SC = 0;
+		// Input capture both edge detect
+		TPM0_C2SC |= TPM_CnSC_ELSB_MASK + TPM_CnSC_ELSA_MASK + TPM_CnSC_CHIE_MASK;
+		TPM0_CONF = 0;
+		TPM0_C2V = 0;
+		enable_irq(INT_TPM0 - 16); // Enable Interrupts 
+		set_irq_priority(INT_TPM0 - 16, 0);  // Interrupt priority = 0 = max
 		break;
-	case 1:
-		
+
+	case 1: // Servo
+		PORTA_PCR12 = PORT_PCR_MUX(3); // TPM1_CH0 - ALT3
+		TPM1_SC = 0; // to ensure that the counter is not running
+		TPM1_SC |= TPM_SC_PS(4) + TPM_SC_TOIE_MASK; //Prescaler = 16, up-mode, counter-disable
+		// TPM period = (MOD + 1) * CounterClock_period
+		TPM1_MOD = SERVO_MUDULO_REGISTER; // PWM frequency of 40Hz = 24MHz/(16x60,000)
+		TPM1_C0SC = 0;
+		// Edge Aligned , High-True pulse, channel interrupts enabled
+		TPM1_C0SC |= TPM_CnSC_MSB_MASK + TPM_CnSC_ELSB_MASK + TPM_CnSC_CHIE_MASK;
+		TPM1_C0V = TPM_DC_VAL_MIN; // Duty Cycle 5% - servo deg = 0
+		TPM1_CONF = 0;//TPM_CONF_DBGMODE(3); //LPTPM counter continues in debug mode
+
 		break;
-	case 2: 
+	case 2: // Trigger
+		PORTE_PCR22 = PORT_PCR_MUX(3); // TPM1_CH1- ALT3
 		TPM2_SC = 0; // to ensure that the counter is not running
-		TPM2_SC |= TPM_SC_PS(5); //Prescaler = 32, up-mode, counter-disable
-		TPM2_MOD = MUDULO_REGISTER; // PWM frequency of 11.4Hz = 24MHz/(32x65,535) .... (for 16.66Hz MOD = 0xAFD0)
-		TPM2_C0SC |= TPM_CnSC_MSB_MASK + TPM_CnSC_ELSB_MASK;
-		TPM2_C0V = 0x8;		//Duty Cycle of 10us width 
-		
-		TPM2_C1SC |= TPM_CnSC_ELSA_MASK + TPM_CnSC_ELSB_MASK + TPM_CnSC_CHIE_MASK;	//capture triggered on edge
-		
-		TPM2_CONF = TPM_CONF_DBGMODE(3);
-		
-		enable_irq(INT_TPM2-16);
-		set_irq_priority(INT_TPM2-16,0);
+		TPM2_SC |= TPM_SC_PS(5) + TPM_SC_TOIE_MASK;  //Prescaler = 32, clear flag
+		// TPM period = (MOD + 1) * CounterClock_period
+		TPM2_MOD = TRIGGER_MODULO_REGISTER;  // PWM frequency of 15Hz = 24MHz/(32x50,000)
+		TPM2_C0SC = 0;
+		// Edge Aligned , High-True pulse, channel interrupts enabled
+		TPM2_C0SC |= TPM_CnSC_MSB_MASK + TPM_CnSC_ELSB_MASK + TPM_CnSC_CHIE_MASK;
+		TPM2_C0V = 10; // Duty Cycle( > 10us)
+		TPM2_CONF = 0;//TPM_CONF_DBGMODE(3); //LPTPM counter continues in debug mode
 		break;
 	}
 }
 
+void SetTPMxDutyCycle(char x, int dutyCycle) {
+
+	switch (x) {
+	case 0:
+		break;
+	case 1:
+		TPM1_C0V = dutyCycle;
+		break;
+	case 2:
+		TPM2_C1V = dutyCycle;
+		break;
+	}
+}
+
+void clearTPM0() {
+	TPM0_CNT = 0;
+	TPM0_C2V = 0;
+}
+
+//-----------------------------------------------------------------
+// Start TPMx
+//-----------------------------------------------------------------
+void StartTPMx(char x, int start) {
+	switch (x) {
+	case 0:
+		if (start)
+			TPM0_SC |= TPM_SC_CMOD(1); //Start the TPM0 counter
+		else
+			TPM0_SC &= ~TPM_SC_CMOD(1); //Stop the TPM0 counter
+		break;
+	case 1:
+		if (start)
+			TPM1_SC |= TPM_SC_CMOD(1); //Start the TPM1 counter
+		else
+			TPM1_SC &= ~TPM_SC_CMOD(1); //Stop the TPM1 counter
+		break;
+	case 2:
+		if (start)
+			TPM2_SC |= TPM_SC_CMOD(1); //Start the TPM2 counter
+		else
+			TPM2_SC &= ~TPM_SC_CMOD(1); //Stop the TPM2 counter
+		break;
+	}
+}
+void clearTPM0() {
+	TPM0_CNT = 0;
+	TPM0_C2V = 0;
+}
 
 //-----------------------------------------------------------------
 // TPMx - Clock Setup

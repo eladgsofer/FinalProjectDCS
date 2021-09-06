@@ -6,6 +6,16 @@
 
 //#include "derivative.h" /* include peripheral declarations */
 # include "TFC.h"
+# #include "servo.c"
+
+// Declarations of externs
+volatile int distance_ready = FALSE;
+volatile int signal_taken = FALSE;
+volatile unsigned int acc_distance = 0;
+volatile unsigned int out_distance = 0;
+volatile unsigned int distance = 0;
+volatile unsigned int rising_edge = 0;
+volatile unsigned int falling_edge = 0;
 		
 int print_files_menu(int file_index);
 void receive_script();
@@ -21,8 +31,9 @@ int main(void){
 	ClockSetup();
 	InitGPIO();
 	InitPIT();
-	InitTPM(0); // servo PWM initialisation
-	InitTPM(2); // sensor's trigger pulse initialisation
+
+	InitServo();
+	InitSensors();
 	lcd_init();
 	dma_init();
 	
