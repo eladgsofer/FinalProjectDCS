@@ -1,6 +1,4 @@
-#include<stdio.h>
-#include <string.h>
-#include <stdlib.h>
+#include "TFC.h"
 
 int commandsParser(int fileIndex) {
     //char string[50] = "0102\n041E\n0201\n0302\n05\n0623\n0101\n07143C\n08";

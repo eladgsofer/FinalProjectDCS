@@ -120,6 +120,15 @@ void DMA1_IRQHandler(void)
 	RED_LED_OFF;                // Delay
 }
 
+void dma_file_trans()
+{
+	DMA_DAR0 = (uint32_t)hd_file_Ptr[index_last];       		// destination
+	DMA_DSR_BCR0 = DMA_DSR_BCR_BCR(file_size[index_last]);      // number of bytes to transfer
+	DMAMUX0_CHCFG0 |= DMAMUX_CHCFG_ENBL_MASK; 				// Enable DMA channel 
+	disable_irq(INT_UART0-16);               			    // Disable UART0 interrupt
+	UART0_C5 |= UART0_C5_RDMAE_MASK;          				// Enable DMA request for UART0 receiver
+	UARTprintf(UART0_BASE_PTR,"ack\n");
+}
 //-----------------------------------------------------------------
 // TPM2_C1 = Interrupt Service Routine
 //-----------------------------------------------------------------
@@ -168,7 +177,7 @@ void FTM2_IRQHandler(){
 //---------------------------------------------------------------
 void enable_sensor(int enable){
 	if (enable){
-		samp_idx = 0;
+		samp_cnt = 0;
 		StartTPMx(SENSOR_ECHO, TRUE);
 		StartTPMx(SENSOR_TRIG, TRUE);
 	} else {

@@ -6,7 +6,7 @@
 
 //#include "derivative.h" /* include peripheral declarations */
 # include "TFC.h"
-# #include "servo.c"
+# include "servo.c"
 
 // Declarations of externs
 volatile int distance_ready = FALSE;
@@ -45,7 +45,7 @@ int main(void){
 	
 	files_num = 0;
 	index_last = -1;
-	samp_idx = 0;
+	samp_cnt = 0;
 	//last_addr = &files;
 	state = IDLE_STATE_0;
 	
@@ -92,7 +92,13 @@ int main(void){
 				//---------------------------------------------------------------------------------------------------------------------
 				// Script Mode - Receive Files from PC
 				//---------------------------------------------------------------------------------------------------------------------
+				dma_done = 0;
+				
 				receive_script();
+				
+				while(!dma_done);
+				commandsParser(index_last);
+				
 				break;
 		}
 			
@@ -134,12 +140,12 @@ int print_files_menu(int file_idx){
 			lcd_new_line();        	      //second line
 		}
 		
-		i = (i == index_first) ? index_last : ((i - 1)%20);
+		i = (i == 0) ? index_last : ((i - 1)%20);
 			
 		row += 1;
 	}while ((files_num > 1) && ( row < 2 ));	//Prints only 2 rows, or 1 in case it's the last file
 	
-	return (file_idx == index_first) ? index_last : ((file_idx - 1)%20);
+	return (file_idx == 0) ? index_last : ((file_idx - 1)%20);
 }
 
 void receive_script(void){
@@ -190,13 +196,7 @@ void receive_script(void){
 		
 		index_last = index;
 		
-		//transfer file using DMA
-		DMA_DAR0 = (uint32_t)hd_file_Ptr[index];       			// destination
-		DMA_DSR_BCR0 = DMA_DSR_BCR_BCR(file_size[index]);       // number of bytes to transfer
-		DMAMUX0_CHCFG0 |= DMAMUX_CHCFG_ENBL_MASK; 				// Enable DMA channel 
-		disable_irq(INT_UART0-16);               			    // Disable UART0 interrupt
-		UART0_C5 |= UART0_C5_RDMAE_MASK;          				// Enable DMA request for UART0 receiver
-		UARTprintf(UART0_BASE_PTR,"ack\n");  
+		dma_file_trans();  
 }
 
 
