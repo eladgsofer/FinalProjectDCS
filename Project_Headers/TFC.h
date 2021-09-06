@@ -45,6 +45,9 @@ int done_script;
 int char_idx;
 int cntr_end, cntr_start, range;
 int scanDegree;
+int dis_arr[8];
+int samp_idx, distance_sample;
+int sample_ready;
 
 
 int delay;	// in ms

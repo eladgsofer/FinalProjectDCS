@@ -126,30 +126,60 @@ void DMA1_IRQHandler(void)
 void FTM2_IRQHandler(){
 	
 	static int rising_edge = 1;
-	int cntr_snap;
+	int cntr_snap, avg_dis;
 	
 	
 	if(TPM2_C1SC&TPM_CnSC_CHF_MASK)		//if channel flag raised
 	{
 		cntr_snap = TPM2_C1V;			//capture TPM2_C1 counter
 		if(rising_edge)
-			{
-				cntr_start = cntr_snap;		//save TPM2_C1 counter value on rising edge
-			}
-			else
-			{
-				cntr_end = cntr_snap;		//save TPM2_C1 counter value on falling edge and calculate delta
-				range = (cntr_end - cntr_start)&0xFFFF;			//calculate range (delta counter)
-				
-			}
+		{
+			cntr_start = cntr_snap;		//save TPM2_C1 counter value on rising edge
+		}
+		else
+		{	
+			cntr_end = cntr_snap;			//save TPM2_C1 counter value on falling edge and calculate delta
+			range = (cntr_end - cntr_start)&0xFFFF;			//calculate range (delta counter)
 			
-			rising_edge = (rising_edge + 1)%2;
+			dis_arr[samp_idx] = range;
+			
+			samp_idx = (samp_idx + 1)%8;	//samples counter
+			
+			//calculate average when got 8 samples
+			if( samp_idx == 0 )
+			{
+				avg_dis = 0;
+				for(int i = 0; i < 8; i++)
+				{
+					avg_dis += range;
+				}
+				avg_dis /= 8;
+				distance_sample = avg_dis;
+				sample_ready = 1;
+				enable_sensor(FALSE);
+			}
+		}
+		
+		rising_edge = (rising_edge + 1)%2;
 	}
 	
 	
 	TPM2_C1SC |= TPM_CnSC_CHF_MASK; 			//clean interrupt flag
 }
 
+//---------------------------------------------------------------
+//		Sensor HAL
+//---------------------------------------------------------------
+void enable_sensor(int enable){
+	if (enable){
+		samp_idx = 0;
+		StartTPMx(SENSOR_ECHO, TRUE);
+		StartTPMx(SENSOR_TRIG, TRUE);
+	} else {
+		StartTPMx(SENSOR_ECHO, FALSE);
+		StartTPMx(SENSOR_TRIG, FALSE);
+	}
+}
 //-------------------------------------
 //*********Commands********************
 //-------------------------------------

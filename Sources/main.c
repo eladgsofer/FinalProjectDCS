@@ -45,6 +45,7 @@ int main(void){
 	
 	files_num = 0;
 	index_last = -1;
+	samp_idx = 0;
 	//last_addr = &files;
 	state = IDLE_STATE_0;
 	
