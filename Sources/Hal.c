@@ -126,7 +126,8 @@ void DMA1_IRQHandler(void)
 void FTM2_IRQHandler(){
 	
 	static int rising_edge = 1;
-	int cntr_snap, avg_dis;
+	static int sample_sum = 0;
+	int cntr_snap;
 	
 	
 	if(TPM2_C1SC&TPM_CnSC_CHF_MASK)		//if channel flag raised
@@ -141,20 +142,15 @@ void FTM2_IRQHandler(){
 			cntr_end = cntr_snap;			//save TPM2_C1 counter value on falling edge and calculate delta
 			range = (cntr_end - cntr_start)&0xFFFF;			//calculate range (delta counter)
 			
-			dis_arr[samp_idx] = range;
+			sample_sum += range;
 			
-			samp_idx = (samp_idx + 1)%8;	//samples counter
+			samp_cnt = (samp_cnt + 1)%8;	//samples counter
 			
 			//calculate average when got 8 samples
-			if( samp_idx == 0 )
+			if( samp_cnt == 0 )
 			{
-				avg_dis = 0;
-				for(int i = 0; i < 8; i++)
-				{
-					avg_dis += range;
-				}
-				avg_dis /= 8;
-				distance_sample = avg_dis;
+				distance_avg = sample_sum/8;
+				sample_sum = 0;
 				sample_ready = 1;
 				enable_sensor(FALSE);
 			}
