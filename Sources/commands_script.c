@@ -2,8 +2,9 @@
 #include <string.h>
 #include <stdlib.h>
 
-int commandsParser() {
-    char string[50] = "0102\n041E\n0201\n0302\n05\n0623\n0101\n07143C\n08";
+int commandsParser(int fileIndex) {
+    //char string[50] = "0102\n041E\n0201\n0302\n05\n0623\n0101\n07143C\n08";
+	char* string = hd_file_Ptr[fileIndex];
     char leftDegree[3], rightDegree[3],  fullOperand[10];
     int operandVal =0, leftAngle, rightAngle, opcode;
 

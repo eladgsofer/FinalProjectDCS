@@ -26,7 +26,6 @@ int main(void){
 	lcd_init();
 	dma_init();
 	
-
 	InitUARTs(9600);
 	InitUARTConf();
 	
