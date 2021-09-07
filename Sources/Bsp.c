@@ -225,6 +225,7 @@ void InitTPM(char x) {  // x={0,1,2}
 		break;
 
 	case 1: // Servo
+		/*
 		PORTA_PCR12 = PORT_PCR_MUX(3); // TPM1_CH0 - ALT3
 		TPM1_SC = 0; // to ensure that the counter is not running
 		TPM1_SC |= TPM_SC_PS(4) + TPM_SC_TOIE_MASK; //Prescaler = 16, up-mode, counter-disable
@@ -235,7 +236,7 @@ void InitTPM(char x) {  // x={0,1,2}
 		TPM1_C0SC |= TPM_CnSC_MSB_MASK + TPM_CnSC_ELSB_MASK + TPM_CnSC_CHIE_MASK;
 		TPM1_C0V = TPM_DC_VAL_MIN; // Duty Cycle 5% - servo deg = 0
 		TPM1_CONF = 0;//TPM_CONF_DBGMODE(3); //LPTPM counter continues in debug mode
-
+		*/
 		break;
 	case 2: // Trigger
 		PORTE_PCR22 = PORT_PCR_MUX(3); // TPM1_CH1- ALT3
@@ -517,12 +518,14 @@ void lcd_strobe(){
 // Init UART Configuration
 //******************************************************************
 void InitUARTConf(){
+	InitUARTs(9600);
+	
+	UARTprintf(UART0_BASE_PTR,"\n");
+	
 	UART0_C2 &= 0xF3; // stop bit only be changed when the transmitter(bit3) and receiver(bit2) are both disabled
 
-	UART0_C1 |= 0x02; 	// EVEN MODE PARITY
-	UART0_C1 &= 0xFE;	
+	UART0_C1 &= 0xFD;
 
 	UART0_BDH &= 0xDF; //default Stop bit = 1
 	UART0_C2 = UARTLP_C2_RE_MASK | UARTLP_C2_TE_MASK | UART_C2_RIE_MASK; // Enable Transmitter, Receiver, Receive interrupt
-	UARTprintf(UART0_BASE_PTR,"\n");
 }

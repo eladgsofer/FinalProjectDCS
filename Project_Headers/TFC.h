@@ -21,6 +21,7 @@
 #include "UART.h"
 #include "Hal.h"
 #include "main_functions.h"
+#include "servo.h"
 
 enum State {IDLE_STATE_0 = 0, Radar_Detector_1 = 1, Telemeter_2 = 2, Script_Mode_3 = 3, Script_Receive_4 = 4};
 enum State state;

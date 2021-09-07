@@ -22,7 +22,7 @@ void InitSensors() {
 /////////////////////////////////
 void WriteServo(int deg) {
 	int dutyCycle;
-
+	/*
 	// check if deg is valid
 	if (SERVO_DEG_MAX < deg || deg < SERVO_DEG_MIN) {
 		return;
@@ -33,7 +33,7 @@ void WriteServo(int deg) {
 	SetTPMxDutyCycle(SERVO_TPM, dutyCycle);
 	StartTPMx(SERVO_TPM, TRUE);
 	DelayMs(100);
-
+	*/
 }
 
 //////////////////////////////////////
