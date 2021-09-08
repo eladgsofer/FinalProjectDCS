@@ -14,10 +14,10 @@ void InitApp(void)
 {
 	char_idx = 0;
 	dataready = 0;
-	ClockSetup();
 	InitGPIO();
 	InitPIT();
-
+	
+	ClockSetup();
 	InitServo();
 	InitSensors();
 	lcd_init();
@@ -31,6 +31,7 @@ void InitApp(void)
 	files_num = 0;
 	index_last = -1;
 	samp_cnt = 0;
+	delay = 50;
 	state = IDLE_STATE_0;
 	UARTprintf(UART0_BASE_PTR,"\n");
 }
@@ -204,10 +205,14 @@ void receive_script(void){
 	int cont_flag, index;
 	char* file_name_addr;
 	
-	lcd_clear();
+	//lcd_clear(); //ToDo:return
 	
 	//calc current index
-	index = (index_last + 1) % 3;
+	index = index_last + 1;
+	if ( index == 4 )
+	{
+		index = 0;
+	}
 	if (files_num != 3) 
 	{
 		files_num += 1;
@@ -223,7 +228,14 @@ void receive_script(void){
 	i++;
 	
 	//Calculate start address
-	file_name_addr = hd_file_Ptr[index_last] + file_size[index_last] + 1;
+	if( index_last == -1)
+	{
+		file_name_addr = &files;
+	}
+	else
+	{
+		file_name_addr = hd_file_Ptr[index_last] + file_size[index_last] + 1;
+	}
 	file_name_Ptr[index] = file_name_addr;
 	
 	//Save file's name

@@ -5,15 +5,15 @@
 //	Inits Servo
 /////////////////////////////////
 void InitServo() {
-	ClockSetup(); // initialise tpm clock
+	//ClockSetup(); // initialise tpm clock
 	InitTPM(SERVO_TPM);		 // configure pit 0
-	StartTPMx(SERVO_TPM, TRUE); // start pit 
+	//StartTPMx(SERVO_TPM, TRUE); // start pit 
 }
 /////////////////////////////////////
 //  Inits Sensors
 /////////////////////////////////////
 void InitSensors() {
-	ClockSetup(); // initialise tpm clock
+	//ClockSetup(); // initialise tpm clock
 	InitTPM(SENSOR_TRIG);
 	InitTPM(SENSOR_ECHO);
 }

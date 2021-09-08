@@ -103,6 +103,7 @@ void DMA0_IRQHandler(void)
 	int j;
 	for (j=1000000; j>0; j--);	                    // Delay
 	RED_LED_OFF;                   // Delay
+	dma_done = 1;
 }
 
 //ToDo: assure we need only DMA0
@@ -116,6 +117,7 @@ void DMA1_IRQHandler(void)
 	int j;
 	for (j=1000000; j>0; j--);	                    // Delay
 	RED_LED_OFF;                // Delay
+	dma_done = 1;
 }
 
 void dma_file_trans(void)
@@ -197,17 +199,17 @@ void blink_rgb(int x){
 	while(num_of_blinks > 0)
 	{
 		RED_LED_ON;
-		//ToDo: add small delay
+		DelayMs(500);
 		RED_LED_OFF;
-		//ToDo: add delay d
+		DelayMs(delay*10);
 		GREEN_LED_ON;
-		//ToDo: add small delay
+		DelayMs(500);
 		GREEN_LED_OFF;
-		//ToDo: add delay d
+		DelayMs(delay*10);
 		BLUE_LED_ON;
-		//ToDo: add small delay
+		DelayMs(500);
 		BLUE_LED_OFF;
-		//ToDo: add delay d
+		DelayMs(delay*10);
 		num_of_blinks--;
 	}
 }
