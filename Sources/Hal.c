@@ -199,17 +199,17 @@ void blink_rgb(int x){
 	while(num_of_blinks > 0)
 	{
 		RED_LED_ON;
-		DelayMs(500);
+		DelayMs(10000); //ToDo: change to PIT
 		RED_LED_OFF;
-		DelayMs(delay*10);
+		DelayMs(delay*10000);
 		GREEN_LED_ON;
-		DelayMs(500);
+		DelayMs(10000);
 		GREEN_LED_OFF;
-		DelayMs(delay*10);
+		DelayMs(delay*10000);
 		BLUE_LED_ON;
-		DelayMs(500);
+		DelayMs(1000);
 		BLUE_LED_OFF;
-		DelayMs(delay*10);
+		DelayMs(delay*10000);
 		num_of_blinks--;
 	}
 }
@@ -225,8 +225,15 @@ void lcd_count_up(int x){
 		while(show_num <= 10)
 		{
 			lcd_clear();
-			lcd_puts('0' + show_num);
-			//ToDo: add delay d
+			if(show_num == 10)
+			{
+				lcd_puts("10");
+			}
+			else
+			{
+				lcd_data('0' + show_num);
+			}
+			DelayMs(delay*10000); //ToDo: add delay d with PIT
 			show_num++;
 		}
 		repeat_num--;
@@ -245,9 +252,16 @@ void lcd_count_down(int x){
 		while(show_num >= 0)
 		{
 			lcd_clear();
-			lcd_puts('0' + show_num);
-			//ToDo: add delay d
-			show_num++;
+			if(show_num == 10)
+			{
+				lcd_puts("10");
+			}
+			else
+			{
+				lcd_data('0' + show_num);
+			}
+			DelayMs(delay*10000); //ToDo: add delay d with PIT
+			show_num--;
 		}
 		repeat_num--;
 	}

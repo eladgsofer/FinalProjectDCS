@@ -31,7 +31,7 @@ void InitApp(void)
 	files_num = 0;
 	index_last = -1;
 	samp_cnt = 0;
-	delay = 50;
+	delay = 5;
 	state = IDLE_STATE_0;
 	UARTprintf(UART0_BASE_PTR,"\n");
 }
