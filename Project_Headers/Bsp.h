@@ -147,6 +147,6 @@ extern uint16_t  value[ADC_READS];
 char ready;
 
 void dma_init(void);
-void InitUARTConf(void);
+void InitUARTConf(char b, char p, char s);
 
 #endif /* BSP_H_ */

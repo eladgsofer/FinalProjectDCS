@@ -23,7 +23,7 @@ void InitApp(void)
 	lcd_init();
 	dma_init();
 	
-	InitUARTConf();
+	InitUARTs(9600);
 	
 	RGB_LED_OFF;
 	lcd_clear();
@@ -31,8 +31,8 @@ void InitApp(void)
 	files_num = 0;
 	index_last = -1;
 	samp_cnt = 0;
-	//last_addr = &files;
 	state = IDLE_STATE_0;
+	UARTprintf(UART0_BASE_PTR,"\n");
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -48,7 +48,6 @@ int commandsParser(int fileIndex) {
     char * token = strtok(string, "\n");
     // loop through the string to extract all other tokens
     while( token != NULL ) {
-        printf( "%s\n", token ); //printing each token
         // Extract opcode and operand
         sscanf(token, "%2d%s", &opcode, fullOperand);
         token = strtok(NULL, "\n");
@@ -94,6 +93,36 @@ int commandsParser(int fileIndex) {
     }
     return 0;
 }
+
+//---------------------------------------------------------------------------------------------------------------------
+// Set UART Configurations
+//---------------------------------------------------------------------------------------------------------------------
+void set_uart_configurations()
+{
+	int j;
+	UARTprintf(UART0_BASE_PTR,"ack\n");
+	for (j=10000; j>0; j--);
+
+	int i,a,b,c;
+	i = 0;
+	a = 17;
+	b = 22;
+	c = 26;
+
+	switch (PC_msg[a]){    //Check baud rate
+		case '1': b+=1; c+=1; break;
+		case '3': b+=1; c+=1; break;
+	}
+
+	switch (PC_msg[b]){   //Check parity bit
+		case 'N': c+=1 ; break;       // Parity = none
+		case 'E': c+=1 ; break;       // Parity = even
+	}
+
+	InitUARTConf(PC_msg[a], PC_msg[b], PC_msg[c]);
+	memset(PC_msg,0,40);  //memset - clears the array
+}
+
 //---------------------------------------------------------------------------------------------------------------------
 // Script Mode - scroll and select script
 //---------------------------------------------------------------------------------------------------------------------
@@ -239,12 +268,16 @@ void state_decode(){
 	{
 		state = Script_Mode_3;
 	}
+	else if (strncmp(PC_msg,"ConnectionParams", 16) == 0)
+	{
+		state = UART_Configuration_5;
+	}
 	else
 	{
 		state = IDLE_STATE_0;
 	}
 	
-	if(state != Script_Receive_4)
+	if(state != Script_Receive_4 && state != UART_Configuration_5)
 		memset(PC_msg,0,40);                   //memset - clears the array
 }
 

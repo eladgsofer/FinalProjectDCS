@@ -25,11 +25,9 @@ int main(void){
 
 		// FSM Mode - IDLE_STATE_0, Radar_Detector_1, Telemeter_2, Script_Mode_3, Script_Receive_4
 
-		while (dataready)
-		{ 	
-			state_decode();
-			dataready = 0;
-		}
+		while (!dataready);
+		state_decode();
+		dataready = 0;
 
 		switch (state)
 		{
@@ -60,6 +58,11 @@ int main(void){
 			case Script_Receive_4:
 				
 				script_receive_flow();
+				
+				break;
+			
+			case UART_Configuration_5:
+				set_uart_configurations();
 				
 				break;
 				

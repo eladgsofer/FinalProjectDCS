@@ -13,6 +13,7 @@ int print_script_idx, next_script_idx;
 void InitApp(void);
 void script_receive_flow(void);
 void script_mode(void);
+void set_uart_configurations(void);
 
 int print_files_menu(int file_idx);
 void receive_script(void);
