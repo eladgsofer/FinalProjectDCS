@@ -44,9 +44,8 @@ namespace TerminalPC
                 StreamReader sr = new StreamReader(textBox1.Text);
                 try
                 {
-                    Home.port.validateConn();
                     file = sr.ReadToEnd();          //translate file to string
-                    Home.port.Write("RScript " + s1.ToString() + "," + fname + "\n");
+                    Home.port.sendMessage("RScript " + s1.ToString() + "," + fname);
                 }
                 catch (Exception ex)
                 {

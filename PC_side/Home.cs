@@ -310,7 +310,8 @@ namespace TerminalPC
         private void button3_Click_1(object sender, EventArgs e)
         {
             // \0? for ending a message? otherwise we could keep reading the next message?..
-            port.sendMessage("RadDec");
+            int deg = int.Parse(telemetriaDataTextBox.Text);
+            port.sendMessage("Tele" + deg.ToString("D3"));
         }
         private void scanButton_Click(object sender, EventArgs e)
         {
@@ -358,6 +359,11 @@ namespace TerminalPC
         }
 
         private void telemetriaPanel_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void telemetriaDataTextBox_TextChanged(object sender, EventArgs e)
         {
 
         }
