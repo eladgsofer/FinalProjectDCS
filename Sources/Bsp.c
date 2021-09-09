@@ -333,12 +333,33 @@ void ClockSetupTPM(){
 void InitPIT(){
 	SIM_SCGC6 |= SIM_SCGC6_PIT_MASK; //Enable the Clock to the PIT Modules
 	// Timer 0
-	PIT_LDVAL0 = 0x00249F00; // setup timer 0 for maximum counting period
-	PIT_TCTRL0 = PIT_TCTRL_TEN_MASK | PIT_TCTRL_TIE_MASK; //enable PIT0 and its interrupt
+	PIT_LDVAL0 = 0x00186A00; // setup timer 0 for 15hz counting period
+	//PIT_TCTRL0 = PIT_TCTRL_TEN_MASK | PIT_TCTRL_TIE_MASK; //enable PIT0 and its interrupt
 	PIT_MCR |= PIT_MCR_FRZ_MASK; // stop the pit when in debug mode
 	enable_irq(INT_PIT-16); //  //Enable PIT IRQ on the NVIC
 	set_irq_priority(INT_PIT-16,0);  // Interrupt priority = 0 = max
 }
+//------------------------------------------------------------------
+// PIT Config
+//------------------------------------------------------------------
+void set_PIT_max_val(int ms)
+{
+	unsigned int timer_val = ms*24000; //calc timer start value
+	PIT_LDVAL0 = timer_val;
+}
+
+void PIT_enable(int start)
+{
+	if(start)
+	{
+		PIT_TCTRL0 |= PIT_TCTRL_TIE_MASK | PIT_TCTRL_TEN_MASK;
+	}
+	else if(!start)
+	{
+		PIT_TCTRL0 &= ~(PIT_TCTRL_TIE_MASK | PIT_TCTRL_TEN_MASK);
+	}
+}
+
 //------------------------------------------------------------------
 //		DMA
 //------------------------------------------------------------------
@@ -554,3 +575,6 @@ void InitUARTConf(char b, char p, char s){
 	
 	UART0_C2 = UARTLP_C2_RE_MASK | UARTLP_C2_TE_MASK | UART_C2_RIE_MASK; // Enable Transmitter, Receiver, Receive interrupt	
 }
+
+
+

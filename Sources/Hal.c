@@ -28,7 +28,7 @@ void PORTD_IRQHandler(void){
 	
 	if (PORTD_ISFR & SW6_POS){  //PTD6 - Move between files in LCD
 		
-		if ((state == Script_Mode_3) & (files_num >= 2)){
+		if (state == Script_Mode_3){
 			start_script = 1;
 		}
 		
@@ -45,9 +45,10 @@ void PORTD_IRQHandler(void){
 ////-----------------------------------------------------------------
 //// PIT - ISR = Interrupt Service Routine
 ////-----------------------------------------------------------------
-/*void PIT_IRQHandler(){
+void PIT_IRQHandler(){
 	PIT_TFLG0 = PIT_TFLG_TIF_MASK; //Turn off the Pit 0 Irq flag
-}*/
+	pit_done = 1;
+}
 
 
 
@@ -114,7 +115,7 @@ void dma_file_trans(void)
 	DMAMUX0_CHCFG0 |= DMAMUX_CHCFG_ENBL_MASK; 				// Enable DMA channel 
 	disable_irq(INT_UART0-16);               			    // Disable UART0 interrupt
 	UART0_C5 |= UART0_C5_RDMAE_MASK;          				// Enable DMA request for UART0 receiver
-	UARTprintf(UART0_BASE_PTR,"ack\n");
+	UARTprintf(UART0_BASE_PTR,"Fack\n");
 }
 //-----------------------------------------------------------------
 // TPM2_C1 = Interrupt Service Routine
@@ -306,3 +307,33 @@ void servo_scan(int left_angle,int right_angle){
 	enable_sensor(FALSE);*/
 }
 
+//----------------------------------------------------------------------------------
+// Delay for functions
+//----------------------------------------------------------------------------------
+void Delay_d(void){
+	// set pit delay to "delay"*10ms
+	set_PIT_max_val(delay*10);
+	
+	// start pit
+	pit_done = 0;
+	PIT_enable(1);
+	while (!pit_done){ 
+		wait(); // wait for pit interrupt
+	}
+	// shut down pit
+	PIT_enable(0);
+}
+
+void Delay_Ms(int ms){
+	// set pit delay to "ms" ms
+	set_PIT_max_val(ms);
+	
+	// start pit
+	pit_done = 0;
+	PIT_enable(1);
+	while (!pit_done){ 
+		wait(); // wait for pit interrupt
+	}
+	// shut down pit
+	PIT_enable(0);
+}

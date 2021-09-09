@@ -35,6 +35,14 @@ void InitSensors() {
 void WriteServo(int deg) {
 	float T_on;
 	int dutyCycle;
+<<<<<<< Updated upstream
+=======
+	
+	// check if deg is valid
+	if (SERVO_DEG_MAX < deg || deg < SERVO_DEG_MIN) {
+		return;
+	}
+>>>>>>> Stashed changes
 
 	T_on = MIN_T_ON + (deg / MAX_SERVO_DEGREE) * (MAX_T_ON - MIN_T_ON);
 	dutyCycle = (T_on / WAVE_PERIOD) * MOTOR_MUDULO_REGISTER;
@@ -42,6 +50,10 @@ void WriteServo(int deg) {
 	SetTPMxDutyCycle(SERVO_TPM, dutyCycle);
 	StartTPMx(SERVO_TPM, TRUE);
 	DelayMs(100);
+<<<<<<< Updated upstream
+=======
+	
+>>>>>>> Stashed changes
 }
 
 //////////////////////////////////////

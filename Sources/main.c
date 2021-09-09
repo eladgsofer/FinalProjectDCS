@@ -33,21 +33,15 @@ int main(void){
 		switch (state)
 		{
 			case Radar_Detector_1:
-				// START scan command - PIT_MCR &= ~PIT_MCR_MDIS_MASK; //Enable the PIT module 
-				//sensor's TPM start:
-				/*
-					TPM2_SC |= TPM_SC_CMOD(1); //Start the TPM2 counter
-					TPM0_SC |= TPM_SC_CMOD(1); //Start the TPM0 counter
-				 */
+				
+				rad_detect_sys();
+				
 				break;
 				
 			case Telemeter_2:
-				// START scan command - PIT_MCR &= ~PIT_MCR_MDIS_MASK; //Enable the PIT module 
-				//sensor's TPM start:
-				/*
-					TPM2_SC |= TPM_SC_CMOD(1); //Start the TPM2 counter
-					TPM0_SC |= TPM_SC_CMOD(1); //Start the TPM0 counter
-				 */
+				
+				telemeter();
+				
 				break;
 				
 			case Script_Mode_3:

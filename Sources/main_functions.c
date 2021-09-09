@@ -36,6 +36,63 @@ void InitApp(void)
 	UARTprintf(UART0_BASE_PTR,"\n");
 }
 
+//////////////////////////////
+//           Scan
+//////////////////////////////
+StateModes rad_detect_sys(){
+	int degree = 0;
+	char msg[20] = {0};
+	//enterON = FALSE;
+	enable_sensor(TRUE);
+	lcd_puts("Scanning");
+	while (1){
+		WriteServo(degree);
+//		if(degree == SERVO_DEG_MIN){
+//			ResetDistanceAccumulator();
+//		}
+		while(!sample_ready);
+		//build_scan_msg(msg,out_distance,degree); ToDo
+		UARTprintf(UART0_BASE_PTR,msg);
+		lcd_puts("sample_ready");
+		sample_ready = 0;
+		
+		// Increase Servo's degree
+		degree += SERVO_DEG_CHANGE;
+		// Zeros degree when limit reached
+		if (degree > SERVO_DEG_MAX){
+			enable_sensor(FALSE);
+			lcd_puts("stop");
+			break;
+		}
+		
+		Delay_Ms(50);
+	}
+}
+////////////////////////
+//   Telemetry
+///////////////////////
+void telemeter(void){
+	char str[16] = {0};
+	enable_sensor(TRUE);
+	lcd_puts("Telemetry");
+	while(1){
+		// wait until sample ready
+		while(!sample_ready);
+		sample_ready = 0;
+		
+		sprintf(str,"%d\0",distance_avg);
+		UARTprintf(UART0_BASE_PTR,str);
+	
+		if (enterON || stopRadar){
+			enterON = FALSE;
+			enable_sensor(FALSE);
+			Print_two_lines("Telemetry","Stopped");
+			return state;
+		}
+		Delay_Ms(50);
+	}
+}
+
 //---------------------------------------------------------------------------------------------------------------------
 // Command Parser
 //---------------------------------------------------------------------------------------------------------------------
@@ -100,7 +157,7 @@ int commandsParser(int fileIndex) {
 void set_uart_configurations()
 {
 	int j;
-	UARTprintf(UART0_BASE_PTR,"ack\n");
+	UARTprintf(UART0_BASE_PTR,"Cack\n");
 	for (j=10000; j>0; j--);
 
 	int i,a,b,c;
@@ -128,15 +185,40 @@ void set_uart_configurations()
 //---------------------------------------------------------------------------------------------------------------------
 void script_mode(void)
 {
-	next_script_idx = 0;
-	start_script = scroll_pushed = 0;
-	while(!start_script)
+	int exit = 0;
+	
+	while(1)
 	{
-		print_script_idx = next_script_idx;
-		next_script_idx	= print_files_menu(print_script_idx);
-		while(!(scroll_pushed || start_script));
-	}
-	commandsParser(print_script_idx);
+		next_script_idx = 0;
+		start_script = scroll_pushed = 0;
+		while(!start_script)
+		{
+			print_script_idx = next_script_idx;
+			next_script_idx	= print_files_menu(print_script_idx);
+			while(!(scroll_pushed || start_script || dataready));
+			scroll_pushed = 0;
+			
+			//Check if PC exit Script Mode
+			if(dataready)
+			{
+				if(strncmp(PC_msg, "SMExit", 6) == 0)
+				{
+					dataready = 0;
+					exit = 1;
+					break;
+				}
+			}
+		}
+		
+		lcd_clear();
+		
+		if(exit)
+		{
+			break;
+		}
+		
+		commandsParser(print_script_idx);
+	}	
 }
 
 
@@ -150,6 +232,7 @@ void script_receive_flow(void)
 	receive_script();
 
 	while(!dma_done);
+	
 	commandsParser(index_last);
 }
 
@@ -186,12 +269,12 @@ int print_files_menu(int file_idx){
 			lcd_new_line();        	      //second line
 		}
 		
-		i = (i == 0) ? index_last : ((i - 1)%20);
+		i = (i == 0) ? index_last : ((i - 1)%3);
 			
 		row += 1;
 	}while ((files_num > 1) && ( row < 2 ));	//Prints only 2 rows, or 1 in case it's the last file
 	
-	return (file_idx == 0) ? index_last : ((file_idx - 1)%20);
+	return (file_idx == 0) ? index_last : ((file_idx - 1)%3);
 }
 
 
@@ -203,8 +286,6 @@ void receive_script(void){
 	int str_size = 0;		// count size of file
 	int cont_flag, index;
 	char* file_name_addr;
-	
-	//lcd_clear(); //ToDo:return
 	
 	//calc current index
 	index = index_last + 1;

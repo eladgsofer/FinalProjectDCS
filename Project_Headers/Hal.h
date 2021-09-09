@@ -23,4 +23,7 @@ void clear_all_leds(void);
 void servo_deg(int p);
 void servo_scan(int l, int r);
 
+void Delay_d(void);
+void Delay_Ms(int ms);
+
 #endif /* TFC_hal_H_ */

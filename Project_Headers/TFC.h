@@ -44,7 +44,7 @@ char PC_msg[40]; 			//Received message from pc
 //char files_names[300];		//Data base contains names of files
 int dataready;  		//flag which indicates if data received from UART is ready to be used
 int start_script, scroll_pushed;
-int dma_done;
+int dma_done, pit_done;
 int char_idx;
 int cntr_end, cntr_start, range;
 int scanDegree;

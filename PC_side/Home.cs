@@ -130,15 +130,12 @@ namespace TerminalPC
 
         }
 
-        private float calcDistsnce(int tpmDiff)
+        private float calcDistsnce(int cntrDiff)
         {
-            // final clk: 1 / (tpm clk/prescaler)  | tpm clk = 24MHz  , tpm prescaler = 32 
-            // => final clk = 24M/32 = 750,000 Hz
-            // dist = tpmDiff * (17,150 / final clk); 
-            // prescaler = 8 : 176.4705882352941
-            // prescaler = 32 : 43.731778425655976676384839650146
-            //return (float)(tpmDiff * 0.022866666666);
-            return (float)tpmDiff / (float)43.731778425655976676384839650146;
+            // CounterClock period = 1 / (tpm clk/prescaler)  | tpm clk = 24MHz  , tpm prescaler = 32 
+            // => CounterClock period = 32/24M = 1/750,000 sec
+            // dist = (cntrDiff * CounterClock period) * 17,000 = cntrDiff * (17/750); 
+            return (float)(cntrDiff * 17.0 / 750.0);
         }
 
         // Data recieved event
@@ -195,7 +192,7 @@ namespace TerminalPC
 
 
                 // File recieved ok 
-                case SerialPortConn.TYPE.FILEEND:
+                case SerialPortConn.TYPE.FILE_ACK:
                     Console.WriteLine("Finished executing file");
                     break;
                 case SerialPortConn.TYPE.CONN_ACK:
@@ -335,11 +332,11 @@ namespace TerminalPC
         // telemetry button
         private void button3_Click_1(object sender, EventArgs e)
         {
-            port.Write("TELEMETRY_DEGREE");
+            port.Write("Tele");
         }
         private void scanButton_Click(object sender, EventArgs e)
         {
-            port.Write("START_SCAN");
+            port.Write("RadDec");
         }
         private void label1_Click(object sender, EventArgs e)
         {

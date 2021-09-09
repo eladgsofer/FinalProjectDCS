@@ -20,10 +20,10 @@ namespace TerminalPC.Sources
         public static class TYPE
         {
             // Messages
-            public const string TELEMETRY = "TL";
-            public const string SCAN = "SC";
-            public const string FILEEND = "FE";
-            public const string CONN_ACK = "ackconn";
+            public const string TELEMETRY = "tele";
+            public const string SCAN = "scan";
+            public const string FILE_ACK = "Fack";
+            public const string CONN_ACK = "Cack";
         }
 
         List<object> Result;

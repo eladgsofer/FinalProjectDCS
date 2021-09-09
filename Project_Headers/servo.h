@@ -8,6 +8,9 @@
 #ifndef SERVO_H_
 #define SERVO_H_
 
+#define SERVO_DEG_MAX 180
+#define SERVO_DEG_MIN 0
+
 void InitServo();
 void InitSensors();
 void WriteServo(int deg);

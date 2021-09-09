@@ -134,6 +134,8 @@ void SetTPMxDutyCycle(char x, int dutyCycle);
 uint8_t TFC_GetDIP_Switch();
 void ClockSetup();
 void InitPIT();
+void set_PIT_max_val(int ms);
+void PIT_enable(int start);
 
 extern void lcd_cmd(unsigned char);
 extern void lcd_data(unsigned char);
