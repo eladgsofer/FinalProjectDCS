@@ -52,6 +52,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.button4 = new System.Windows.Forms.Button();
             this.MaskedDistanceTextBox = new System.Windows.Forms.TextBox();
+            this.stopButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.radarPictureBox)).BeginInit();
             this.telemetriaPanel.SuspendLayout();
             this.SuspendLayout();
@@ -66,7 +67,7 @@
             "COM6",
             "COM7"});
             this.comboBoxCOM.Location = new System.Drawing.Point(45, 412);
-            this.comboBoxCOM.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.comboBoxCOM.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxCOM.Name = "comboBoxCOM";
             this.comboBoxCOM.Size = new System.Drawing.Size(315, 24);
             this.comboBoxCOM.TabIndex = 1;
@@ -75,7 +76,7 @@
             // buttonConnect
             // 
             this.buttonConnect.Location = new System.Drawing.Point(45, 612);
-            this.buttonConnect.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.buttonConnect.Margin = new System.Windows.Forms.Padding(4);
             this.buttonConnect.Name = "buttonConnect";
             this.buttonConnect.Size = new System.Drawing.Size(145, 44);
             this.buttonConnect.TabIndex = 5;
@@ -101,8 +102,8 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(45, 86);
-            this.button1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.button1.Location = new System.Drawing.Point(45, 58);
+            this.button1.Margin = new System.Windows.Forms.Padding(4);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(185, 81);
             this.button1.TabIndex = 16;
@@ -148,7 +149,7 @@
             "Even",
             "Odd"});
             this.comboBoxParity.Location = new System.Drawing.Point(45, 569);
-            this.comboBoxParity.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.comboBoxParity.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxParity.Name = "comboBoxParity";
             this.comboBoxParity.Size = new System.Drawing.Size(315, 24);
             this.comboBoxParity.TabIndex = 24;
@@ -162,7 +163,7 @@
             "19200",
             "38400"});
             this.comboBoxBaud.Location = new System.Drawing.Point(45, 464);
-            this.comboBoxBaud.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.comboBoxBaud.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxBaud.Name = "comboBoxBaud";
             this.comboBoxBaud.Size = new System.Drawing.Size(315, 24);
             this.comboBoxBaud.TabIndex = 23;
@@ -174,15 +175,15 @@
             "1",
             "2"});
             this.comboBoxSTPBIT.Location = new System.Drawing.Point(45, 516);
-            this.comboBoxSTPBIT.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.comboBoxSTPBIT.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxSTPBIT.Name = "comboBoxSTPBIT";
             this.comboBoxSTPBIT.Size = new System.Drawing.Size(315, 24);
             this.comboBoxSTPBIT.TabIndex = 22;
             // 
             // scanButton
             // 
-            this.scanButton.Location = new System.Drawing.Point(45, 199);
-            this.scanButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.scanButton.Location = new System.Drawing.Point(46, 158);
+            this.scanButton.Margin = new System.Windows.Forms.Padding(4);
             this.scanButton.Name = "scanButton";
             this.scanButton.Size = new System.Drawing.Size(185, 81);
             this.scanButton.TabIndex = 28;
@@ -225,7 +226,7 @@
             // button3
             // 
             this.button3.Location = new System.Drawing.Point(723, 95);
-            this.button3.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.button3.Margin = new System.Windows.Forms.Padding(4);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(125, 30);
             this.button3.TabIndex = 33;
@@ -300,7 +301,7 @@
             // button4
             // 
             this.button4.Location = new System.Drawing.Point(1140, 95);
-            this.button4.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.button4.Margin = new System.Windows.Forms.Padding(4);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(125, 30);
             this.button4.TabIndex = 37;
@@ -319,6 +320,17 @@
             this.MaskedDistanceTextBox.TabIndex = 38;
             this.MaskedDistanceTextBox.TextChanged += new System.EventHandler(this.MaskedDistanceTextBox_TextChanged);
             // 
+            // stopButton
+            // 
+            this.stopButton.Location = new System.Drawing.Point(44, 262);
+            this.stopButton.Margin = new System.Windows.Forms.Padding(4);
+            this.stopButton.Name = "stopButton";
+            this.stopButton.Size = new System.Drawing.Size(186, 79);
+            this.stopButton.TabIndex = 37;
+            this.stopButton.Text = "Stop";
+            this.stopButton.UseVisualStyleBackColor = true;
+            this.stopButton.Click += new System.EventHandler(this.stopButton_Click);
+            // 
             // Home
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -328,6 +340,7 @@
             this.ClientSize = new System.Drawing.Size(1656, 720);
             this.Controls.Add(this.MaskedDistanceTextBox);
             this.Controls.Add(this.button4);
+            this.Controls.Add(this.stopButton);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.telemetriaPanel);
             this.Controls.Add(this.button3);
@@ -345,7 +358,7 @@
             this.Controls.Add(this.labelCOM);
             this.Controls.Add(this.buttonConnect);
             this.Controls.Add(this.comboBoxCOM);
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "Home";
             this.Text = "Final Project By Katrin Nekhin and Elad Sofer";
             this.Load += new System.EventHandler(this.Home_Load);
@@ -382,6 +395,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.TextBox MaskedDistanceTextBox;
+        private System.Windows.Forms.Button stopButton;
     }
 }
 

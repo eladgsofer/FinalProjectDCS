@@ -39,10 +39,28 @@ void InitApp(void)
 //           Scan
 //////////////////////////////
 void rad_detect_sys(){
-	int degree = 0;
-	//char msg[20] = {0};
+
 	lcd_puts("Scanning");
-	servo_scan(MIN_DEG,MAX_DEG);
+	
+	while(1){
+		servo_scan(MIN_DEG,MAX_DEG);
+		
+		Delay_Ms(50);
+	
+		//Check if PC exit Radar
+		if (dataready)
+		{
+			if(strncmp(PC_msg, "Exit", 4) == 0)
+			{
+				//clear Flags & Args
+				dataready = 0;
+				memset(PC_msg,0,40);
+				
+				//Exit state
+				break;
+			}
+		}
+	}
 }
 ////////////////////////
 //   Telemetry
@@ -60,22 +78,30 @@ void telemeter(void){
 	WriteServo(degree);
 	enable_sensor(TRUE);
 	
-	//while(1){
+	while(1){
 		// wait until sample ready
 		while(!sample_ready);
 		sample_ready = 0;
 		
 		sprintf(str,"tele%4X\n",distance_avg);
 		UARTprintf(UART0_BASE_PTR,str);
+		
+		Delay_Ms(50);
 	
-//		if (enterON || stopRadar){
-//			enterON = FALSE;
-//			enable_sensor(FALSE);
-//			Print_two_lines("Telemetry","Stopped");
-//			return state;
-//		}
-		//Delay_Ms(50);
-	//}
+		//Check if PC exit Telemeter
+		if (dataready)
+		{
+			if(strncmp(PC_msg, "Exit", 4) == 0)
+			{
+				//clear Flags & Args
+				dataready = 0;
+				memset(PC_msg,0,40);
+				
+				//Exit state
+				break;
+			}
+		}
+	}
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -188,7 +214,11 @@ void script_mode(void)
 			{
 				if(strncmp(PC_msg, "SMExit", 6) == 0)
 				{
+					//clear Flags & Args
 					dataready = 0;
+					memset(PC_msg,0,40);
+					
+					//Exit state
 					exit = 1;
 					break;
 				}

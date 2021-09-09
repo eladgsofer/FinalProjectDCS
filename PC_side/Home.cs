@@ -317,6 +317,10 @@ namespace TerminalPC
         {
             port.sendMessage("RadDec");
         }
+        private void stopButton_Click(object sender, EventArgs e)
+        {
+            port.sendMessage("Exit");
+        }
         private void label1_Click(object sender, EventArgs e)
         {
 
