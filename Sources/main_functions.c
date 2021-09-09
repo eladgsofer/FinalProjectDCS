@@ -23,7 +23,6 @@ void InitApp(void)
 	dma_init();
 	
 	InitUARTs(9600);
-
 	
 	RGB_LED_OFF;
 	lcd_clear();
