@@ -49,8 +49,17 @@ void rad_detect_sys(){
 ///////////////////////
 void telemeter(void){
 	char str[16] = {0};
+	int degree;
+	
+	sscanf(PC_msg,"Tele%d", &degree);
+	memset(PC_msg,0,40);
+	
 	enable_sensor(TRUE);
 	lcd_puts("Telemetry");
+	
+	WriteServo(degree);
+	enable_sensor(TRUE);
+	
 	//while(1){
 		// wait until sample ready
 		while(!sample_ready);
@@ -345,7 +354,7 @@ void state_decode(){
 		state = IDLE_STATE_0;
 	}
 	
-	if(state != Script_Receive_4 && state != UART_Configuration_5)
+	if(state != Script_Receive_4 && state != UART_Configuration_5 && state != Telemeter_2)
 		memset(PC_msg,0,40);                   //memset - clears the array
 }
 
