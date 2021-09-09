@@ -264,11 +264,44 @@ void clear_all_leds(void){
 	BLUE_LED_OFF;
 }
 
-void servo_deg(int p){
-	//ToDo: add function - use elad's
+void servo_deg(int degree){
+/*	char msg[20] = {0};
+	int i = 0;
+	WriteServo(degree);
+	enable_sensor(TRUE);
+	for(i = 0 ; i < DIST_AVG_SIZE + 1; i++){
+		distance_ready = FALSE;
+		while(!distance_ready);
+	}
+	
+	if (distance_ready){
+		build_scan_msg(msg,out_distance,degree);
+		send2pc("Sc",msg);
+		Print("Telemetry");
+		distance_ready = FALSE;
+	}
+	enable_sensor(FALSE);*/
 }
+// 07
+void servo_scan(int left_angle,int right_angle){
+/*	int angle = left_angle;
+	char msg[20] = {0};
+	WriteServo(left_angle);
+	enable_sensor(TRUE);
+	while(angle<right_angle){
+		while(!distance_ready){
+					WaitDelay(10);
+		}
+		if (distance_ready){
+			build_scan_msg(msg,out_distance,angle);
+			send2pc("Sc",msg);
+			Print("Scanning");
+			distance_ready = FALSE;
+		}
+		angle+=SERVO_DEG_CHANGE;
+		WriteServo(angle);
 
-void servo_scan(int l, int r){
-	//ToDo: add function - use elad's (scan between l and r)
+	}
+	enable_sensor(FALSE);*/
 }
 

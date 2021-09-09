@@ -3,7 +3,8 @@
 
 #define SERVO_MUDULO_REGISTER   0x9275 - 1 
 #define TRIGGER_MODULO_REGISTER 0xC350 - 1 // 50,000
-
+#define TPM_DC_VAL_MIN 750 //900 // ~5% * 20ms = 1ms 
+#define TPM_DC_VAL_MAX 3550//3750// ~10% * 20ms = 2ms
 char ready;
 
 //-----------------------------------------------------------------
@@ -194,6 +195,19 @@ void InitGPIO()
 	PORTE_PCR4 = PORT_PCR_MUX(1) | PORT_PCR_PE_MASK | PORT_PCR_PS_MASK ; // assign  as GPIO (R/W) PIN5 -> PTE4
 	PORTE_PCR5 = PORT_PCR_MUX(1) | PORT_PCR_PE_MASK | PORT_PCR_PS_MASK ; // assign  as GPIO (E) PTE5
 	
+	
+	PORTA_PCR12 = PORT_PCR_MUX(3); // TPM1_CH0 - ALT3
+
+	/////// Ultra-sonic sensor/////
+	// Trigger
+	PORTE_PCR22 = PORT_PCR_MUX(3); // TPM1_CH1- ALT3
+	//pit
+	PORTC_PCR7  = PORT_PCR_MUX(1); // set GPIO
+	GPIOC_PDDR  |= PORT_LOC(7);    // PTC7 is output
+	// Echo
+	PORTE_PCR29  = PORT_PCR_MUX(3); // TPM0_CH2 - ALT3
+	
+	
 }
 //-----------------------------------------------------------------
 // DipSwitch data reading
@@ -209,8 +223,8 @@ uint8_t TFC_GetDIP_Switch()
 //-----------------------------------------------------------------
 // TPMx - Initialization
 //-----------------------------------------------------------------
-void InitTPM(char x) {  // x={0,1,2}
-	switch (x) {
+void InitTPMx(char x){  // x={0,1,2}
+	switch(x){ 
 	case 0: // Echo
 		TPM0_SC = 0; // to ensure that the counter is not running
 		TPM0_SC = TPM_SC_PS(5); //Prescaler 32
@@ -220,15 +234,13 @@ void InitTPM(char x) {  // x={0,1,2}
 		TPM0_C2SC |= TPM_CnSC_ELSB_MASK + TPM_CnSC_ELSA_MASK + TPM_CnSC_CHIE_MASK;
 		TPM0_CONF = 0;
 		TPM0_C2V = 0;
-		enable_irq(INT_TPM0 - 16); // Enable Interrupts 
-		set_irq_priority(INT_TPM0 - 16, 0);  // Interrupt priority = 0 = max
+		enable_irq(INT_TPM0-16); // Enable Interrupts 
+		set_irq_priority (INT_TPM0-16,0);  // Interrupt priority = 0 = max
 		break;
-
+		
 	case 1: // Servo
-		/*
-		PORTA_PCR12 = PORT_PCR_MUX(3); // TPM1_CH0 - ALT3
 		TPM1_SC = 0; // to ensure that the counter is not running
-		TPM1_SC |= TPM_SC_PS(4) + TPM_SC_TOIE_MASK; //Prescaler = 16, up-mode, counter-disable
+		TPM1_SC |= TPM_SC_PS(4)+TPM_SC_TOIE_MASK; //Prescaler = 16, up-mode, counter-disable
 		// TPM period = (MOD + 1) * CounterClock_period
 		TPM1_MOD = SERVO_MUDULO_REGISTER; // PWM frequency of 40Hz = 24MHz/(16x60,000)
 		TPM1_C0SC = 0;
@@ -236,10 +248,9 @@ void InitTPM(char x) {  // x={0,1,2}
 		TPM1_C0SC |= TPM_CnSC_MSB_MASK + TPM_CnSC_ELSB_MASK + TPM_CnSC_CHIE_MASK;
 		TPM1_C0V = TPM_DC_VAL_MIN; // Duty Cycle 5% - servo deg = 0
 		TPM1_CONF = 0;//TPM_CONF_DBGMODE(3); //LPTPM counter continues in debug mode
-		*/
+		
 		break;
 	case 2: // Trigger
-		PORTE_PCR22 = PORT_PCR_MUX(3); // TPM1_CH1- ALT3
 		TPM2_SC = 0; // to ensure that the counter is not running
 		TPM2_SC |= TPM_SC_PS(5) + TPM_SC_TOIE_MASK;  //Prescaler = 32, clear flag
 		// TPM period = (MOD + 1) * CounterClock_period
@@ -300,22 +311,23 @@ void clearTPM0() {
 //-----------------------------------------------------------------
 // TPMx - Clock Setup
 //-----------------------------------------------------------------
-void ClockSetup(){
+void ClockSetupTPM(){
 	    
-	    pll_init(8000000, LOW_POWER, CRYSTAL,4,24,MCGOUT); //Core Clock is now at 48MHz using the 8MHZ Crystal
-		
-	    //Clock Setup for the TPM requires a couple steps.
-	    //1st,  set the clock mux
-	    //See Page 124 of f the KL25 Sub-Family Reference Manual
-	    SIM_SOPT2 |= SIM_SOPT2_PLLFLLSEL_MASK;// We Want MCGPLLCLK/2=24MHz (See Page 196 of the KL25 Sub-Family Reference Manual
-	    SIM_SOPT2 &= ~(SIM_SOPT2_TPMSRC_MASK);
-	    SIM_SOPT2 |= SIM_SOPT2_TPMSRC(1); //We want the MCGPLLCLK/2 (See Page 196 of the KL25 Sub-Family Reference Manual
-		//Enable the Clock to the TPM0 and PIT Modules
-		//See Page 207 of f the KL25 Sub-Family Reference Manual
-		SIM_SCGC6 |= SIM_SCGC6_TPM0_MASK + SIM_SCGC6_TPM2_MASK;
-	    // TPM_clock = 24MHz , PIT_clock = 48MHz
-	    
+	pll_init(8000000, LOW_POWER, CRYSTAL,4,24,MCGOUT); //Core Clock is now at 48MHz using the 8MHZ Crystal
+	
+	//Clock Setup for the TPM requires a couple steps.
+	//1st,  set the clock mux
+	//See Page 124 of f the KL25 Sub-Family Reference Manual
+	SIM_SOPT2 |= SIM_SOPT2_PLLFLLSEL_MASK;// We Want MCGPLLCLK/2=24MHz (See Page 196 of the KL25 Sub-Family Reference Manual
+	SIM_SOPT2 &= ~(SIM_SOPT2_TPMSRC_MASK);
+	SIM_SOPT2 |= SIM_SOPT2_TPMSRC(1); //We want the MCGPLLCLK/2 (See Page 196 of the KL25 Sub-Family Reference Manual
+	//Enable the Clock to the TPM0 and PIT Modules
+	//See Page 207 of f the KL25 Sub-Family Reference Manual
+	SIM_SCGC6 |= SIM_SCGC6_TPM0_MASK + SIM_SCGC6_TPM1_MASK + SIM_SCGC6_TPM2_MASK;
+	// TPM_clock = 24MHz	    
 }
+
+
 //-----------------------------------------------------------------
 // PIT - Initialisation
 //-----------------------------------------------------------------

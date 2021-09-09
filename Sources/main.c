@@ -20,6 +20,7 @@ volatile unsigned int falling_edge = 0;
 int main(void){
 
 	InitApp();
+	WriteServo(70);
 	
 	while(1){
 
