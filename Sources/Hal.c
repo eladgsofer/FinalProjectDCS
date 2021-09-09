@@ -122,8 +122,8 @@ void dma_file_trans(void)
 //-----------------------------------------------------------------
 void FTM2_IRQHandler(){
 	
-	static int rising_edge = 1;
-	static int sample_sum = 0;
+	static unsigned int rising_edge = 0x1;
+	static unsigned int sample_sum = 0x0000;
 	int cntr_snap;
 	
 	
@@ -141,19 +141,19 @@ void FTM2_IRQHandler(){
 			
 			sample_sum += range;
 			
-			samp_cnt = (samp_cnt + 1)%8;	//samples counter
+			samp_cnt = (samp_cnt + 0x1)&0x7;	//samples counter
 			
 			//calculate average when got 8 samples
-			if( samp_cnt == 0 )
+			if( samp_cnt == 0x0 )
 			{
-				distance_avg = sample_sum/8;
+				distance_avg = sample_sum >> 3; //divide by 8
 				sample_sum = 0;
 				sample_ready = 1;
 				enable_sensor(FALSE);
 			}
 		}
 		
-		rising_edge = (rising_edge + 1)%2;
+		rising_edge = (rising_edge + 0x1)&0x1;
 	}
 	
 	
@@ -165,7 +165,8 @@ void FTM2_IRQHandler(){
 //---------------------------------------------------------------
 void enable_sensor(int enable){
 	if (enable){
-		samp_cnt = 0;
+		samp_cnt = 0x0;
+		clearTPMxCNT(SENSOR_TRIG);
 		StartTPMx(SENSOR_ECHO, TRUE);
 		StartTPMx(SENSOR_TRIG, TRUE);
 	} else {
@@ -187,17 +188,21 @@ void blink_rgb(int x){
 	while(num_of_blinks > 0)
 	{
 		RED_LED_ON;
-		DelayMs(10000); //ToDo: change to PIT
+		
+		Delay_d();
+		
 		RED_LED_OFF;
-		DelayMs(delay*10000);
 		GREEN_LED_ON;
-		DelayMs(10000);
+		
+		Delay_d();
+		
 		GREEN_LED_OFF;
-		DelayMs(delay*10000);
 		BLUE_LED_ON;
-		DelayMs(1000);
+		
+		Delay_d();
+		
 		BLUE_LED_OFF;
-		DelayMs(delay*10000);
+		
 		num_of_blinks--;
 	}
 }
@@ -221,7 +226,7 @@ void lcd_count_up(int x){
 			{
 				lcd_data('0' + show_num);
 			}
-			DelayMs(delay*10000); //ToDo: add delay d with PIT
+			Delay_d();
 			show_num++;
 		}
 		repeat_num--;
@@ -248,7 +253,7 @@ void lcd_count_down(int x){
 			{
 				lcd_data('0' + show_num);
 			}
-			DelayMs(delay*10000); //ToDo: add delay d with PIT
+			Delay_d();
 			show_num--;
 		}
 		repeat_num--;
@@ -267,44 +272,34 @@ void clear_all_leds(void){
 }
 
 void servo_deg(int degree){
-/*	char msg[20] = {0};
-	int i = 0;
+	char msg[12] = {0};
+
 	WriteServo(degree);
 	enable_sensor(TRUE);
-	for(i = 0 ; i < DIST_AVG_SIZE + 1; i++){
-		distance_ready = FALSE;
-		while(!distance_ready);
-	}
 	
-	if (distance_ready){
-		build_scan_msg(msg,out_distance,degree);
-		send2pc("Sc",msg);
-		Print("Telemetry");
-		distance_ready = FALSE;
-	}
-	enable_sensor(FALSE);*/
+	while(!sample_ready);
+	
+	//ToDo
+	sprintf(msg,"scan%3d%4X",degree,distance_avg);
+	UARTprintf(UART0_BASE_PTR,msg);
+	
+	lcd_puts("sample_ready");
+	
+	sample_ready = 0;
 }
 // 07
 void servo_scan(int left_angle,int right_angle){
-/*	int angle = left_angle;
-	char msg[20] = {0};
-	WriteServo(left_angle);
-	enable_sensor(TRUE);
+	int angle = left_angle;
+	
 	while(angle<right_angle){
-		while(!distance_ready){
-					WaitDelay(10);
-		}
-		if (distance_ready){
-			build_scan_msg(msg,out_distance,angle);
-			send2pc("Sc",msg);
-			Print("Scanning");
-			distance_ready = FALSE;
-		}
-		angle+=SERVO_DEG_CHANGE;
-		WriteServo(angle);
-
+		
+		servo_deg(angle);
+		
+		angle += DEG_DIFF;
+		
+		Delay_Ms(50);
 	}
-	enable_sensor(FALSE);*/
+	enable_sensor(FALSE);
 }
 
 //----------------------------------------------------------------------------------

@@ -41,32 +41,9 @@ void InitApp(void)
 //////////////////////////////
 StateModes rad_detect_sys(){
 	int degree = 0;
-	char msg[20] = {0};
-	//enterON = FALSE;
-	enable_sensor(TRUE);
+	//char msg[20] = {0};
 	lcd_puts("Scanning");
-	while (1){
-		WriteServo(degree);
-//		if(degree == SERVO_DEG_MIN){
-//			ResetDistanceAccumulator();
-//		}
-		while(!sample_ready);
-		//build_scan_msg(msg,out_distance,degree); ToDo
-		UARTprintf(UART0_BASE_PTR,msg);
-		lcd_puts("sample_ready");
-		sample_ready = 0;
-		
-		// Increase Servo's degree
-		degree += SERVO_DEG_CHANGE;
-		// Zeros degree when limit reached
-		if (degree > SERVO_DEG_MAX){
-			enable_sensor(FALSE);
-			lcd_puts("stop");
-			break;
-		}
-		
-		Delay_Ms(50);
-	}
+	servo_scan(MIN_DEG,MAX_DEG);
 }
 ////////////////////////
 //   Telemetry
@@ -75,22 +52,22 @@ void telemeter(void){
 	char str[16] = {0};
 	enable_sensor(TRUE);
 	lcd_puts("Telemetry");
-	while(1){
+	//while(1){
 		// wait until sample ready
 		while(!sample_ready);
 		sample_ready = 0;
 		
-		sprintf(str,"%d\0",distance_avg);
+		sprintf(str,"tele%4X",distance_avg);
 		UARTprintf(UART0_BASE_PTR,str);
 	
-		if (enterON || stopRadar){
-			enterON = FALSE;
-			enable_sensor(FALSE);
-			Print_two_lines("Telemetry","Stopped");
-			return state;
-		}
-		Delay_Ms(50);
-	}
+//		if (enterON || stopRadar){
+//			enterON = FALSE;
+//			enable_sensor(FALSE);
+//			Print_two_lines("Telemetry","Stopped");
+//			return state;
+//		}
+		//Delay_Ms(50);
+	//}
 }
 
 //---------------------------------------------------------------------------------------------------------------------

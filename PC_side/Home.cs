@@ -155,7 +155,8 @@ namespace TerminalPC
             //ProcessMessage(indata);
 
             string opCode = indata.Substring(0, 3);
-            string val = indata.Substring(3, 6);
+            string val = indata.Substring(4, 7);
+            int cntDiff;
             // Check opc
             switch (opCode)
             {
@@ -164,9 +165,9 @@ namespace TerminalPC
 
                 // Recieve Scanner info
                 case SerialPortConn.TYPE.SCAN:
-                    int deg = int.Parse(indata.Substring(0, 3));
-                    int tpmDiff = int.Parse(indata.Substring(3));
-                    float dist = calcDistsnce(tpmDiff);
+                    int deg = int.Parse(indata.Substring(4, 6));
+                    cntDiff = int.Parse(indata.Substring(7,10), System.Globalization.NumberStyles.HexNumber);
+                    float dist = calcDistsnce(cntDiff);
                     Console.WriteLine("scan: deg- " + deg + " dist- " + dist + " cm");
 
                     this.Invoke((MethodInvoker)delegate
@@ -180,7 +181,8 @@ namespace TerminalPC
 
                 // Recieve Telemetry info
                 case SerialPortConn.TYPE.TELEMETRY:
-                    string distanceString = calcDistsnce(int.Parse(val)) > maskedDistance ?
+                    cntDiff = int.Parse(val, System.Globalization.NumberStyles.HexNumber);
+                    string distanceString = calcDistsnce(cntDiff) > maskedDistance ?
                         "Out of Range" : calcDistsnce(int.Parse(val)).ToString("#.##") + " cm";
                     Console.WriteLine("Telemetria: Distance- " + distanceString);
                     this.Invoke((MethodInvoker)delegate

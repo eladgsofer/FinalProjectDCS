@@ -46,9 +46,9 @@ int dataready;  		//flag which indicates if data received from UART is ready to 
 int start_script, scroll_pushed;
 int dma_done, pit_done;
 int char_idx;
-int cntr_end, cntr_start, range;
 int scanDegree;
-int samp_cnt, distance_avg;
+unsigned int cntr_end, cntr_start, range;
+unsigned int samp_cnt, distance_avg;
 int sample_ready;
 
 

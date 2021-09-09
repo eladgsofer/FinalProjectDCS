@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using System.IO.Ports;
+using TerminalPC.Sources;
 
 namespace TerminalPC
 {
@@ -65,7 +60,8 @@ namespace TerminalPC
         }
         public void port_File_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-            SerialPort spConn = (SerialPort)sender;
+            SerialPortConn spConn = (SerialPortConn)sender;
+            
             string indata = "";
             if (waitingForFile)
             {
@@ -81,7 +77,7 @@ namespace TerminalPC
             else
             {
                 indata = spConn.ReadLine();
-                if (indata.Equals("ack"))
+                if (indata.Equals(SerialPortConn.TYPE.FILE_ACK))
                 {
                     if (sendingMode == 0) { //normal sending
                         try

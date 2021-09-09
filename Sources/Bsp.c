@@ -263,6 +263,21 @@ void InitTPMx(char x){  // x={0,1,2}
 	}
 }
 
+void clearTPMxCNT(char x)
+{
+	switch (x) {
+	case 0:
+		TPM0_CNT = 0xFFFF;
+		break;
+	case 1:
+		TPM1_CNT = 0xFFFF;
+		break;
+	case 2:
+		TPM2_CNT = 0xFFFF;
+		break;
+	}
+}
+
 void SetTPMxDutyCycle(char x, int dutyCycle) {
 
 	switch (x) {

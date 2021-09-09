@@ -8,6 +8,9 @@
 #ifndef MAIN_FUNCTIONS_H_
 #define MAIN_FUNCTIONS_H_
 
+#define MIN_DEG	0
+#define MAX_DEG	180
+
 int print_script_idx, next_script_idx;
 
 void InitApp(void);

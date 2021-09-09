@@ -130,6 +130,7 @@
 void InitGPIO();
 void InitTPM(char x);
 void StartTPMx(char x, int start);
+void clearTPMxCNT(char x);
 void SetTPMxDutyCycle(char x, int dutyCycle);
 uint8_t TFC_GetDIP_Switch();
 void ClockSetup();
