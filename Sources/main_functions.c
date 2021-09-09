@@ -16,14 +16,14 @@ void InitApp(void)
 	dataready = 0;
 	InitGPIO();
 	InitPIT();
-	
-	ClockSetup();
 	InitServo();
 	InitSensors();
+
 	lcd_init();
 	dma_init();
 	
 	InitUARTs(9600);
+
 	
 	RGB_LED_OFF;
 	lcd_clear();
@@ -81,7 +81,6 @@ int commandsParser(int fileIndex) {
                 sscanf(fullOperand, "%2c%2c", leftDegree, rightDegree);
                 leftAngle = (int)strtol(leftDegree, NULL, 16);
                 rightAngle = (int)strtol(rightDegree, NULL, 16);
-
                 servo_scan(leftAngle, rightAngle);
                 break;
             case 8:

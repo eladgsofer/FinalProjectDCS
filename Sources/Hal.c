@@ -45,24 +45,11 @@ void PORTD_IRQHandler(void){
 ////-----------------------------------------------------------------
 //// PIT - ISR = Interrupt Service Routine
 ////-----------------------------------------------------------------
-void PIT_IRQHandler(){
+/*void PIT_IRQHandler(){
 	PIT_TFLG0 = PIT_TFLG_TIF_MASK; //Turn off the Pit 0 Irq flag
-	setServoAtDegree();
-}
+}*/
 
-void setServoAtDegree()
-{
-	scanDegree+=1;
-	scanDegree%=180;
-	float T_on = 0.6 + scanDegree/180.0 * (2.5-0.6);
-	int deg_cnt = T_on/25.0*MOTOR_MUDULO_REGISTER;
 
-	TPM0_SC &= ~TPM_SC_CMOD(1); //Stop the TPM0 counter
-	TPM0_C0V = deg_cnt;
-	TPM0_SC |= TPM_SC_CMOD(1); //Start the TPM0 counter	 
-	if (scanDegree==0)
-		TPM0_SC &= ~TPM_SC_CMOD(1); //Turn off the TPM0 counter
-}
 
 //-----------------------------------------------------------------
 //  UART0 - ISR = Interrupt Service Routine
@@ -278,11 +265,44 @@ void clear_all_leds(void){
 	BLUE_LED_OFF;
 }
 
-void servo_deg(int p){
-	//ToDo: add function - use elad's
+void servo_deg(int degree){
+/*	char msg[20] = {0};
+	int i = 0;
+	WriteServo(degree);
+	enable_sensor(TRUE);
+	for(i = 0 ; i < DIST_AVG_SIZE + 1; i++){
+		distance_ready = FALSE;
+		while(!distance_ready);
+	}
+	
+	if (distance_ready){
+		build_scan_msg(msg,out_distance,degree);
+		send2pc("Sc",msg);
+		Print("Telemetry");
+		distance_ready = FALSE;
+	}
+	enable_sensor(FALSE);*/
 }
+// 07
+void servo_scan(int left_angle,int right_angle){
+/*	int angle = left_angle;
+	char msg[20] = {0};
+	WriteServo(left_angle);
+	enable_sensor(TRUE);
+	while(angle<right_angle){
+		while(!distance_ready){
+					WaitDelay(10);
+		}
+		if (distance_ready){
+			build_scan_msg(msg,out_distance,angle);
+			send2pc("Sc",msg);
+			Print("Scanning");
+			distance_ready = FALSE;
+		}
+		angle+=SERVO_DEG_CHANGE;
+		WriteServo(angle);
 
-void servo_scan(int l, int r){
-	//ToDo: add function - use elad's (scan between l and r)
+	}
+	enable_sensor(FALSE);*/
 }
 
