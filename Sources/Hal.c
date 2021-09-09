@@ -33,8 +33,9 @@ void PORTD_IRQHandler(void){
 		}
 		
 		//Debounce or using PFE field
-		while(!(GPIOD_PDIR & SW6_POS) );// wait of release the button
-		for(i=30000 ; i>0 ; i--); //delay, button debounce
+		while(TFC_PUSH_BUTTON_1_PRESSED);// wait of release the button
+		for(i=50000 ; i>0 ; i--); //delay, button debounce
+		
 		PORTD_ISFR |= TFC_PUSH_BUTT0N1_LOC; // clear interrupt flag bit of PTD6  // clear interrupt flag bit of PTD7
 		
 	}
@@ -279,11 +280,8 @@ void servo_deg(int degree){
 	
 	while(!sample_ready);
 	
-	//ToDo
-	sprintf(msg,"scan%3d%4X",degree,distance_avg);
+	sprintf(msg,"scan%3d%4X\n",degree,distance_avg);
 	UARTprintf(UART0_BASE_PTR,msg);
-	
-	lcd_puts("sample_ready");
 	
 	sample_ready = 0;
 }

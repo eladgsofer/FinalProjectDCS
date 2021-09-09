@@ -7,16 +7,6 @@
 //#include "derivative.h" /* include peripheral declarations */
 # include "TFC.h"
 
-// Declarations of externs
-volatile int distance_ready = FALSE;
-volatile int signal_taken = FALSE;
-volatile unsigned int acc_distance = 0;
-volatile unsigned int out_distance = 0;
-volatile unsigned int distance = 0;
-volatile unsigned int rising_edge = 0;
-volatile unsigned int falling_edge = 0;
-
-
 int main(void){
 
 	InitApp();

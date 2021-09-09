@@ -56,7 +56,7 @@ void telemeter(void){
 		while(!sample_ready);
 		sample_ready = 0;
 		
-		sprintf(str,"tele%4X",distance_avg);
+		sprintf(str,"tele%4X\n",distance_avg);
 		UARTprintf(UART0_BASE_PTR,str);
 	
 //		if (enterON || stopRadar){
