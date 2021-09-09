@@ -12,11 +12,11 @@ using System.Text.RegularExpressions;
 namespace TerminalPC.Sources
 {
 
-    // Message types
-
 
     public class SerialPortConn : SerialPort
     {
+        // Message types
+
         public static class TYPE
         {
             // Messages
@@ -34,6 +34,20 @@ namespace TerminalPC.Sources
             this.DataBits = dataBits;
             this.StopBits = stopBits;
             this.PortName = COM;
+        }
+
+        public void validateConn()
+        {
+            if (!this.IsOpen)
+            {
+                this.Open();
+            }
+        }
+
+        public void sendMessage(string message)
+        {
+            this.validateConn();
+            this.Write(message);
         }
 
 /*        public List<object> receiveData()

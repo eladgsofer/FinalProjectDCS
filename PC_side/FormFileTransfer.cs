@@ -44,12 +44,8 @@ namespace TerminalPC
                 StreamReader sr = new StreamReader(textBox1.Text);
                 try
                 {
+                    Home.port.validateConn();
                     file = sr.ReadToEnd();          //translate file to string
-                    if (!Home.port.IsOpen)
-                    {
-                        Home.port.Open();
-                    }
-                    
                     Home.port.Write("RScript " + s1.ToString() + "," + fname + "\n");
                 }
                 catch (Exception ex)
@@ -61,65 +57,25 @@ namespace TerminalPC
         public void port_File_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
             SerialPortConn spConn = (SerialPortConn)sender;
-            
-            string indata = "";
-            if (waitingForFile)
+
+            string indata;
+            indata = spConn.ReadLine();
+
+            if (indata.Equals(SerialPortConn.TYPE.FILE_ACK))
             {
-                waitingForFile = false;
-                indata = ((char)Home.port.ReadChar()).ToString();//check
-                while (!(indata.EndsWith("\0")))
+                try
                 {
-                    indata += ((char)Home.port.ReadChar()).ToString();
+                    Console.WriteLine("Sending file");
+                    spConn.sendMessage(file);
                 }
-                indata = indata.Substring(0, indata.Length - 1);
-                File.WriteAllText(@"C:\Users\katri\Downloads\dcs\" + fileName, indata);
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.ToString());
+                }
             }
             else
             {
-                indata = spConn.ReadLine();
-                if (indata.Equals(SerialPortConn.TYPE.FILE_ACK))
-                {
-                    if (sendingMode == 0) { //normal sending
-                        try
-                        {
-                            if (!Home.port.IsOpen)
-                            {
-                                Home.port.Open();
-                            }
-                            Home.port.Write(file);
-                        }
-                        catch (Exception ex)
-                        {
-                            MessageBox.Show(ex.ToString());
-                        }
-                    }
-                }
-                else
-                {
-                    if (indata.StartsWith("filename") || indata.StartsWith("ilename"))
-                    {
-                        fileName = indata.Substring(9, indata.Length - 9);
-                        //string path = @"C:\Users\Elad\Desktop\Terminal\Recieved files\"+ fileName;
-                        //File.Create(path);
-                  
-                        waitingForFile = true;
-                        try
-                        {
-                            if (!Home.port.IsOpen)
-                            {
-                                Home.port.Open();
-                            }
-                            Home.port.Write("ackfile\n");
-                        }
-                        catch (Exception ex)
-                        {
-                            MessageBox.Show(ex.ToString());
-                        }
-
-                    }
-                    else
-                        MessageBox.Show("Ack Failed: " + indata);
-                }
+                Console.WriteLine("unkown response");
             }
         }
 
@@ -127,11 +83,7 @@ namespace TerminalPC
         {
             try
             {
-                if (!Home.port.IsOpen)
-                {
-                    Home.port.Open();
-                }
-                Home.port.Write("SMExit\r\n");
+                Home.port.sendMessage("SMExit\r\n");
             }
             catch (Exception ex)
             {
@@ -144,11 +96,7 @@ namespace TerminalPC
         {
             try
             {
-                if (!Home.port.IsOpen)
-                {
-                    Home.port.Open();
-                }
-                Home.port.Write("ScriptM\r\n");
+                Home.port.sendMessage("ScriptM\r\n");
             }
             catch (Exception ex)
             {

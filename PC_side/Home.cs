@@ -58,7 +58,6 @@ namespace TerminalPC
         public Home()
         {
             InitializeComponent();
-            //Console.WriteLine("Main Form Init");
             comboBoxBaud.SelectedIndex = 1;
             comboBoxCOM.SelectedIndex = 3;
             comboBoxParity.SelectedIndex = 0;
@@ -66,13 +65,7 @@ namespace TerminalPC
             WIDTH = radarPictureBox.Height * 2;
             HEIGHT = radarPictureBox.Height;
             HAND = radarPictureBox.Height;
-            port = new SerialPortConn(comboBoxCOM.Text,
-                                    9600,
-                                    Parity.None,
-                                    8,
-                                    StopBits.One);
-
-
+            port = new SerialPortConn(comboBoxCOM.Text, 9600, Parity.None, 8, StopBits.One);
 
             //center
             circleX = radarPictureBox.Width / 2 - 50;
@@ -93,41 +86,28 @@ namespace TerminalPC
         {
 
         }
-        private void Form1_Load(object sender, EventArgs e)
-        {
-            
-        }
 
         // Connect + update parameters
         private void ButtonConnect_Click(object sender, EventArgs e)
         {
             Console.WriteLine("Connecting");
             
-
             try
             {
-                if (!port.IsOpen)
-                {
-                    port.Open();
-                }
                 parityTemp = (Parity)comboBoxParity.SelectedIndex;
                 stopbitsTemp = (StopBits)(comboBoxSTPBIT.SelectedIndex+1);
                 comTemp = comboBoxCOM.SelectedItem.ToString();
                 baudTemp = int.Parse(comboBoxBaud.SelectedItem.ToString());
-               
 
-                port.Write("ConnectionParams"+ " "+
-                           comboBoxBaud.SelectedItem.ToString()+" "+
-                           comboBoxParity.SelectedItem.ToString()+" "+
-                           comboBoxSTPBIT.SelectedItem.ToString()+"\r\n");
-
+                port.sendMessage("ConnectionParams"+ " "+
+                    comboBoxBaud.SelectedItem.ToString()+" "+
+                    comboBoxParity.SelectedItem.ToString()+" "+
+                    comboBoxSTPBIT.SelectedItem.ToString()+"\r\n");
              }
             catch(Exception ex)
             {
                 MessageBox.Show(ex.ToString());
             }
-
-
         }
 
         private float calcDistsnce(int cntrDiff)
@@ -144,12 +124,8 @@ namespace TerminalPC
             string indata;
             SerialPortConn spConn = (SerialPortConn)sender;
             System.Threading.Thread.Sleep(500);
-            
-            if (!port.IsOpen)
-            {
-                port.Open();
-            }
 
+            spConn.validateConn();
             indata = spConn.ReadExisting().TrimStart('\0');
 
             //ProcessMessage(indata);
@@ -160,9 +136,6 @@ namespace TerminalPC
             // Check opc
             switch (opCode)
             {
-                // Baud rate change acknoledge
-
-
                 // Recieve Scanner info
                 case SerialPortConn.TYPE.SCAN:
                     int deg = int.Parse(indata.Substring(4, 6));
@@ -197,6 +170,7 @@ namespace TerminalPC
                 case SerialPortConn.TYPE.FILE_ACK:
                     Console.WriteLine("Finished executing file");
                     break;
+                // Change connection parameters ack
                 case SerialPortConn.TYPE.CONN_ACK:
                     refreshSerialPort();
                     break;
@@ -238,8 +212,6 @@ namespace TerminalPC
             if (updatePicture)
             {
                 graphics.Dispose();
-                //load bitmap in picturebox1
-
                 radarPictureBox.Image = bmp;
             }
         }
@@ -272,15 +244,14 @@ namespace TerminalPC
                 handY = circleY - (int)(adjustedDist * Math.Cos(Math.PI * handDegMain / 180));
             }
 
-            // Draw radar hand
-            Point startHand = new Point(circleX, circleY);
+            
             Point endHand = new Point(handX, handY);
 
             if (adjustedDist == HAND) {
-                graphics.DrawLine(greenPen, startHand, endHand);
+                graphics.DrawLine(greenPen, centerP, endHand);
             }
             else {
-                graphics.DrawLine(redPen, startHand, endHand);
+                graphics.DrawLine(redPen, centerP, endHand);
             }
 
             // for future deletion
@@ -334,11 +305,12 @@ namespace TerminalPC
         // telemetry button
         private void button3_Click_1(object sender, EventArgs e)
         {
-            port.Write("Tele");
+            // \0? for ending a message? otherwise we could keep reading the next message?..
+            port.sendMessage("RadDec");
         }
         private void scanButton_Click(object sender, EventArgs e)
         {
-            port.Write("RadDec");
+            port.sendMessage("RadDec");
         }
         private void label1_Click(object sender, EventArgs e)
         {
@@ -380,6 +352,12 @@ namespace TerminalPC
         {
 
         }
+
+        private void telemetriaPanel_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
         private void comboBoxParity_SelectedIndexChanged(object sender, EventArgs e)
         {
 

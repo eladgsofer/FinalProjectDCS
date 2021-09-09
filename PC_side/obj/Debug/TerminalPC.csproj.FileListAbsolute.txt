@@ -58,3 +58,14 @@ C:\Users\elads\Desktop\312124662_318647906 (5)\PC_side\obj\Debug\TerminalPC.cspr
 C:\Users\elads\Desktop\312124662_318647906 (5)\PC_side\obj\Debug\TerminalPC.csproj.CoreCompileInputs.cache
 C:\Users\elads\Desktop\312124662_318647906 (5)\PC_side\obj\Debug\TerminalPC.exe
 C:\Users\elads\Desktop\312124662_318647906 (5)\PC_side\obj\Debug\TerminalPC.pdb
+C:\Users\elads\workspace\FinalProjectWorkspace\PC_side\bin\Debug\TerminalPC.exe.config
+C:\Users\elads\workspace\FinalProjectWorkspace\PC_side\bin\Debug\TerminalPC.exe
+C:\Users\elads\workspace\FinalProjectWorkspace\PC_side\bin\Debug\TerminalPC.pdb
+C:\Users\elads\workspace\FinalProjectWorkspace\PC_side\obj\Debug\TerminalPC.csprojAssemblyReference.cache
+C:\Users\elads\workspace\FinalProjectWorkspace\PC_side\obj\Debug\TerminalPC.Home.resources
+C:\Users\elads\workspace\FinalProjectWorkspace\PC_side\obj\Debug\TerminalPC.FormFileTransfer.resources
+C:\Users\elads\workspace\FinalProjectWorkspace\PC_side\obj\Debug\TerminalPC.Properties.Resources.resources
+C:\Users\elads\workspace\FinalProjectWorkspace\PC_side\obj\Debug\TerminalPC.csproj.GenerateResource.cache
+C:\Users\elads\workspace\FinalProjectWorkspace\PC_side\obj\Debug\TerminalPC.csproj.CoreCompileInputs.cache
+C:\Users\elads\workspace\FinalProjectWorkspace\PC_side\obj\Debug\TerminalPC.exe
+C:\Users\elads\workspace\FinalProjectWorkspace\PC_side\obj\Debug\TerminalPC.pdb
