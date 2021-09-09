@@ -45,24 +45,11 @@ void PORTD_IRQHandler(void){
 ////-----------------------------------------------------------------
 //// PIT - ISR = Interrupt Service Routine
 ////-----------------------------------------------------------------
-void PIT_IRQHandler(){
+/*void PIT_IRQHandler(){
 	PIT_TFLG0 = PIT_TFLG_TIF_MASK; //Turn off the Pit 0 Irq flag
-	setServoAtDegree();
-}
+}*/
 
-void setServoAtDegree()
-{
-	scanDegree+=1;
-	scanDegree%=180;
-	float T_on = 0.6 + scanDegree/180.0 * (2.5-0.6);
-	int deg_cnt = T_on/25.0*MOTOR_MUDULO_REGISTER;
 
-	TPM0_SC &= ~TPM_SC_CMOD(1); //Stop the TPM0 counter
-	TPM0_C0V = deg_cnt;
-	TPM0_SC |= TPM_SC_CMOD(1); //Start the TPM0 counter	 
-	if (scanDegree==0)
-		TPM0_SC &= ~TPM_SC_CMOD(1); //Turn off the TPM0 counter
-}
 
 //-----------------------------------------------------------------
 //  UART0 - ISR = Interrupt Service Routine

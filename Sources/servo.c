@@ -1,4 +1,5 @@
 #include "TFC.h"
+#include "servo.h"
 
 #define PIT_RISING 0
 #define PIT_FALLING 1
@@ -32,15 +33,12 @@ void InitSensors() {
 //	Change Servo's deg
 /////////////////////////////////
 void WriteServo(int deg) {
+	float T_on;
 	int dutyCycle;
 
-	// check if deg is valid
-	if (SERVO_DEG_MAX < deg || deg < SERVO_DEG_MIN) {
-		return;
-	}
-
+	T_on = MIN_T_ON + (deg / MAX_SERVO_DEGREE) * (MAX_T_ON - MIN_T_ON);
+	dutyCycle = (T_on / WAVE_PERIOD) * MOTOR_MUDULO_REGISTER;
 	StartTPMx(SERVO_TPM, FALSE);
-	dutyCycle = TPM_DC_VAL_MIN + (TPM_DC_VAL_MAX - TPM_DC_VAL_MIN) * (float)deg / (float)SERVO_DEG_MAX;
 	SetTPMxDutyCycle(SERVO_TPM, dutyCycle);
 	StartTPMx(SERVO_TPM, TRUE);
 	DelayMs(100);

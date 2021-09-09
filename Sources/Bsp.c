@@ -1,10 +1,9 @@
 #include "TFC.h"
 #include "mcg.h"
+#include "servo.h"
 
-#define SERVO_MUDULO_REGISTER   0x9275 - 1 
 #define TRIGGER_MODULO_REGISTER 0xC350 - 1 // 50,000
-#define TPM_DC_VAL_MIN 750 //900 // ~5% * 20ms = 1ms 
-#define TPM_DC_VAL_MAX 3550//3750// ~10% * 20ms = 2ms
+
 char ready;
 
 //-----------------------------------------------------------------
@@ -240,13 +239,13 @@ void InitTPMx(char x){  // x={0,1,2}
 		
 	case 1: // Servo
 		TPM1_SC = 0; // to ensure that the counter is not running
-		TPM1_SC |= TPM_SC_PS(4)+TPM_SC_TOIE_MASK; //Prescaler = 16, up-mode, counter-disable
+		TPM1_SC |= TPM_SC_PS(6) + TPM_SC_TOIE_MASK; //Prescaler =64, up-mode, counter-disable
 		// TPM period = (MOD + 1) * CounterClock_period
-		TPM1_MOD = SERVO_MUDULO_REGISTER; // PWM frequency of 40Hz = 24MHz/(16x60,000)
+		TPM1_MOD = MOTOR_MUDULO_REGISTER; // PWM frequency of 40Hz = 24MHz/(16x60,000)
 		TPM1_C0SC = 0;
 		// Edge Aligned , High-True pulse, channel interrupts enabled
 		TPM1_C0SC |= TPM_CnSC_MSB_MASK + TPM_CnSC_ELSB_MASK + TPM_CnSC_CHIE_MASK;
-		TPM1_C0V = TPM_DC_VAL_MIN; // Duty Cycle 5% - servo deg = 0
+		TPM1_C0V = (int)((MIN_T_ON / WAVE_PERIOD) * MOTOR_MUDULO_REGISTER);
 		TPM1_CONF = 0;//TPM_CONF_DBGMODE(3); //LPTPM counter continues in debug mode
 		
 		break;
