@@ -47,7 +47,7 @@ namespace TerminalPC.Sources
         public void sendMessage(string message)
         {
             this.validateConn();
-            this.Write(message);
+            this.Write(message + "\n");
         }
 
 /*        public List<object> receiveData()

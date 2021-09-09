@@ -32,13 +32,13 @@ void InitApp(void)
 	samp_cnt = 0;
 	delay = 5;
 	state = IDLE_STATE_0;
-	UARTprintf(UART0_BASE_PTR,"\n");
+	
 }
 
 //////////////////////////////
 //           Scan
 //////////////////////////////
-StateModes rad_detect_sys(){
+void rad_detect_sys(){
 	int degree = 0;
 	//char msg[20] = {0};
 	lcd_puts("Scanning");

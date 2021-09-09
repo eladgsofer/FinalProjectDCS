@@ -83,7 +83,7 @@ namespace TerminalPC
         {
             try
             {
-                Home.port.sendMessage("SMExit\r\n");
+                Home.port.sendMessage("SMExit");
             }
             catch (Exception ex)
             {
@@ -96,7 +96,7 @@ namespace TerminalPC
         {
             try
             {
-                Home.port.sendMessage("ScriptM\r\n");
+                Home.port.sendMessage("ScriptM");
             }
             catch (Exception ex)
             {

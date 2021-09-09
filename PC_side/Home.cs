@@ -102,7 +102,7 @@ namespace TerminalPC
                 port.sendMessage("ConnectionParams"+ " "+
                     comboBoxBaud.SelectedItem.ToString()+" "+
                     comboBoxParity.SelectedItem.ToString()+" "+
-                    comboBoxSTPBIT.SelectedItem.ToString()+"\r\n");
+                    comboBoxSTPBIT.SelectedItem.ToString());
              }
             catch(Exception ex)
             {
@@ -122,22 +122,24 @@ namespace TerminalPC
         public void port_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
             string indata;
+            string cmdVal;
             SerialPortConn spConn = (SerialPortConn)sender;
             System.Threading.Thread.Sleep(500);
 
             spConn.validateConn();
-            indata = spConn.ReadExisting().TrimStart('\0');
+            indata = spConn.ReadLine().TrimStart('\0');
 
             //ProcessMessage(indata);
 
-            string opCode = indata.Substring(0, 3);
-            string val = indata.Substring(4, 7);
+            string opCode = indata.Substring(0, 4);
+
             int cntDiff;
             // Check opc
             switch (opCode)
             {
                 // Recieve Scanner info
                 case SerialPortConn.TYPE.SCAN:
+                    cmdVal = indata.Substring(4, 7);
                     int deg = int.Parse(indata.Substring(4, 6));
                     cntDiff = int.Parse(indata.Substring(7,10), System.Globalization.NumberStyles.HexNumber);
                     float dist = calcDistsnce(cntDiff);
@@ -154,9 +156,10 @@ namespace TerminalPC
 
                 // Recieve Telemetry info
                 case SerialPortConn.TYPE.TELEMETRY:
-                    cntDiff = int.Parse(val, System.Globalization.NumberStyles.HexNumber);
+                    cmdVal = indata.Substring(4, 7);
+                    cntDiff = int.Parse(cmdVal, System.Globalization.NumberStyles.HexNumber);
                     string distanceString = calcDistsnce(cntDiff) > maskedDistance ?
-                        "Out of Range" : calcDistsnce(int.Parse(val)).ToString("#.##") + " cm";
+                        "Out of Range" : calcDistsnce(cntDiff).ToString("#.##") + " cm";
                     Console.WriteLine("Telemetria: Distance- " + distanceString);
                     this.Invoke((MethodInvoker)delegate
                     {
@@ -172,6 +175,7 @@ namespace TerminalPC
                     break;
                 // Change connection parameters ack
                 case SerialPortConn.TYPE.CONN_ACK:
+                    Console.WriteLine("Finished executing file");
                     refreshSerialPort();
                     break;
 
