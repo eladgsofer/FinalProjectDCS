@@ -90,7 +90,7 @@ namespace TerminalPC
 
             bmp = new Bitmap(WIDTH + 1, HEIGHT + 1);
             radarPictureBox.BackColor = Color.Black;
-            pointsArr = new List<Point>(180);
+            pointsArr = new List<Point>();
             drawRadarPicture(true);
 
             // create a dataReceived handler function
@@ -140,7 +140,7 @@ namespace TerminalPC
             string indata;
             string cmdVal;
             SerialPortConn spConn = (SerialPortConn)sender;
-            System.Threading.Thread.Sleep(500);
+            //System.Threading.Thread.Sleep(500);
 
             spConn.validateConn();
             indata = spConn.ReadLine().TrimStart('\0');
@@ -256,7 +256,14 @@ namespace TerminalPC
         {
             for (int i = 0; i < pointsArr.Count; i++)
             {
-                graphics.DrawLine(blackPen, centerP, pointsArr[i]);
+                try
+                {
+                    graphics.DrawLine(blackPen, centerP, pointsArr[i]);
+                }
+                catch
+                {
+                    Console.WriteLine(blackPen +" " + centerP + " " + pointsArr[i]);
+                }
             }
         }
 
@@ -315,6 +322,8 @@ namespace TerminalPC
                        8,
                        stopbitsTemp);
 
+                port.DataReceived += new SerialDataReceivedEventHandler(port_DataReceived);
+
                 port.Open();
                 MessageBox.Show("Connected!");
             }
@@ -346,6 +355,8 @@ namespace TerminalPC
         private void stopButton_Click(object sender, EventArgs e)
         {
             port.sendMessage("Exit");
+            eraseLines();
+            pointsArr = new List<Point>();
         }
         private void label1_Click(object sender, EventArgs e)
         {

@@ -225,6 +225,7 @@ void lcd_count_up(int x){
 			DelayMs(250);
 			
 			lcd_puts(num_str);
+			cursor_off();
 			
 			Delay_d();
 			
@@ -252,6 +253,7 @@ void lcd_count_down(int x){
 			DelayMs(250);
 			
 			lcd_puts(num_str);
+			cursor_off();
 			
 			Delay_d();
 			

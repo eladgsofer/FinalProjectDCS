@@ -39,28 +39,47 @@ void InitApp(void)
 //           Scan
 //////////////////////////////
 void rad_detect_sys(){
+	int exit = 0;
+	int degree = MIN_DEG;
 
 	lcd_puts("Scanning");
 	
 	while(1){
-		servo_scan(MIN_DEG,MAX_DEG);
-		
-		Delay_Ms(50);
-	
-		//Check if PC exit Radar
-		if (dataready)
-		{
-			if(strncmp(PC_msg, "Exit", 4) == 0)
+		while( degree < MAX_DEG ){
+			
+			servo_deg(degree);
+			
+			degree += DEG_DIFF;
+			
+			Delay_Ms(50);
+			
+			//Check if PC exit Radar
+			if (dataready)
 			{
-				//clear Flags & Args
-				dataready = 0;
-				memset(PC_msg,0,40);
-				
-				//Exit state
-				break;
+				if(strncmp(PC_msg, "Exit", 4) == 0)
+				{
+					//clear Flags & Args
+					dataready = 0;
+					memset(PC_msg,0,40);
+					exit = 1;
+					
+					//Exit state
+					break;
+				}
 			}
 		}
+		
+		if(exit)
+		{
+			break;
+		}
+		//enable_sensor(FALSE);
+			
+		//servo_scan(MIN_DEG,MAX_DEG);
+		
+		//Delay_Ms(50);
 	}
+	InitServo();
 }
 ////////////////////////
 //   Telemetry
@@ -84,9 +103,9 @@ void telemeter(void){
 	lcd_puts("Telemetry");
 	
 	WriteServo(degree);
-	enable_sensor(TRUE);
 	
 	while(1){
+		enable_sensor(TRUE);
 		// wait until sample ready
 		while(!sample_ready);
 		sample_ready = 0;
