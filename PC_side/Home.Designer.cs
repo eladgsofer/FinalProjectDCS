@@ -32,7 +32,6 @@
             this.buttonConnect = new System.Windows.Forms.Button();
             this.labelCOM = new System.Windows.Forms.Label();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.button1 = new System.Windows.Forms.Button();
             this.labelParity = new System.Windows.Forms.Label();
             this.labelSTPBIT = new System.Windows.Forms.Label();
             this.labelBaud = new System.Windows.Forms.Label();
@@ -53,6 +52,12 @@
             this.button4 = new System.Windows.Forms.Button();
             this.MaskedDistanceTextBox = new System.Windows.Forms.TextBox();
             this.stopButton = new System.Windows.Forms.Button();
+            this.buttonSend = new System.Windows.Forms.Button();
+            this.buttonFilesLCD = new System.Windows.Forms.Button();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.buttonChoose = new System.Windows.Forms.Button();
+            this.label3 = new System.Windows.Forms.Label();
+            this.openFileDialog2 = new System.Windows.Forms.OpenFileDialog();
             ((System.ComponentModel.ISupportInitialize)(this.radarPictureBox)).BeginInit();
             this.telemetriaPanel.SuspendLayout();
             this.SuspendLayout();
@@ -60,25 +65,17 @@
             // comboBoxCOM
             // 
             this.comboBoxCOM.FormattingEnabled = true;
-            this.comboBoxCOM.Items.AddRange(new object[] {
-            "COM3",
-            "COM4",
-            "COM5",
-            "COM6",
-            "COM7"});
-            this.comboBoxCOM.Location = new System.Drawing.Point(45, 412);
-            this.comboBoxCOM.Margin = new System.Windows.Forms.Padding(4);
+            this.comboBoxCOM.Location = new System.Drawing.Point(34, 335);
             this.comboBoxCOM.Name = "comboBoxCOM";
-            this.comboBoxCOM.Size = new System.Drawing.Size(315, 24);
+            this.comboBoxCOM.Size = new System.Drawing.Size(237, 21);
             this.comboBoxCOM.TabIndex = 1;
             this.comboBoxCOM.SelectedIndexChanged += new System.EventHandler(this.ComboBoxCOM_SelectedIndexChanged);
             // 
             // buttonConnect
             // 
-            this.buttonConnect.Location = new System.Drawing.Point(45, 612);
-            this.buttonConnect.Margin = new System.Windows.Forms.Padding(4);
+            this.buttonConnect.Location = new System.Drawing.Point(34, 497);
             this.buttonConnect.Name = "buttonConnect";
-            this.buttonConnect.Size = new System.Drawing.Size(145, 44);
+            this.buttonConnect.Size = new System.Drawing.Size(109, 36);
             this.buttonConnect.TabIndex = 5;
             this.buttonConnect.Text = "Connect";
             this.buttonConnect.UseVisualStyleBackColor = true;
@@ -87,10 +84,9 @@
             // labelCOM
             // 
             this.labelCOM.AutoSize = true;
-            this.labelCOM.Location = new System.Drawing.Point(41, 393);
-            this.labelCOM.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.labelCOM.Location = new System.Drawing.Point(31, 319);
             this.labelCOM.Name = "labelCOM";
-            this.labelCOM.Size = new System.Drawing.Size(133, 17);
+            this.labelCOM.Size = new System.Drawing.Size(101, 13);
             this.labelCOM.TabIndex = 8;
             this.labelCOM.Text = "Choose a COM Port";
             this.labelCOM.Click += new System.EventHandler(this.labelCOM_Click);
@@ -99,45 +95,32 @@
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             this.openFileDialog1.Filter = "txt files (*.txt)|*.txt";
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(45, 58);
-            this.button1.Margin = new System.Windows.Forms.Padding(4);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(185, 81);
-            this.button1.TabIndex = 16;
-            this.button1.Text = "Send a script";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.ButtonFile_Click);
+            this.openFileDialog1.FileOk += new System.ComponentModel.CancelEventHandler(this.openFileDialog1_FileOk_1);
             // 
             // labelParity
             // 
             this.labelParity.AutoSize = true;
-            this.labelParity.Location = new System.Drawing.Point(43, 545);
-            this.labelParity.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.labelParity.Location = new System.Drawing.Point(32, 443);
             this.labelParity.Name = "labelParity";
-            this.labelParity.Size = new System.Drawing.Size(48, 17);
+            this.labelParity.Size = new System.Drawing.Size(36, 13);
             this.labelParity.TabIndex = 27;
             this.labelParity.Text = "Parity:";
             // 
             // labelSTPBIT
             // 
             this.labelSTPBIT.AutoSize = true;
-            this.labelSTPBIT.Location = new System.Drawing.Point(41, 494);
-            this.labelSTPBIT.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.labelSTPBIT.Location = new System.Drawing.Point(31, 401);
             this.labelSTPBIT.Name = "labelSTPBIT";
-            this.labelSTPBIT.Size = new System.Drawing.Size(68, 17);
+            this.labelSTPBIT.Size = new System.Drawing.Size(52, 13);
             this.labelSTPBIT.TabIndex = 26;
             this.labelSTPBIT.Text = "Stop Bits:";
             // 
             // labelBaud
             // 
             this.labelBaud.AutoSize = true;
-            this.labelBaud.Location = new System.Drawing.Point(41, 444);
-            this.labelBaud.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.labelBaud.Location = new System.Drawing.Point(31, 361);
             this.labelBaud.Name = "labelBaud";
-            this.labelBaud.Size = new System.Drawing.Size(79, 17);
+            this.labelBaud.Size = new System.Drawing.Size(61, 13);
             this.labelBaud.TabIndex = 25;
             this.labelBaud.Text = "Baud Rate:";
             // 
@@ -148,10 +131,9 @@
             "None",
             "Even",
             "Odd"});
-            this.comboBoxParity.Location = new System.Drawing.Point(45, 569);
-            this.comboBoxParity.Margin = new System.Windows.Forms.Padding(4);
+            this.comboBoxParity.Location = new System.Drawing.Point(34, 462);
             this.comboBoxParity.Name = "comboBoxParity";
-            this.comboBoxParity.Size = new System.Drawing.Size(315, 24);
+            this.comboBoxParity.Size = new System.Drawing.Size(237, 21);
             this.comboBoxParity.TabIndex = 24;
             // 
             // comboBoxBaud
@@ -162,10 +144,9 @@
             "9600",
             "19200",
             "38400"});
-            this.comboBoxBaud.Location = new System.Drawing.Point(45, 464);
-            this.comboBoxBaud.Margin = new System.Windows.Forms.Padding(4);
+            this.comboBoxBaud.Location = new System.Drawing.Point(34, 377);
             this.comboBoxBaud.Name = "comboBoxBaud";
-            this.comboBoxBaud.Size = new System.Drawing.Size(315, 24);
+            this.comboBoxBaud.Size = new System.Drawing.Size(237, 21);
             this.comboBoxBaud.TabIndex = 23;
             // 
             // comboBoxSTPBIT
@@ -174,18 +155,16 @@
             this.comboBoxSTPBIT.Items.AddRange(new object[] {
             "1",
             "2"});
-            this.comboBoxSTPBIT.Location = new System.Drawing.Point(45, 516);
-            this.comboBoxSTPBIT.Margin = new System.Windows.Forms.Padding(4);
+            this.comboBoxSTPBIT.Location = new System.Drawing.Point(34, 419);
             this.comboBoxSTPBIT.Name = "comboBoxSTPBIT";
-            this.comboBoxSTPBIT.Size = new System.Drawing.Size(315, 24);
+            this.comboBoxSTPBIT.Size = new System.Drawing.Size(237, 21);
             this.comboBoxSTPBIT.TabIndex = 22;
             // 
             // scanButton
             // 
-            this.scanButton.Location = new System.Drawing.Point(46, 158);
-            this.scanButton.Margin = new System.Windows.Forms.Padding(4);
+            this.scanButton.Location = new System.Drawing.Point(23, 210);
             this.scanButton.Name = "scanButton";
-            this.scanButton.Size = new System.Drawing.Size(185, 81);
+            this.scanButton.Size = new System.Drawing.Size(139, 66);
             this.scanButton.TabIndex = 28;
             this.scanButton.Text = "Start Scan";
             this.scanButton.UseVisualStyleBackColor = true;
@@ -193,10 +172,10 @@
             // 
             // radarPictureBox
             // 
-            this.radarPictureBox.Location = new System.Drawing.Point(499, 224);
-            this.radarPictureBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.radarPictureBox.Location = new System.Drawing.Point(426, 186);
+            this.radarPictureBox.Margin = new System.Windows.Forms.Padding(2);
             this.radarPictureBox.Name = "radarPictureBox";
-            this.radarPictureBox.Size = new System.Drawing.Size(1128, 478);
+            this.radarPictureBox.Size = new System.Drawing.Size(814, 388);
             this.radarPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.radarPictureBox.TabIndex = 29;
             this.radarPictureBox.TabStop = false;
@@ -206,9 +185,10 @@
             // 
             this.telemetriaEnterAngleLabel.AutoSize = true;
             this.telemetriaEnterAngleLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(177)));
-            this.telemetriaEnterAngleLabel.Location = new System.Drawing.Point(496, 58);
+            this.telemetriaEnterAngleLabel.Location = new System.Drawing.Point(423, 47);
+            this.telemetriaEnterAngleLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.telemetriaEnterAngleLabel.Name = "telemetriaEnterAngleLabel";
-            this.telemetriaEnterAngleLabel.Size = new System.Drawing.Size(248, 20);
+            this.telemetriaEnterAngleLabel.Size = new System.Drawing.Size(212, 17);
             this.telemetriaEnterAngleLabel.TabIndex = 32;
             this.telemetriaEnterAngleLabel.Text = "Enter Telemetry Angle (0°-180°)";
             // 
@@ -216,19 +196,18 @@
             // 
             this.telemetriaDataTextBox.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.telemetriaDataTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(177)));
-            this.telemetriaDataTextBox.Location = new System.Drawing.Point(497, 97);
-            this.telemetriaDataTextBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.telemetriaDataTextBox.Location = new System.Drawing.Point(430, 84);
+            this.telemetriaDataTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.telemetriaDataTextBox.Name = "telemetriaDataTextBox";
-            this.telemetriaDataTextBox.Size = new System.Drawing.Size(192, 30);
+            this.telemetriaDataTextBox.Size = new System.Drawing.Size(145, 26);
             this.telemetriaDataTextBox.TabIndex = 31;
             this.telemetriaDataTextBox.TextChanged += new System.EventHandler(this.telemetriaDataTextBox_TextChanged);
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(723, 95);
-            this.button3.Margin = new System.Windows.Forms.Padding(4);
+            this.button3.Location = new System.Drawing.Point(590, 82);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(125, 30);
+            this.button3.Size = new System.Drawing.Size(94, 28);
             this.button3.TabIndex = 33;
             this.button3.Text = "Send Telemetry";
             this.button3.UseVisualStyleBackColor = true;
@@ -240,10 +219,10 @@
             this.telemetriaPanel.Controls.Add(this.telemetriaCmLabel);
             this.telemetriaPanel.Controls.Add(this.AngelLabel);
             this.telemetriaPanel.Controls.Add(this.DistanceLabel);
-            this.telemetriaPanel.Location = new System.Drawing.Point(499, 149);
-            this.telemetriaPanel.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.telemetriaPanel.Location = new System.Drawing.Point(426, 123);
+            this.telemetriaPanel.Margin = new System.Windows.Forms.Padding(2);
             this.telemetriaPanel.Name = "telemetriaPanel";
-            this.telemetriaPanel.Size = new System.Drawing.Size(611, 54);
+            this.telemetriaPanel.Size = new System.Drawing.Size(458, 44);
             this.telemetriaPanel.TabIndex = 34;
             this.telemetriaPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.telemetriaPanel_Paint);
             // 
@@ -251,9 +230,10 @@
             // 
             this.telemetriaOlLabel.AutoSize = true;
             this.telemetriaOlLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(177)));
-            this.telemetriaOlLabel.Location = new System.Drawing.Point(497, 9);
+            this.telemetriaOlLabel.Location = new System.Drawing.Point(373, 7);
+            this.telemetriaOlLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.telemetriaOlLabel.Name = "telemetriaOlLabel";
-            this.telemetriaOlLabel.Size = new System.Drawing.Size(17, 20);
+            this.telemetriaOlLabel.Size = new System.Drawing.Size(15, 17);
             this.telemetriaOlLabel.TabIndex = 7;
             this.telemetriaOlLabel.Text = "°";
             // 
@@ -261,9 +241,10 @@
             // 
             this.telemetriaCmLabel.AutoSize = true;
             this.telemetriaCmLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(177)));
-            this.telemetriaCmLabel.Location = new System.Drawing.Point(287, 18);
+            this.telemetriaCmLabel.Location = new System.Drawing.Point(215, 15);
+            this.telemetriaCmLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.telemetriaCmLabel.Name = "telemetriaCmLabel";
-            this.telemetriaCmLabel.Size = new System.Drawing.Size(34, 20);
+            this.telemetriaCmLabel.Size = new System.Drawing.Size(28, 17);
             this.telemetriaCmLabel.TabIndex = 6;
             this.telemetriaCmLabel.Text = "cm";
             // 
@@ -271,9 +252,10 @@
             // 
             this.AngelLabel.AutoSize = true;
             this.AngelLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(177)));
-            this.AngelLabel.Location = new System.Drawing.Point(383, 16);
+            this.AngelLabel.Location = new System.Drawing.Point(287, 13);
+            this.AngelLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.AngelLabel.Name = "AngelLabel";
-            this.AngelLabel.Size = new System.Drawing.Size(75, 25);
+            this.AngelLabel.Size = new System.Drawing.Size(60, 20);
             this.AngelLabel.TabIndex = 5;
             this.AngelLabel.Text = "Angle:";
             // 
@@ -281,9 +263,10 @@
             // 
             this.DistanceLabel.AutoSize = true;
             this.DistanceLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(177)));
-            this.DistanceLabel.Location = new System.Drawing.Point(76, 17);
+            this.DistanceLabel.Location = new System.Drawing.Point(57, 14);
+            this.DistanceLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.DistanceLabel.Name = "DistanceLabel";
-            this.DistanceLabel.Size = new System.Drawing.Size(103, 25);
+            this.DistanceLabel.Size = new System.Drawing.Size(85, 20);
             this.DistanceLabel.TabIndex = 4;
             this.DistanceLabel.Text = "Distance:";
             // 
@@ -291,19 +274,19 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(177)));
-            this.label1.Location = new System.Drawing.Point(916, 58);
+            this.label1.Location = new System.Drawing.Point(705, 47);
+            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(184, 20);
+            this.label1.Size = new System.Drawing.Size(154, 17);
             this.label1.TabIndex = 36;
             this.label1.Text = "Enter Masked Distance";
             this.label1.Click += new System.EventHandler(this.label1_Click_1);
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(1140, 95);
-            this.button4.Margin = new System.Windows.Forms.Padding(4);
+            this.button4.Location = new System.Drawing.Point(867, 82);
             this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(125, 30);
+            this.button4.Size = new System.Drawing.Size(94, 29);
             this.button4.TabIndex = 37;
             this.button4.Text = "Save";
             this.button4.UseVisualStyleBackColor = true;
@@ -313,31 +296,89 @@
             // 
             this.MaskedDistanceTextBox.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.MaskedDistanceTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(177)));
-            this.MaskedDistanceTextBox.Location = new System.Drawing.Point(917, 97);
-            this.MaskedDistanceTextBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.MaskedDistanceTextBox.Location = new System.Drawing.Point(708, 84);
+            this.MaskedDistanceTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.MaskedDistanceTextBox.Name = "MaskedDistanceTextBox";
-            this.MaskedDistanceTextBox.Size = new System.Drawing.Size(192, 30);
+            this.MaskedDistanceTextBox.Size = new System.Drawing.Size(145, 26);
             this.MaskedDistanceTextBox.TabIndex = 38;
             this.MaskedDistanceTextBox.TextChanged += new System.EventHandler(this.MaskedDistanceTextBox_TextChanged);
             // 
             // stopButton
             // 
-            this.stopButton.Location = new System.Drawing.Point(44, 262);
-            this.stopButton.Margin = new System.Windows.Forms.Padding(4);
+            this.stopButton.Location = new System.Drawing.Point(180, 210);
             this.stopButton.Name = "stopButton";
-            this.stopButton.Size = new System.Drawing.Size(186, 79);
+            this.stopButton.Size = new System.Drawing.Size(139, 66);
             this.stopButton.TabIndex = 37;
             this.stopButton.Text = "Stop";
             this.stopButton.UseVisualStyleBackColor = true;
             this.stopButton.Click += new System.EventHandler(this.stopButton_Click);
             // 
+            // buttonSend
+            // 
+            this.buttonSend.Location = new System.Drawing.Point(37, 137);
+            this.buttonSend.Name = "buttonSend";
+            this.buttonSend.Size = new System.Drawing.Size(75, 23);
+            this.buttonSend.TabIndex = 43;
+            this.buttonSend.Text = "Send";
+            this.buttonSend.UseVisualStyleBackColor = true;
+            this.buttonSend.Click += new System.EventHandler(this.buttonSend_Click);
+            // 
+            // buttonFilesLCD
+            // 
+            this.buttonFilesLCD.Location = new System.Drawing.Point(127, 137);
+            this.buttonFilesLCD.Name = "buttonFilesLCD";
+            this.buttonFilesLCD.Size = new System.Drawing.Size(108, 23);
+            this.buttonFilesLCD.TabIndex = 42;
+            this.buttonFilesLCD.Text = "Show files via LCD";
+            this.buttonFilesLCD.UseVisualStyleBackColor = true;
+            this.buttonFilesLCD.Click += new System.EventHandler(this.buttonFilesLCD_Click);
+            // 
+            // textBox1
+            // 
+            this.textBox1.Enabled = false;
+            this.textBox1.Location = new System.Drawing.Point(33, 83);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(272, 20);
+            this.textBox1.TabIndex = 41;
+            this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+            // 
+            // buttonChoose
+            // 
+            this.buttonChoose.Location = new System.Drawing.Point(311, 80);
+            this.buttonChoose.Name = "buttonChoose";
+            this.buttonChoose.Size = new System.Drawing.Size(75, 23);
+            this.buttonChoose.TabIndex = 39;
+            this.buttonChoose.Text = "Browse";
+            this.buttonChoose.UseVisualStyleBackColor = true;
+            this.buttonChoose.Click += new System.EventHandler(this.buttonChoose_Click);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(177)));
+            this.label3.Location = new System.Drawing.Point(34, 47);
+            this.label3.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(128, 17);
+            this.label3.TabIndex = 44;
+            this.label3.Text = "Choose a script file";
+            // 
+            // openFileDialog2
+            // 
+            this.openFileDialog2.FileName = "openFileDialog2";
+            // 
             // Home
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Menu;
             this.BackgroundImage = global::TerminalPC.Properties.Resources.d4xmmg4_883c5c3d_2e64_445f_8dc4_a7c4eef8f41c;
-            this.ClientSize = new System.Drawing.Size(1656, 720);
+            this.ClientSize = new System.Drawing.Size(1275, 595);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.buttonSend);
+            this.Controls.Add(this.buttonFilesLCD);
+            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.buttonChoose);
             this.Controls.Add(this.MaskedDistanceTextBox);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.stopButton);
@@ -354,11 +395,9 @@
             this.Controls.Add(this.comboBoxParity);
             this.Controls.Add(this.comboBoxBaud);
             this.Controls.Add(this.comboBoxSTPBIT);
-            this.Controls.Add(this.button1);
             this.Controls.Add(this.labelCOM);
             this.Controls.Add(this.buttonConnect);
             this.Controls.Add(this.comboBoxCOM);
-            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "Home";
             this.Text = "Final Project By Katrin Nekhin and Elad Sofer";
             this.Load += new System.EventHandler(this.Home_Load);
@@ -375,7 +414,6 @@
         private System.Windows.Forms.Button buttonConnect;
         private System.Windows.Forms.Label labelCOM;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
-        private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label labelParity;
         private System.Windows.Forms.Label labelSTPBIT;
         private System.Windows.Forms.Label labelBaud;
@@ -396,6 +434,12 @@
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.TextBox MaskedDistanceTextBox;
         private System.Windows.Forms.Button stopButton;
+        private System.Windows.Forms.Button buttonSend;
+        private System.Windows.Forms.Button buttonFilesLCD;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Button buttonChoose;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.OpenFileDialog openFileDialog2;
     }
 }
 

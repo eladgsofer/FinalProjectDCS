@@ -35,6 +35,10 @@ namespace TerminalPC
         public static string comTemp;
         public static int baudTemp;
 
+        public static string fileData = "";
+        public static string fileName;
+
+
 
         private float maskedDistance = 100; // cm
 
@@ -46,20 +50,32 @@ namespace TerminalPC
         private List<Point> pointsArr;
         Point centerP;
 
-        // radar drawing
+        // Radar graphic objects
         private Bitmap bmp;
-        private Pen greenPen = new Pen(Color.Green, 2.5f);
-        private Pen redPen = new Pen(Color.Red, 2.5f);
-        private Pen blackPen = new Pen(Color.Black, 2.5f);
         private Graphics graphics;
 
+        // border Pen
+        private readonly  Pen borderGreenPen = new Pen(Color.Green, 2.5f);
+        // Beam pens
+        private readonly Pen greenPen = new Pen(Color.Red, 1f);
+        private readonly Pen redPen = new Pen(Color.Red, 1f);
+        private readonly Pen blackPen = new Pen(Color.Black, 1f);
 
 
         public Home()
         {
             InitializeComponent();
+
+            string[] ports = SerialPort.GetPortNames().Length > 0 ? SerialPort.GetPortNames() : null;
+            if (ports != null)
+            {
+                this.comboBoxCOM.Items.AddRange(ports);
+                comboBoxCOM.SelectedIndex = 1;
+
+            }
+
             comboBoxBaud.SelectedIndex = 1;
-            comboBoxCOM.SelectedIndex = 3;
+            
             comboBoxParity.SelectedIndex = 0;
             comboBoxSTPBIT.SelectedIndex = 0;
             WIDTH = radarPictureBox.Height * 2;
@@ -68,7 +84,7 @@ namespace TerminalPC
             port = new SerialPortConn(comboBoxCOM.Text, 9600, Parity.None, 8, StopBits.One);
 
             //center
-            circleX = radarPictureBox.Width / 2 - 50;
+            circleX = radarPictureBox.Width / 2 ;
             circleY = radarPictureBox.Height;
             centerP = new Point(circleX, circleY);
 
@@ -167,15 +183,22 @@ namespace TerminalPC
                     });
                     break;
 
-
                 // File recieved ok 
                 case SerialPortConn.TYPE.FILE_ACK:
-                    Console.WriteLine("Finished executing file");
+                    Console.WriteLine("Sending file");
+                    sendSerialMessage(spConn, fileData);
                     break;
+
+                // Finish executing script
+                case SerialPortConn.TYPE.SCRIPT_DONE:
+                    Console.WriteLine("Finished executing command script " + fileName);
+                    sendSerialMessage(spConn, "SMExit");
+                    break;
+                    
                 // Change connection parameters ack
                 case SerialPortConn.TYPE.CONN_ACK:
-                    Console.WriteLine("Finished executing file");
                     refreshSerialPort();
+                    Console.WriteLine("SerialPort is connected");
                     break;
 
                 // Unknown
@@ -186,6 +209,17 @@ namespace TerminalPC
 
         }
 
+        private void sendSerialMessage(SerialPortConn spConn, string serialCmd)
+        {
+            try
+            {
+                spConn.sendMessage(serialCmd);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+        }
         private void drawRadarPicture(bool updatePicture)
         {
 
@@ -199,18 +233,18 @@ namespace TerminalPC
             for (int i = 50; i < HAND; i += 100)
             {
                 int radius = HAND - i;
-                graphics.DrawEllipse(greenPen, circleX - radius, circleY - radius, radius * 2, radius * 2);
+                graphics.DrawEllipse(borderGreenPen, circleX - radius, circleY - radius, radius * 2, radius * 2);
             }
 
             //draw perpendicular line
-            graphics.DrawLine(greenPen, new Point(circleX, circleY), new Point(circleX, HEIGHT)); // UP-DOWN
-            graphics.DrawLine(greenPen, new Point(0, circleY-3), new Point(WIDTH, circleY - 3)); // UP-DOWN
+            graphics.DrawLine(borderGreenPen, new Point(circleX, circleY), new Point(circleX, HEIGHT)); // UP-DOWN
+            graphics.DrawLine(borderGreenPen, new Point(0, circleY-3), new Point(WIDTH, circleY - 3)); // UP-DOWN
 
             // draw angled lines
             for (int ang = 30; ang < MAX_SERVO_ANGLE; ang += 30)
             {
                 Point p_end = new Point(circleX - (int)(HAND * Math.Cos(ang * Math.PI / 180)), circleY - (int)(HAND * Math.Sin(ang * Math.PI / 180)));
-                graphics.DrawLine(greenPen, new Point(circleX, circleY), p_end);
+                graphics.DrawLine(borderGreenPen, new Point(circleX, circleY), p_end);
             }
             if (updatePicture)
             {
@@ -291,13 +325,6 @@ namespace TerminalPC
 
         }
 
-        //Open file transfer window
-        private void ButtonFile_Click(object sender, EventArgs e)
-        {
-            FormFileTransfer formFileTransfer = new FormFileTransfer();
-            formFileTransfer.ShowDialog();
-        }
-
         // save masked distance
         private void button4_Click(object sender, EventArgs e)
         {
@@ -369,6 +396,58 @@ namespace TerminalPC
         private void telemetriaDataTextBox_TextChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void buttonSend_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(textBox1.Text))
+            {
+                MessageBox.Show("File wasn't specified! Pick a file");
+            }
+            else
+            {
+                FileInfo f = new FileInfo(textBox1.Text);
+                string fname = f.Name;              // file name: fileX.txt
+                long s1 = f.Length;                 // file size in bytes
+                StreamReader sr = new StreamReader(textBox1.Text);
+                try
+                {
+                    fileData = sr.ReadToEnd();          //translate file to string
+                    Home.port.sendMessage("RScript " + s1.ToString() + "," + fname);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.ToString());
+                }
+            }
+        }
+
+        private void buttonFilesLCD_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Home.port.sendMessage("ScriptM");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+        }
+
+        private void buttonChoose_Click(object sender, EventArgs e)
+        {
+            openFileDialog1.ShowDialog();
+        }
+
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void openFileDialog1_FileOk_1(object sender, CancelEventArgs e)
+        {
+            textBox1.Text = openFileDialog1.FileName;
         }
 
         private void comboBoxParity_SelectedIndexChanged(object sender, EventArgs e)

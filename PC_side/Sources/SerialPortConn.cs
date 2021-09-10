@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 using System.IO;
 using System.Threading;
@@ -22,8 +23,10 @@ namespace TerminalPC.Sources
             // Messages
             public const string TELEMETRY = "tele";
             public const string SCAN = "scan";
+            public const string SCRIPT_DONE = "fnsc";
             public const string FILE_ACK = "Fack";
             public const string CONN_ACK = "Cack";
+            
         }
 
         List<object> Result;
@@ -34,6 +37,7 @@ namespace TerminalPC.Sources
             this.DataBits = dataBits;
             this.StopBits = stopBits;
             this.PortName = COM;
+            
         }
 
         public void validateConn()
@@ -46,8 +50,9 @@ namespace TerminalPC.Sources
 
         public void sendMessage(string message)
         {
-            this.validateConn();
-            this.Write(message + "\n");
+                this.validateConn();
+                this.Write(message + "\n");
+
         }
 
 /*        public List<object> receiveData()

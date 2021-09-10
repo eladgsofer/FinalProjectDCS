@@ -63,7 +63,6 @@ C:\Users\elads\workspace\FinalProjectWorkspace\PC_side\bin\Debug\TerminalPC.exe
 C:\Users\elads\workspace\FinalProjectWorkspace\PC_side\bin\Debug\TerminalPC.pdb
 C:\Users\elads\workspace\FinalProjectWorkspace\PC_side\obj\Debug\TerminalPC.csprojAssemblyReference.cache
 C:\Users\elads\workspace\FinalProjectWorkspace\PC_side\obj\Debug\TerminalPC.Home.resources
-C:\Users\elads\workspace\FinalProjectWorkspace\PC_side\obj\Debug\TerminalPC.FormFileTransfer.resources
 C:\Users\elads\workspace\FinalProjectWorkspace\PC_side\obj\Debug\TerminalPC.Properties.Resources.resources
 C:\Users\elads\workspace\FinalProjectWorkspace\PC_side\obj\Debug\TerminalPC.csproj.GenerateResource.cache
 C:\Users\elads\workspace\FinalProjectWorkspace\PC_side\obj\Debug\TerminalPC.csproj.CoreCompileInputs.cache
