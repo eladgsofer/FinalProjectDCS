@@ -55,26 +55,51 @@ namespace TerminalPC
         }
         public void port_File_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-            SerialPortConn spConn = (SerialPortConn)sender;
-
             string indata;
-            indata = spConn.ReadLine();
+            string cmdVal;
+            SerialPortConn spConn = (SerialPortConn)sender;
+            System.Threading.Thread.Sleep(500);
 
-            if (indata.Equals(SerialPortConn.TYPE.FILE_ACK))
+            spConn.validateConn();
+            indata = spConn.ReadLine().TrimStart('\0');
+
+            //ProcessMessage(indata);
+
+            string opCode = indata.Substring(0, 4);
+
+            int cntDiff;
+            // Check opc
+            switch (opCode)
             {
-                try
-                {
-                    Console.WriteLine("Sending file");
-                    spConn.sendMessage(file);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.ToString());
-                }
-            }
-            else
-            {
-                Console.WriteLine("unkown response");
+                // File recieved ok 
+                case SerialPortConn.TYPE.FILE_ACK:
+                    try
+                    {
+                        Console.WriteLine("Sending file");
+                        spConn.sendMessage(file);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.ToString());
+                    }
+                    break;
+
+                // Recieve Scanner info
+                case SerialPortConn.TYPE.SCAN:
+                    int deg = int.Parse(indata.Substring(4, 3));
+                    cntDiff = int.Parse(indata.Substring(7, 4), System.Globalization.NumberStyles.HexNumber);
+                    float dist = Home.calcDistsnce(cntDiff);
+                    Console.WriteLine("scan: deg- " + deg + " dist- " + dist + " cm");
+
+                    //this.Invoke((MethodInvoker)delegate
+                    //{
+                    //    DisplayRadar(deg, dist);
+                    //    AngelLabel.Text = "Angle: " + deg;
+                    //    DistanceLabel.Text = "Distance: " + dist.ToString("#.##");
+                    //});
+                    break;
+                    //case default:
+                    //Console.WriteLine("unkown response");
             }
         }
 

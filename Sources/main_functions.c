@@ -30,7 +30,7 @@ void InitApp(void)
 	files_num = 0;
 	index_last = -1;
 	samp_cnt = 0;
-	delay = 5;
+	delay = 50;
 	state = IDLE_STATE_0;
 	
 }
@@ -108,11 +108,13 @@ void telemeter(void){
 // Command Parser
 //---------------------------------------------------------------------------------------------------------------------
 int commandsParser(int fileIndex) {
-    //char string[50] = "0102\n041E\n0201\n0302\n05\n0623\n0101\n07143C\n08";
-	char* string = hd_file_Ptr[fileIndex];
+    char string[50];
+	//char* string = hd_file_Ptr[fileIndex];
     char leftDegree[3], rightDegree[3],  fullOperand[10];
     int operandVal =0, leftAngle, rightAngle, opcode;
 
+    //copy script from memory to temp val "string"
+    strcpy(string, hd_file_Ptr[fileIndex]);
     // Extract the first token
     char * token = strtok(string, "\n");
     // loop through the string to extract all other tokens

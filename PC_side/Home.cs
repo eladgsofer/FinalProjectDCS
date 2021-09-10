@@ -110,7 +110,7 @@ namespace TerminalPC
             }
         }
 
-        private float calcDistsnce(int cntrDiff)
+        public static float calcDistsnce(int cntrDiff)
         {
             // CounterClock period = 1 / (tpm clk/prescaler)  | tpm clk = 24MHz  , tpm prescaler = 32 
             // => CounterClock period = 32/24M = 1/750,000 sec
@@ -139,9 +139,8 @@ namespace TerminalPC
             {
                 // Recieve Scanner info
                 case SerialPortConn.TYPE.SCAN:
-                    cmdVal = indata.Substring(4, 7);
-                    int deg = int.Parse(indata.Substring(4, 6));
-                    cntDiff = int.Parse(indata.Substring(7,10), System.Globalization.NumberStyles.HexNumber);
+                    int deg = int.Parse(indata.Substring(4,3));
+                    cntDiff = int.Parse(indata.Substring(7,4), System.Globalization.NumberStyles.HexNumber);
                     float dist = calcDistsnce(cntDiff);
                     Console.WriteLine("scan: deg- " + deg + " dist- " + dist + " cm");
 
@@ -156,7 +155,7 @@ namespace TerminalPC
 
                 // Recieve Telemetry info
                 case SerialPortConn.TYPE.TELEMETRY:
-                    cmdVal = indata.Substring(4, 7);
+                    cmdVal = indata.Substring(4, 4);
                     cntDiff = int.Parse(cmdVal, System.Globalization.NumberStyles.HexNumber);
                     string distanceString = calcDistsnce(cntDiff) > maskedDistance ?
                         "Out of Range" : calcDistsnce(cntDiff).ToString("#.##") + " cm";

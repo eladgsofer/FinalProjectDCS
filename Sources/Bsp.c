@@ -341,6 +341,8 @@ void InitPIT(){
 	PIT_LDVAL0 = 0x00186A00; // setup timer 0 for 15hz counting period
 	//PIT_TCTRL0 = PIT_TCTRL_TEN_MASK | PIT_TCTRL_TIE_MASK; //enable PIT0 and its interrupt
 	PIT_MCR |= PIT_MCR_FRZ_MASK; // stop the pit when in debug mode
+	PIT_MCR &= ~PIT_MCR_MDIS_MASK;
+	
 	enable_irq(INT_PIT-16); //  //Enable PIT IRQ on the NVIC
 	set_irq_priority(INT_PIT-16,0);  // Interrupt priority = 0 = max
 }

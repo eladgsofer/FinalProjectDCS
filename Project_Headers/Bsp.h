@@ -114,18 +114,18 @@
 				value=LCD_DATA_READ, \
 				LCD_EN(0) 
 
-#define	lcd_cursor(x)		lcd_cmd(((x)&0x7F)|0x80)
-#define lcd_clear()		lcd_cmd(0x01)
-#define lcd_putchar(x)		lcd_data(x)
-#define lcd_goto(x)		lcd_cmd(0x80+(x))
-#define lcd_cursor_right()	lcd_cmd(0x14)
-#define lcd_cursor_left()	lcd_cmd(0x10)
-#define lcd_display_shift()	lcd_cmd(0x1C)
-#define lcd_home()		lcd_cmd(0x02)
-#define cursor_off()              lcd_cmd(0x0C)
-#define cursor_on()               lcd_cmd(0x0F) 
-#define lcd_function_set()        lcd_cmd(0x3C) // 8bit,two lines,5x10 dots 
-#define lcd_new_line()            lcd_cmd(0xC0)
+#define	lcd_cursor(x)			lcd_cmd(((x)&0x7F)|0x80)
+#define lcd_clear()				lcd_cmd(0x01)
+#define lcd_putchar(x)			lcd_data(x)
+#define lcd_goto(x)				lcd_cmd(0x80+(x))
+#define lcd_cursor_right()		lcd_cmd(0x14)
+#define lcd_cursor_left()		lcd_cmd(0x10)
+#define lcd_display_shift()		lcd_cmd(0x1C)
+#define lcd_home()				lcd_cmd(0x02)
+#define cursor_off()            lcd_cmd(0x0C)
+#define cursor_on()             lcd_cmd(0x0F) 
+#define lcd_function_set()      lcd_cmd(0x3C) // 8bit,two lines,5x10 dots 
+#define lcd_new_line()          lcd_cmd(0xC0)
 
 void InitGPIO();
 void InitTPM(char x);

@@ -210,6 +210,7 @@ void blink_rgb(int x){
 
 void lcd_count_up(int x){
 	int repeat_num, show_num;
+	char num_str[3];
 		
 	repeat_num = x;
 	
@@ -218,25 +219,25 @@ void lcd_count_up(int x){
 		show_num = 0;
 		while(show_num <= 10)
 		{
+			sprintf(num_str,"%d",show_num);
+			
 			lcd_clear();
-			if(show_num == 10)
-			{
-				lcd_puts("10");
-			}
-			else
-			{
-				lcd_data('0' + show_num);
-			}
+			DelayMs(250);
+			
+			lcd_puts(num_str);
+			
 			Delay_d();
+			
 			show_num++;
 		}
 		repeat_num--;
 	}
-	
+	lcd_clear();
 }
 
 void lcd_count_down(int x){
 	int repeat_num, show_num;
+	char num_str[3];
 		
 	repeat_num = x;
 	
@@ -245,21 +246,20 @@ void lcd_count_down(int x){
 		show_num = 10;
 		while(show_num >= 0)
 		{
+			sprintf(num_str,"%d",show_num);
+			
 			lcd_clear();
-			if(show_num == 10)
-			{
-				lcd_puts("10");
-			}
-			else
-			{
-				lcd_data('0' + show_num);
-			}
+			DelayMs(250);
+			
+			lcd_puts(num_str);
+			
 			Delay_d();
+			
 			show_num--;
 		}
 		repeat_num--;
 	}
-	
+	lcd_clear();
 }
 
 void set_delay(int d){
@@ -273,7 +273,7 @@ void clear_all_leds(void){
 }
 
 void servo_deg(int degree){
-	char msg[12] = {0};
+	char msg[13] = {0};
 
 	WriteServo(degree);
 	enable_sensor(TRUE);
