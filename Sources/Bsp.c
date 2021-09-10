@@ -151,9 +151,9 @@ void InitGPIO()
 	SIM_SCGC5 |= SIM_SCGC5_PORTA_MASK | SIM_SCGC5_PORTB_MASK | SIM_SCGC5_PORTC_MASK | SIM_SCGC5_PORTD_MASK | SIM_SCGC5_PORTE_MASK;
 	
 	//Setup Pins as Timer Output PWM
-	PORTE_PCR22 	= PORT_PCR_MUX(3)| PORT_PCR_DSE_MASK; 	//PTE22 pin TMP2_CH0 - ALT3, Edge Aligned PWM
-	PORTA_PCR2 		= PORT_PCR_MUX(3);						//PTA2  pin TMP2_CH1 - ALT3, input-capture
-	PORTD_PCR0 		= PORT_PCR_MUX(4)| PORT_PCR_DSE_MASK;	//PTE22 pin TMP0_CH0 - ALT4, Edge Aligned PWM
+	PORTE_PCR22 	= PORT_PCR_MUX(3)| PORT_PCR_DSE_MASK; 	//PTE22 pin TMP2_CH0 - ALT3, Edge Aligned PWM,	Trigger
+	PORTE_PCR29 	= PORT_PCR_MUX(3); 						//PTE29 pin TMP0_CH2 - ALT3, input-capture,		Echo
+	PORTA_PCR12 	= PORT_PCR_MUX(3) | PORT_PCR_DSE_MASK;	//PTA12 pin TPM1_CH0 - ALT3, Edge Aligned PWM
 		
 	//GPIO Configuration - LEDs - Output
 	PORTD_PCR1 = PORT_PCR_MUX(1) | PORT_PCR_DSE_MASK;  //Blue
@@ -193,20 +193,6 @@ void InitGPIO()
 	PORTE_PCR3 = PORT_PCR_MUX(1) | PORT_PCR_PE_MASK | PORT_PCR_PS_MASK ; // assign  as GPIO (RS) Pin4 LCD -> PTE3
 	PORTE_PCR4 = PORT_PCR_MUX(1) | PORT_PCR_PE_MASK | PORT_PCR_PS_MASK ; // assign  as GPIO (R/W) PIN5 -> PTE4
 	PORTE_PCR5 = PORT_PCR_MUX(1) | PORT_PCR_PE_MASK | PORT_PCR_PS_MASK ; // assign  as GPIO (E) PTE5
-	
-	
-	PORTA_PCR12 = PORT_PCR_MUX(3); // TPM1_CH0 - ALT3
-
-	/////// Ultra-sonic sensor/////
-	// Trigger
-	PORTE_PCR22 = PORT_PCR_MUX(3); // TPM1_CH1- ALT3
-	//pit
-	PORTC_PCR7  = PORT_PCR_MUX(1); // set GPIO
-	GPIOC_PDDR  |= PORT_LOC(7);    // PTC7 is output
-	// Echo
-	PORTE_PCR29  = PORT_PCR_MUX(3); // TPM0_CH2 - ALT3
-	
-	
 }
 //-----------------------------------------------------------------
 // DipSwitch data reading
@@ -225,19 +211,22 @@ uint8_t TFC_GetDIP_Switch()
 void InitTPMx(char x){  // x={0,1,2}
 	switch(x){ 
 	case 0: // Echo
+		
 		TPM0_SC = 0; // to ensure that the counter is not running
-		TPM0_SC = TPM_SC_PS(5); //Prescaler 32
+		TPM0_SC = TPM_SC_PS(5); //Prescaler = 32, up-mode, counter-disable
 		TPM0_MOD = 0xFFFF;
 		TPM0_C2SC = 0;
-		// Input capture both edge detect
-		TPM0_C2SC |= TPM_CnSC_ELSB_MASK + TPM_CnSC_ELSA_MASK + TPM_CnSC_CHIE_MASK;
-		TPM0_CONF = 0;
+		TPM0_C2SC |= TPM_CnSC_ELSA_MASK + TPM_CnSC_ELSB_MASK + TPM_CnSC_CHIE_MASK;	//capture triggered on edge
+		
+		TPM0_CONF = TPM_CONF_DBGMODE(3);
+		
 		TPM0_C2V = 0;
 		enable_irq(INT_TPM0-16); // Enable Interrupts 
 		set_irq_priority (INT_TPM0-16,0);  // Interrupt priority = 0 = max
 		break;
 		
 	case 1: // Servo
+		
 		TPM1_SC = 0; // to ensure that the counter is not running
 		TPM1_SC |= TPM_SC_PS(6) + TPM_SC_TOIE_MASK; //Prescaler =64, up-mode, counter-disable
 		// TPM period = (MOD + 1) * CounterClock_period
@@ -250,15 +239,16 @@ void InitTPMx(char x){  // x={0,1,2}
 		
 		break;
 	case 2: // Trigger
+		
 		TPM2_SC = 0; // to ensure that the counter is not running
-		TPM2_SC |= TPM_SC_PS(5) + TPM_SC_TOIE_MASK;  //Prescaler = 32, clear flag
+		TPM2_SC |= TPM_SC_PS(5) + TPM_SC_TOIE_MASK;  //Prescaler = 32, up-mode, counter-disable
 		// TPM period = (MOD + 1) * CounterClock_period
 		TPM2_MOD = TRIGGER_MODULO_REGISTER;  // PWM frequency of 15Hz = 24MHz/(32x50,000)
 		TPM2_C0SC = 0;
 		// Edge Aligned , High-True pulse, channel interrupts enabled
 		TPM2_C0SC |= TPM_CnSC_MSB_MASK + TPM_CnSC_ELSB_MASK + TPM_CnSC_CHIE_MASK;
-		TPM2_C0V = 10; // Duty Cycle( > 10us)
-		TPM2_CONF = 0;//TPM_CONF_DBGMODE(3); //LPTPM counter continues in debug mode
+		TPM2_C0V = 0xA; // Duty Cycle( > 10us)
+		TPM2_CONF = 0;
 		break;
 	}
 }

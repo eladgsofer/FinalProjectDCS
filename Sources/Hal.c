@@ -119,25 +119,25 @@ void dma_file_trans(void)
 	UARTprintf(UART0_BASE_PTR,"Fack\n");
 }
 //-----------------------------------------------------------------
-// TPM2_C1 = Interrupt Service Routine
+// TPM0_C2 = Interrupt Service Routine
 //-----------------------------------------------------------------
-void FTM2_IRQHandler(){
+void FTM0_IRQHandler(){
 	
 	static unsigned int rising_edge = 0x1;
 	static unsigned int sample_sum = 0x0000;
 	int cntr_snap;
 	
 	
-	if(TPM2_C1SC&TPM_CnSC_CHF_MASK)		//if channel flag raised
+	if(TPM0_C2SC&TPM_CnSC_CHF_MASK)		//if channel flag raised
 	{
-		cntr_snap = TPM2_C1V;			//capture TPM2_C1 counter
+		cntr_snap = TPM0_C2V;			//capture TPM0_C2 counter
 		if(rising_edge)
 		{
-			cntr_start = cntr_snap;		//save TPM2_C1 counter value on rising edge
+			cntr_start = cntr_snap;		//save TPM0_C2 counter value on rising edge
 		}
 		else
 		{	
-			cntr_end = cntr_snap;			//save TPM2_C1 counter value on falling edge and calculate delta
+			cntr_end = cntr_snap;			//save TPM0_C2 counter value on falling edge and calculate delta
 			range = (cntr_end - cntr_start)&0xFFFF;			//calculate range (delta counter)
 			
 			sample_sum += range;
@@ -158,7 +158,7 @@ void FTM2_IRQHandler(){
 	}
 	
 	
-	TPM2_C1SC |= TPM_CnSC_CHF_MASK; 			//clean interrupt flag
+	TPM0_C2SC |= TPM_CnSC_CHF_MASK; 			//clean interrupt flag
 }
 
 //---------------------------------------------------------------
