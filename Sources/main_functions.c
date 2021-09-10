@@ -66,6 +66,14 @@ void rad_detect_sys(){
 //   Telemetry
 ///////////////////////
 void telemeter(void){
+	
+	// just servo_degree
+	// Maybe use for telemetry?
+	/*	if(telemetryMode)
+			sprintf(str,"tele%4X",distance_avg);
+		else
+			sprintf(msg,"scan%3d%4X\n",degree,distance_avg);*/
+	
 	char str[16] = {0};
 	int degree;
 	
@@ -251,6 +259,9 @@ void script_receive_flow(void)
 	while(!dma_done);
 	
 	commandsParser(index_last);
+	UARTprintf(UART0_BASE_PTR,"fnsc\n");
+	
+
 }
 
 int print_files_menu(int file_idx){
