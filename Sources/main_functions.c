@@ -35,6 +35,24 @@ void InitApp(void)
 	
 }
 
+//--------------------------------------------------------------------------------------------------------------------
+// Exit State
+//--------------------------------------------------------------------------------------------------------------------
+exit_state()
+{
+	//Clear LCD
+	lcd_clear();
+	
+	//Clear UART messages from PC and ready to accept new once
+	dataready = 0;
+	memset(PC_msg,0,40);
+	
+	//Return Servo to starting point
+	WriteServo(MIN_DEG);
+	
+	//Enter Idle Mode
+	state = IDLE_STATE_0;
+}
 //////////////////////////////
 //           Scan
 //////////////////////////////
@@ -62,9 +80,7 @@ void rad_detect_sys(){
 			{
 				if(strncmp(PC_msg, "Exit", 4) == 0)
 				{
-					//clear Flags & Args
-					dataready = 0;
-					memset(PC_msg,0,40);
+					exit_state();
 					exit = 1;
 					
 					//Exit state
@@ -77,13 +93,7 @@ void rad_detect_sys(){
 		{
 			break;
 		}
-		//enable_sensor(FALSE);
-			
-		//servo_scan(MIN_DEG,MAX_DEG);
-		
-		//Delay_Ms(50);
 	}
-	InitServo();
 }
 ////////////////////////
 //   Telemetry
@@ -124,9 +134,7 @@ void telemeter(void){
 		{
 			if(strncmp(PC_msg, "Exit", 4) == 0)
 			{
-				//clear Flags & Args
-				dataready = 0;
-				memset(PC_msg,0,40);
+				exit_state();
 				
 				//Exit state
 				break;
@@ -185,13 +193,15 @@ int commandsParser(int fileIndex) {
                 servo_scan(leftAngle, rightAngle);
                 break;
             case 8:
-                wait(); //sleep();
+                UARTprintf(UART0_BASE_PTR,"fnsc\n");
+                exit_state();
                 break;
                 /* you can have any number of case statements */
             default : /* Optional */
                 break;
         }
     }
+
     return 0;
 }
 
@@ -221,7 +231,7 @@ void set_uart_configurations()
 	}
 
 	InitUARTConf(PC_msg[a], PC_msg[b], PC_msg[c]);
-	memset(PC_msg,0,40);  //memset - clears the array
+	exit_state();
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -247,9 +257,7 @@ void script_mode(void)
 			{
 				if(strncmp(PC_msg, "SMExit", 6) == 0)
 				{
-					//clear Flags & Args
-					dataready = 0;
-					memset(PC_msg,0,40);
+					exit_state();
 					
 					//Exit state
 					exit = 1;
@@ -282,8 +290,6 @@ void script_receive_flow(void)
 	while(!dma_done);
 	
 	commandsParser(index_last);
-	UARTprintf(UART0_BASE_PTR,"fnsc\n");
-	
 
 }
 
