@@ -71,42 +71,12 @@ namespace TerminalPC.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static System.Drawing.Bitmap chatModeBack {
+        internal static System.Drawing.Icon logo {
             get {
-                object obj = ResourceManager.GetObject("chatModeBack", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap d4xmmg4_883c5c3d_2e64_445f_8dc4_a7c4eef8f41c {
-            get {
-                object obj = ResourceManager.GetObject("d4xmmg4-883c5c3d-2e64-445f-8dc4-a7c4eef8f41c", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap filesback {
-            get {
-                object obj = ResourceManager.GetObject("filesback", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap filesbackNew {
-            get {
-                object obj = ResourceManager.GetObject("filesbackNew", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                object obj = ResourceManager.GetObject("logo", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
             }
         }
     }

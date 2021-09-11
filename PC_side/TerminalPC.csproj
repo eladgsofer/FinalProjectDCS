@@ -85,19 +85,13 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\background.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\filesback.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\filesbackNew.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\chatModeBack.jpg" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\d4xmmg4-883c5c3d-2e64-445f-8dc4-a7c4eef8f41c.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\WiFiFinder_radar_signal_6897.ico" />
+    <None Include="Resources\106958421-radar-icon-vector-isolated-on-white-background-for-your-web-and-mobile-app-design-radar-logo-concept.jpg" />
+    <None Include="Resources\logo.bmp" />
+    <Content Include="Resources\logo.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

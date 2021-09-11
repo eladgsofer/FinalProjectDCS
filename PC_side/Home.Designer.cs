@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Home));
             this.comboBoxCOM = new System.Windows.Forms.ComboBox();
             this.buttonConnect = new System.Windows.Forms.Button();
             this.labelCOM = new System.Windows.Forms.Label();
@@ -58,16 +59,16 @@
             this.buttonChoose = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.StatusDataLabel = new System.Windows.Forms.Label();
-            this.Status = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
             this.label2 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
+            this.StatusDataLabel = new System.Windows.Forms.Label();
+            this.Status = new System.Windows.Forms.Label();
             this.panel3 = new System.Windows.Forms.Panel();
+            this.ConnectionStatus = new System.Windows.Forms.Label();
             this.panel4 = new System.Windows.Forms.Panel();
             this.label4 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
-            this.ConnectionStatus = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.radarPictureBox)).BeginInit();
             this.telemetriaPanel.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -397,28 +398,6 @@
             this.panel1.Size = new System.Drawing.Size(294, 44);
             this.panel1.TabIndex = 35;
             // 
-            // StatusDataLabel
-            // 
-            this.StatusDataLabel.AutoSize = true;
-            this.StatusDataLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(177)));
-            this.StatusDataLabel.Location = new System.Drawing.Point(86, 18);
-            this.StatusDataLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.StatusDataLabel.Name = "StatusDataLabel";
-            this.StatusDataLabel.Size = new System.Drawing.Size(13, 17);
-            this.StatusDataLabel.TabIndex = 6;
-            this.StatusDataLabel.Text = " ";
-            // 
-            // Status
-            // 
-            this.Status.AutoSize = true;
-            this.Status.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(177)));
-            this.Status.Location = new System.Drawing.Point(14, 15);
-            this.Status.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.Status.Name = "Status";
-            this.Status.Size = new System.Drawing.Size(67, 20);
-            this.Status.TabIndex = 4;
-            this.Status.Text = "Status:";
-            // 
             // panel2
             // 
             this.panel2.Controls.Add(this.label2);
@@ -451,6 +430,28 @@
             this.label5.TabIndex = 4;
             this.label5.Text = "Status:";
             // 
+            // StatusDataLabel
+            // 
+            this.StatusDataLabel.AutoSize = true;
+            this.StatusDataLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(177)));
+            this.StatusDataLabel.Location = new System.Drawing.Point(86, 18);
+            this.StatusDataLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.StatusDataLabel.Name = "StatusDataLabel";
+            this.StatusDataLabel.Size = new System.Drawing.Size(13, 17);
+            this.StatusDataLabel.TabIndex = 6;
+            this.StatusDataLabel.Text = " ";
+            // 
+            // Status
+            // 
+            this.Status.AutoSize = true;
+            this.Status.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(177)));
+            this.Status.Location = new System.Drawing.Point(14, 15);
+            this.Status.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.Status.Name = "Status";
+            this.Status.Size = new System.Drawing.Size(67, 20);
+            this.Status.TabIndex = 4;
+            this.Status.Text = "Status:";
+            // 
             // panel3
             // 
             this.panel3.Controls.Add(this.ConnectionStatus);
@@ -460,6 +461,18 @@
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(125, 36);
             this.panel3.TabIndex = 45;
+            // 
+            // ConnectionStatus
+            // 
+            this.ConnectionStatus.AutoSize = true;
+            this.ConnectionStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(177)));
+            this.ConnectionStatus.ForeColor = System.Drawing.Color.Red;
+            this.ConnectionStatus.Location = new System.Drawing.Point(3, 10);
+            this.ConnectionStatus.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.ConnectionStatus.Name = "ConnectionStatus";
+            this.ConnectionStatus.Size = new System.Drawing.Size(111, 17);
+            this.ConnectionStatus.TabIndex = 46;
+            this.ConnectionStatus.Text = " Disconnected";
             // 
             // panel4
             // 
@@ -493,24 +506,12 @@
             this.label6.TabIndex = 4;
             this.label6.Text = "Status:";
             // 
-            // ConnectionStatus
-            // 
-            this.ConnectionStatus.AutoSize = true;
-            this.ConnectionStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(177)));
-            this.ConnectionStatus.ForeColor = System.Drawing.Color.Red;
-            this.ConnectionStatus.Location = new System.Drawing.Point(3, 10);
-            this.ConnectionStatus.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.ConnectionStatus.Name = "ConnectionStatus";
-            this.ConnectionStatus.Size = new System.Drawing.Size(111, 17);
-            this.ConnectionStatus.TabIndex = 46;
-            this.ConnectionStatus.Text = " Disconnected";
-            // 
             // Home
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Menu;
-            this.BackgroundImage = global::TerminalPC.Properties.Resources.d4xmmg4_883c5c3d_2e64_445f_8dc4_a7c4eef8f41c;
+            this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.ClientSize = new System.Drawing.Size(1275, 595);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel1);
@@ -538,6 +539,7 @@
             this.Controls.Add(this.labelCOM);
             this.Controls.Add(this.buttonConnect);
             this.Controls.Add(this.comboBoxCOM);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Home";
             this.Text = "Final Project By Katrin Nekhin and Elad Sofer";
             this.Load += new System.EventHandler(this.Home_Load);
