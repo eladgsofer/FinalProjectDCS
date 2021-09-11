@@ -299,6 +299,7 @@ void servo_scan(int left_angle,int right_angle){
 		
 		Delay_Ms(50);
 	}
+	
 	enable_sensor(FALSE);
 }
 

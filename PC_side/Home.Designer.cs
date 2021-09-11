@@ -44,8 +44,8 @@
             this.telemetriaDataTextBox = new System.Windows.Forms.TextBox();
             this.button3 = new System.Windows.Forms.Button();
             this.telemetriaPanel = new System.Windows.Forms.Panel();
-            this.telemetriaOlLabel = new System.Windows.Forms.Label();
-            this.telemetriaCmLabel = new System.Windows.Forms.Label();
+            this.AngelDataLabel = new System.Windows.Forms.Label();
+            this.DistanceDataLabel = new System.Windows.Forms.Label();
             this.AngelLabel = new System.Windows.Forms.Label();
             this.DistanceLabel = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
@@ -58,8 +58,16 @@
             this.buttonChoose = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.openFileDialog2 = new System.Windows.Forms.OpenFileDialog();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.StatusDataLabel = new System.Windows.Forms.Label();
+            this.Status = new System.Windows.Forms.Label();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.radarPictureBox)).BeginInit();
             this.telemetriaPanel.SuspendLayout();
+            this.panel1.SuspendLayout();
+            this.panel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // comboBoxCOM
@@ -215,49 +223,51 @@
             // 
             // telemetriaPanel
             // 
-            this.telemetriaPanel.Controls.Add(this.telemetriaOlLabel);
-            this.telemetriaPanel.Controls.Add(this.telemetriaCmLabel);
+            this.telemetriaPanel.Controls.Add(this.AngelDataLabel);
+            this.telemetriaPanel.Controls.Add(this.DistanceDataLabel);
             this.telemetriaPanel.Controls.Add(this.AngelLabel);
             this.telemetriaPanel.Controls.Add(this.DistanceLabel);
             this.telemetriaPanel.Location = new System.Drawing.Point(426, 123);
             this.telemetriaPanel.Margin = new System.Windows.Forms.Padding(2);
             this.telemetriaPanel.Name = "telemetriaPanel";
-            this.telemetriaPanel.Size = new System.Drawing.Size(458, 44);
+            this.telemetriaPanel.Size = new System.Drawing.Size(506, 44);
             this.telemetriaPanel.TabIndex = 34;
             this.telemetriaPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.telemetriaPanel_Paint);
             // 
-            // telemetriaOlLabel
+            // AngelDataLabel
             // 
-            this.telemetriaOlLabel.AutoSize = true;
-            this.telemetriaOlLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(177)));
-            this.telemetriaOlLabel.Location = new System.Drawing.Point(373, 7);
-            this.telemetriaOlLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.telemetriaOlLabel.Name = "telemetriaOlLabel";
-            this.telemetriaOlLabel.Size = new System.Drawing.Size(15, 17);
-            this.telemetriaOlLabel.TabIndex = 7;
-            this.telemetriaOlLabel.Text = "°";
+            this.AngelDataLabel.AutoSize = true;
+            this.AngelDataLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(177)));
+            this.AngelDataLabel.Location = new System.Drawing.Point(372, 15);
+            this.AngelDataLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.AngelDataLabel.Name = "AngelDataLabel";
+            this.AngelDataLabel.Size = new System.Drawing.Size(13, 17);
+            this.AngelDataLabel.TabIndex = 7;
+            this.AngelDataLabel.Text = " ";
+            this.AngelDataLabel.Click += new System.EventHandler(this.telemetriaOlLabel_Click);
             // 
-            // telemetriaCmLabel
+            // DistanceDataLabel
             // 
-            this.telemetriaCmLabel.AutoSize = true;
-            this.telemetriaCmLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(177)));
-            this.telemetriaCmLabel.Location = new System.Drawing.Point(215, 15);
-            this.telemetriaCmLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.telemetriaCmLabel.Name = "telemetriaCmLabel";
-            this.telemetriaCmLabel.Size = new System.Drawing.Size(28, 17);
-            this.telemetriaCmLabel.TabIndex = 6;
-            this.telemetriaCmLabel.Text = "cm";
+            this.DistanceDataLabel.AutoSize = true;
+            this.DistanceDataLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(177)));
+            this.DistanceDataLabel.Location = new System.Drawing.Point(146, 15);
+            this.DistanceDataLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.DistanceDataLabel.Name = "DistanceDataLabel";
+            this.DistanceDataLabel.Size = new System.Drawing.Size(13, 17);
+            this.DistanceDataLabel.TabIndex = 6;
+            this.DistanceDataLabel.Text = " ";
             // 
             // AngelLabel
             // 
             this.AngelLabel.AutoSize = true;
             this.AngelLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(177)));
-            this.AngelLabel.Location = new System.Drawing.Point(287, 13);
+            this.AngelLabel.Location = new System.Drawing.Point(308, 12);
             this.AngelLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.AngelLabel.Name = "AngelLabel";
             this.AngelLabel.Size = new System.Drawing.Size(60, 20);
             this.AngelLabel.TabIndex = 5;
             this.AngelLabel.Text = "Angle:";
+            this.AngelLabel.Click += new System.EventHandler(this.AngelLabel_Click);
             // 
             // DistanceLabel
             // 
@@ -367,6 +377,71 @@
             // 
             this.openFileDialog2.FileName = "openFileDialog2";
             // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.panel2);
+            this.panel1.Controls.Add(this.StatusDataLabel);
+            this.panel1.Controls.Add(this.Status);
+            this.panel1.Location = new System.Drawing.Point(946, 123);
+            this.panel1.Margin = new System.Windows.Forms.Padding(2);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(294, 44);
+            this.panel1.TabIndex = 35;
+            // 
+            // StatusDataLabel
+            // 
+            this.StatusDataLabel.AutoSize = true;
+            this.StatusDataLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(177)));
+            this.StatusDataLabel.Location = new System.Drawing.Point(86, 18);
+            this.StatusDataLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.StatusDataLabel.Name = "StatusDataLabel";
+            this.StatusDataLabel.Size = new System.Drawing.Size(13, 17);
+            this.StatusDataLabel.TabIndex = 6;
+            this.StatusDataLabel.Text = " ";
+            // 
+            // Status
+            // 
+            this.Status.AutoSize = true;
+            this.Status.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(177)));
+            this.Status.Location = new System.Drawing.Point(14, 15);
+            this.Status.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.Status.Name = "Status";
+            this.Status.Size = new System.Drawing.Size(67, 20);
+            this.Status.TabIndex = 4;
+            this.Status.Text = "Status:";
+            // 
+            // panel2
+            // 
+            this.panel2.Controls.Add(this.label2);
+            this.panel2.Controls.Add(this.label5);
+            this.panel2.Location = new System.Drawing.Point(29, 63);
+            this.panel2.Margin = new System.Windows.Forms.Padding(2);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(269, 44);
+            this.panel2.TabIndex = 36;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(177)));
+            this.label2.Location = new System.Drawing.Point(86, 18);
+            this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(13, 17);
+            this.label2.TabIndex = 6;
+            this.label2.Text = " ";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(177)));
+            this.label5.Location = new System.Drawing.Point(14, 15);
+            this.label5.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(67, 20);
+            this.label5.TabIndex = 4;
+            this.label5.Text = "Status:";
+            // 
             // Home
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -374,6 +449,7 @@
             this.BackColor = System.Drawing.SystemColors.Menu;
             this.BackgroundImage = global::TerminalPC.Properties.Resources.d4xmmg4_883c5c3d_2e64_445f_8dc4_a7c4eef8f41c;
             this.ClientSize = new System.Drawing.Size(1275, 595);
+            this.Controls.Add(this.panel1);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.buttonSend);
             this.Controls.Add(this.buttonFilesLCD);
@@ -404,6 +480,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.radarPictureBox)).EndInit();
             this.telemetriaPanel.ResumeLayout(false);
             this.telemetriaPanel.PerformLayout();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
+            this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -426,8 +506,7 @@
         private System.Windows.Forms.TextBox telemetriaDataTextBox;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Panel telemetriaPanel;
-        private System.Windows.Forms.Label telemetriaOlLabel;
-        private System.Windows.Forms.Label telemetriaCmLabel;
+        private System.Windows.Forms.Label AngelDataLabel;
         private System.Windows.Forms.Label AngelLabel;
         private System.Windows.Forms.Label DistanceLabel;
         private System.Windows.Forms.Label label1;
@@ -440,6 +519,13 @@
         private System.Windows.Forms.Button buttonChoose;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.OpenFileDialog openFileDialog2;
+        private System.Windows.Forms.Label DistanceDataLabel;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label StatusDataLabel;
+        private System.Windows.Forms.Label Status;
     }
 }
 

@@ -37,7 +37,7 @@ namespace TerminalPC
 
         public static string fileData = "";
         public static string fileName;
-
+        private bool displayOn = false;
 
 
         private float maskedDistance = 100; // cm
@@ -55,11 +55,11 @@ namespace TerminalPC
         private Graphics graphics;
 
         // border Pen
-        private readonly  Pen borderGreenPen = new Pen(Color.Green, 2.5f);
+        private readonly  Pen borderGreenPen = new Pen(Color.Green, 1f);
         // Beam pens
-        private readonly Pen greenPen = new Pen(Color.Red, 1f);
-        private readonly Pen redPen = new Pen(Color.Red, 1f);
-        private readonly Pen blackPen = new Pen(Color.Black, 1f);
+        private  Pen greenPen = new Pen(Color.Green, 1.2f);
+        private  Pen redPen = new Pen(Color.Red, 1.2f);
+        private  Pen blackPen = new Pen(Color.Black, 1.2f);
 
 
         public Home()
@@ -91,7 +91,7 @@ namespace TerminalPC
             bmp = new Bitmap(WIDTH + 1, HEIGHT + 1);
             radarPictureBox.BackColor = Color.Black;
             pointsArr = new List<Point>();
-            drawRadarPicture(true);
+            drawRadarPicture(true, false);
 
             // create a dataReceived handler function
             port.DataReceived += new SerialDataReceivedEventHandler(port_DataReceived);
@@ -162,9 +162,12 @@ namespace TerminalPC
 
                     this.Invoke((MethodInvoker)delegate
                     {
-                        DisplayRadar(deg, dist);
-                        AngelLabel.Text = "Angle: " + deg;
-                        DistanceLabel.Text = "Distance: " + dist.ToString("#.##");
+                        if (displayOn)
+                        {
+                            DisplayRadar(deg, dist);
+                            AngelDataLabel.Text = deg + "°";
+                            DistanceDataLabel.Text = dist.ToString("#.##") + " cm";
+                        }
                     });
                     break;
 
@@ -178,20 +181,31 @@ namespace TerminalPC
                     Console.WriteLine("Telemetria: Distance- " + distanceString);
                     this.Invoke((MethodInvoker)delegate
                     {
-                        DistanceLabel.Text = "Distance: " + distanceString;
-                        telemetriaPanel.Visible = true;
+                        if (displayOn)
+                            DistanceDataLabel.Text = distanceString;
                     });
                     break;
 
                 // File recieved ok 
                 case SerialPortConn.TYPE.FILE_ACK:
                     Console.WriteLine("Sending file");
+                    displayOn = true;
                     sendSerialMessage(spConn, fileData);
+                    StatusDataLabel.Text = "Script mode is on";
+
                     break;
 
                 // Finish executing script
                 case SerialPortConn.TYPE.SCRIPT_DONE:
                     Console.WriteLine("Finished executing command script " + fileName);
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        StatusDataLabel.Text = "Script " + fileName + " finished execution";
+                    });
+                    
+                    displayOn = false;
+                    //TODO? need to clean the GUI?
+                    clearGUI(); 
                     sendSerialMessage(spConn, "SMExit");
                     break;
                     
@@ -199,6 +213,7 @@ namespace TerminalPC
                 case SerialPortConn.TYPE.CONN_ACK:
                     refreshSerialPort();
                     Console.WriteLine("SerialPort is connected");
+                    StatusDataLabel.Text = "Serial port is connected";
                     break;
 
                 // Unknown
@@ -220,7 +235,7 @@ namespace TerminalPC
                 MessageBox.Show(ex.ToString());
             }
         }
-        private void drawRadarPicture(bool updatePicture)
+        private void drawRadarPicture(bool updatePicture, bool eraseLines)
         {
 
             /////////////////////////////
@@ -228,6 +243,9 @@ namespace TerminalPC
             ////////////////////////////
             //graphics
             graphics = Graphics.FromImage(bmp);
+
+            if (eraseLines)
+                this.eraseLines();
 
             // draw circles
             for (int i = 50; i < HAND; i += 100)
@@ -246,6 +264,8 @@ namespace TerminalPC
                 Point p_end = new Point(circleX - (int)(HAND * Math.Cos(ang * Math.PI / 180)), circleY - (int)(HAND * Math.Sin(ang * Math.PI / 180)));
                 graphics.DrawLine(borderGreenPen, new Point(circleX, circleY), p_end);
             }
+
+
             if (updatePicture)
             {
                 graphics.Dispose();
@@ -260,16 +280,20 @@ namespace TerminalPC
                 {
                     graphics.DrawLine(blackPen, centerP, pointsArr[i]);
                 }
-                catch
+                catch (Exception ex)
                 {
                     Console.WriteLine(blackPen +" " + centerP + " " + pointsArr[i]);
                 }
             }
+            pointsArr.Clear();
         }
 
         private void DisplayRadar(int deg, float dist)
         {
-            drawRadarPicture(false);
+            if (!displayOn)
+                return;
+
+            drawRadarPicture(false, false);
 
             // Convert deg to range [-90,90]
             handDegMain = -(deg - 90);
@@ -302,12 +326,13 @@ namespace TerminalPC
             pointsArr.Add(endHand);
             if (handDegMain == 90)
             {
-                eraseLines();
-                pointsArr = new List<Point>(180);
+                drawRadarPicture(true, true);
             }
-
-            graphics.Dispose();
-            radarPictureBox.Image = bmp;
+            else
+            {
+                graphics.Dispose();
+                radarPictureBox.Image = bmp;
+            }
         }
         //public void ProcessMessage(){
         private void refreshSerialPort()
@@ -325,7 +350,6 @@ namespace TerminalPC
                 port.DataReceived += new SerialDataReceivedEventHandler(port_DataReceived);
 
                 port.Open();
-                MessageBox.Show("Connected!");
             }
             catch (Exception ex)
             {
@@ -334,29 +358,47 @@ namespace TerminalPC
 
         }
 
+        private void clearGUI()
+        {
+            drawRadarPicture(true, true);
+            AngelDataLabel.Text = "";
+            DistanceDataLabel.Text = "";
+        }
         // save masked distance
         private void button4_Click(object sender, EventArgs e)
         {
-            this.maskedDistance = int.Parse(MaskedDistanceTextBox.Text);
+            string maskedStr = MaskedDistanceTextBox.Text;
             MaskedDistanceTextBox.Clear();
+            this.maskedDistance = int.Parse(maskedStr);
+            MessageBox.Show("Masked distance new value " + maskedStr);
         }
 
         // telemetry button
         private void button3_Click_1(object sender, EventArgs e)
         {
-            // \0? for ending a message? otherwise we could keep reading the next message?..
+            this.displayOn = true;
+            AngelDataLabel.Text = telemetriaDataTextBox.Text + "°";
             int deg = int.Parse(telemetriaDataTextBox.Text);
+            telemetriaDataTextBox.Clear();
+            // \0? for ending a message? otherwise we could keep reading the next message?..
             port.sendMessage("Tele" + deg.ToString("D3"));
+            StatusDataLabel.Text = "Telemetry is on";
         }
         private void scanButton_Click(object sender, EventArgs e)
         {
+            this.displayOn = true;
+            StatusDataLabel.Text = "Scan is on";
             port.sendMessage("RadDec");
         }
         private void stopButton_Click(object sender, EventArgs e)
         {
+            this.displayOn = false;
             port.sendMessage("Exit");
-            eraseLines();
-            pointsArr = new List<Point>();
+            StatusDataLabel.Text = "Scan Stopped";
+            // maybe ack the exit?
+            clearGUI();
+
+
         }
         private void label1_Click(object sender, EventArgs e)
         {
@@ -425,6 +467,7 @@ namespace TerminalPC
                 {
                     fileData = sr.ReadToEnd();          //translate file to string
                     Home.port.sendMessage("RScript " + s1.ToString() + "," + fname);
+                    StatusDataLabel.Text = "Script mode is on";
                 }
                 catch (Exception ex)
                 {
@@ -459,6 +502,17 @@ namespace TerminalPC
         private void openFileDialog1_FileOk_1(object sender, CancelEventArgs e)
         {
             textBox1.Text = openFileDialog1.FileName;
+            fileName = Path.GetFileName(openFileDialog1.FileName);
+        }
+
+        private void telemetriaOlLabel_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void AngelLabel_Click(object sender, EventArgs e)
+        {
+
         }
 
         private void comboBoxParity_SelectedIndexChanged(object sender, EventArgs e)

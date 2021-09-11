@@ -45,7 +45,11 @@ void rad_detect_sys(){
 	lcd_puts("Scanning");
 	
 	while(1){
-		while( degree < MAX_DEG ){
+
+		if (degree> MAX_DEG)
+			degree = MIN_DEG;
+		
+		while( degree <= MAX_DEG ){
 			
 			servo_deg(degree);
 			
