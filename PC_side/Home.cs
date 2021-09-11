@@ -213,7 +213,10 @@ namespace TerminalPC
                 case SerialPortConn.TYPE.CONN_ACK:
                     refreshSerialPort();
                     Console.WriteLine("SerialPort is connected");
-                    StatusDataLabel.Text = "Serial port is connected";
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        StatusDataLabel.Text = "Serial port is connected";
+                    });
                     break;
 
                 // Unknown
@@ -361,8 +364,11 @@ namespace TerminalPC
         private void clearGUI()
         {
             drawRadarPicture(true, true);
-            AngelDataLabel.Text = "";
-            DistanceDataLabel.Text = "";
+            this.Invoke((MethodInvoker)delegate
+            {
+                AngelDataLabel.Text = "";
+                DistanceDataLabel.Text = "";
+            });    
         }
         // save masked distance
         private void button4_Click(object sender, EventArgs e)
@@ -396,6 +402,7 @@ namespace TerminalPC
             port.sendMessage("Exit");
             StatusDataLabel.Text = "Scan Stopped";
             // maybe ack the exit?
+            Thread.Sleep(500);
             clearGUI();
 
 
@@ -486,6 +493,7 @@ namespace TerminalPC
             {
                 MessageBox.Show(ex.ToString());
             }
+            displayOn = true;
         }
 
         private void buttonChoose_Click(object sender, EventArgs e)

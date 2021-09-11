@@ -247,11 +247,6 @@ void script_mode(void)
 		start_script = scroll_pushed = 0;
 		while(!start_script)
 		{
-			print_script_idx = next_script_idx;
-			next_script_idx	= print_files_menu(print_script_idx);
-			while(!(scroll_pushed || start_script || dataready));
-			scroll_pushed = 0;
-			
 			//Check if PC exit Script Mode
 			if(dataready)
 			{
@@ -264,6 +259,11 @@ void script_mode(void)
 					break;
 				}
 			}
+			
+			print_script_idx = next_script_idx;
+			next_script_idx	= print_files_menu(print_script_idx);
+			while(!(scroll_pushed || start_script || dataready));
+			scroll_pushed = 0;
 		}
 		
 		lcd_clear();
@@ -290,7 +290,8 @@ void script_receive_flow(void)
 	while(!dma_done);
 	
 	commandsParser(index_last);
-
+	
+	exit_state();
 }
 
 int print_files_menu(int file_idx){
