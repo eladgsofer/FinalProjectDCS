@@ -38,6 +38,7 @@ namespace TerminalPC
         public static string fileData = "";
         public static string fileName;
         private bool displayOn = false;
+        private int currTelDegree;
 
 
         private float maskedDistance = 100; // cm
@@ -139,6 +140,8 @@ namespace TerminalPC
         {
             string indata;
             string cmdVal;
+            float dist;
+            int deg;
             SerialPortConn spConn = (SerialPortConn)sender;
 
             spConn.validateConn();
@@ -154,9 +157,9 @@ namespace TerminalPC
             {
                 // Recieve Scanner info
                 case SerialPortConn.TYPE.SCAN:
-                    int deg = int.Parse(indata.Substring(4,3));
+                    deg = int.Parse(indata.Substring(4,3));
                     cntDiff = int.Parse(indata.Substring(7,4), System.Globalization.NumberStyles.HexNumber);
-                    float dist = calcDistsnce(cntDiff);
+                    dist = calcDistsnce(cntDiff);
                     Console.WriteLine("scan: deg- " + deg + " dist- " + dist + " cm");
 
                     this.Invoke((MethodInvoker)delegate
@@ -175,13 +178,18 @@ namespace TerminalPC
                 case SerialPortConn.TYPE.TELEMETRY:
                     cmdVal = indata.Substring(4, 4);
                     cntDiff = int.Parse(cmdVal, System.Globalization.NumberStyles.HexNumber);
-                    string distanceString = calcDistsnce(cntDiff) > maskedDistance ?
-                        "Out of Range" : calcDistsnce(cntDiff).ToString("#.##") + " cm";
+                    dist = calcDistsnce(cntDiff);
+                    string distanceString = dist > maskedDistance ? "Out of Range" : dist.ToString("#.##") + " cm";
                     Console.WriteLine("Telemetria: Distance- " + distanceString);
                     this.Invoke((MethodInvoker)delegate
                     {
                         if (displayOn)
+                        {
+
                             DistanceDataLabel.Text = distanceString;
+                            clearRadar();
+                            DisplayRadar(currTelDegree, dist);
+                        }
                     });
                     break;
 
@@ -379,12 +387,21 @@ namespace TerminalPC
 
         private void clearGUI()
         {
-            drawRadarPicture(true, true);
+            
             this.Invoke((MethodInvoker)delegate
             {
+                drawRadarPicture(true, true);
                 AngelDataLabel.Text = "";
                 DistanceDataLabel.Text = "";
             });    
+        }
+
+        private void clearRadar()
+        {
+            this.Invoke((MethodInvoker)delegate
+            {
+                drawRadarPicture(true, true);
+            });
         }
         // save masked distance
         private void button4_Click(object sender, EventArgs e)
@@ -401,6 +418,7 @@ namespace TerminalPC
             this.displayOn = true;
             AngelDataLabel.Text = telemetriaDataTextBox.Text + "°";
             int deg = int.Parse(telemetriaDataTextBox.Text);
+            currTelDegree = deg;
             telemetriaDataTextBox.Clear();
             // \0? for ending a message? otherwise we could keep reading the next message?..
             port.sendMessage("Tele" + deg.ToString("D3"));
