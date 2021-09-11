@@ -26,7 +26,8 @@ namespace TerminalPC.Sources
             public const string SCRIPT_DONE = "fnsc";
             public const string FILE_ACK = "Fack";
             public const string CONN_ACK = "Cack";
-            
+            public const string GUI_CLEAR = "Gclr";
+
         }
 
         List<object> Result;

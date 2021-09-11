@@ -200,6 +200,10 @@ int commandsParser(int fileIndex) {
             default : /* Optional */
                 break;
         }
+        Delay_Ms(500);
+        if (opcode==7 || opcode==6)
+            UARTprintf(UART0_BASE_PTR,"Gclr\n");
+
     }
 
     return 0;

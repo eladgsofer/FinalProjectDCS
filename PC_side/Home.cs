@@ -140,7 +140,6 @@ namespace TerminalPC
             string indata;
             string cmdVal;
             SerialPortConn spConn = (SerialPortConn)sender;
-            //System.Threading.Thread.Sleep(500);
 
             spConn.validateConn();
             indata = spConn.ReadLine().TrimStart('\0');
@@ -198,14 +197,13 @@ namespace TerminalPC
                 // Finish executing script
                 case SerialPortConn.TYPE.SCRIPT_DONE:
                     Console.WriteLine("Finished executing command script " + fileName);
+                    displayOn = false;
                     this.Invoke((MethodInvoker)delegate
                     {
-                        StatusDataLabel.Text = "Script " + fileName + " finished execution";
+                        StatusDataLabel.Text = "Script finished execution";
+                        clearGUI();
                     });
                     
-                    displayOn = false;
-                    //TODO? need to clean the GUI?
-                    clearGUI(); 
                     sendSerialMessage(spConn, "SMExit");
                     break;
                     
@@ -213,15 +211,20 @@ namespace TerminalPC
                 case SerialPortConn.TYPE.CONN_ACK:
                     refreshSerialPort();
                     Console.WriteLine("SerialPort is connected");
+                    break;
+
+                // Clear GUI
+                case SerialPortConn.TYPE.GUI_CLEAR:
+                    Console.WriteLine("Clearing GUI...");
                     this.Invoke((MethodInvoker)delegate
                     {
-                        StatusDataLabel.Text = "Serial port is connected";
+                        clearGUI();
                     });
                     break;
 
                 // Unknown
                 default:
-                    Console.WriteLine("unreccognized type");
+                    Console.WriteLine("Unknown command type");
                     break;
             }
 
@@ -353,6 +356,14 @@ namespace TerminalPC
                 port.DataReceived += new SerialDataReceivedEventHandler(port_DataReceived);
 
                 port.Open();
+                this.Invoke((MethodInvoker)delegate
+                {
+                    ConnectionStatus.TextAlign = ContentAlignment.MiddleCenter;
+                    ConnectionStatus.Text = "   Connected";
+                    
+                    ConnectionStatus.ForeColor = Color.Green;
+                });
+
             }
             catch (Exception ex)
             {
@@ -401,8 +412,6 @@ namespace TerminalPC
             this.displayOn = false;
             port.sendMessage("Exit");
             StatusDataLabel.Text = "Scan Stopped";
-            // maybe ack the exit?
-            Thread.Sleep(500);
             clearGUI();
 
 
@@ -510,7 +519,6 @@ namespace TerminalPC
         private void openFileDialog1_FileOk_1(object sender, CancelEventArgs e)
         {
             textBox1.Text = openFileDialog1.FileName;
-            fileName = Path.GetFileName(openFileDialog1.FileName);
         }
 
         private void telemetriaOlLabel_Click(object sender, EventArgs e)
