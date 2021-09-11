@@ -176,6 +176,7 @@
             // 
             // scanButton
             // 
+            this.scanButton.Enabled = false;
             this.scanButton.Location = new System.Drawing.Point(23, 210);
             this.scanButton.Name = "scanButton";
             this.scanButton.Size = new System.Drawing.Size(139, 66);
@@ -219,6 +220,7 @@
             // 
             // button3
             // 
+            this.button3.Enabled = false;
             this.button3.Location = new System.Drawing.Point(590, 82);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(94, 28);
@@ -300,6 +302,7 @@
             // 
             // button4
             // 
+            this.button4.Enabled = false;
             this.button4.Location = new System.Drawing.Point(867, 82);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(94, 29);
@@ -321,6 +324,7 @@
             // 
             // stopButton
             // 
+            this.stopButton.Enabled = false;
             this.stopButton.Location = new System.Drawing.Point(180, 210);
             this.stopButton.Name = "stopButton";
             this.stopButton.Size = new System.Drawing.Size(139, 66);
@@ -331,6 +335,7 @@
             // 
             // buttonSend
             // 
+            this.buttonSend.Enabled = false;
             this.buttonSend.Location = new System.Drawing.Point(37, 137);
             this.buttonSend.Name = "buttonSend";
             this.buttonSend.Size = new System.Drawing.Size(75, 23);
@@ -341,11 +346,12 @@
             // 
             // buttonFilesLCD
             // 
+            this.buttonFilesLCD.Enabled = false;
             this.buttonFilesLCD.Location = new System.Drawing.Point(127, 137);
             this.buttonFilesLCD.Name = "buttonFilesLCD";
-            this.buttonFilesLCD.Size = new System.Drawing.Size(108, 23);
+            this.buttonFilesLCD.Size = new System.Drawing.Size(129, 23);
             this.buttonFilesLCD.TabIndex = 42;
-            this.buttonFilesLCD.Text = "Show files via LCD";
+            this.buttonFilesLCD.Text = "Show Scripts via LCD";
             this.buttonFilesLCD.UseVisualStyleBackColor = true;
             this.buttonFilesLCD.Click += new System.EventHandler(this.buttonFilesLCD_Click);
             // 
@@ -360,6 +366,7 @@
             // 
             // buttonChoose
             // 
+            this.buttonChoose.Enabled = false;
             this.buttonChoose.Location = new System.Drawing.Point(311, 80);
             this.buttonChoose.Name = "buttonChoose";
             this.buttonChoose.Size = new System.Drawing.Size(75, 23);

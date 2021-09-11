@@ -360,8 +360,13 @@ namespace TerminalPC
                 {
                     ConnectionStatus.TextAlign = ContentAlignment.MiddleCenter;
                     ConnectionStatus.Text = "   Connected";
-                    
                     ConnectionStatus.ForeColor = Color.Green;
+                    buttonSend.Enabled = true;
+                    buttonFilesLCD.Enabled = true;
+                    scanButton.Enabled = true;
+                    stopButton.Enabled = true;
+                    button3.Enabled = true;
+                    button4.Enabled = true;
                 });
 
             }
