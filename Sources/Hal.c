@@ -60,18 +60,31 @@ void UART0_IRQHandler(){
 	
 	
 	uint8_t received_char;
-		
+	
+	
 	if(UART0_S1 & UART_S1_RDRF_MASK){ // RX buffer is full and ready for reading
 		
 		received_char = UART0_D;
-		if (received_char != '\n'){         //insert chars to array until pressing Enter
-			PC_msg[char_idx] = received_char;   
-			char_idx ++;
+		
+		if(UART0_S1 & UART_S1_PF_MASK){ // Parity Error
+			
+			DelayMs(5000);
+			
+			UARTprintf(UART0_BASE_PTR,"PErr\n"); //send flag to PC so it will resend the data
+			
+			UART0_S1 |= UART_S1_PF_MASK; //Clear PE Flag
 		}
-		else{
-			char_idx = 0;
-			dataready = 1;
-		}	
+		else //If there is no error - continue
+		{
+			if (received_char != '\n'){         //insert chars to array until pressing Enter
+				PC_msg[char_idx] = received_char;   
+				char_idx ++;
+			}
+			else{
+				char_idx = 0;
+				dataready = 1;
+			}	
+		}
 	}
 }
 //-----------------------------------------------------------------

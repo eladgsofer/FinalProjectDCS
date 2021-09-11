@@ -143,7 +143,19 @@ void Uart0_Br_Sbr(int sysclk, int baud){
     
 }
 
-
+void Uart0_PEIE(int enable)
+{
+	if(enable)
+	{
+		UART0_C3 |= UART0_C3_PEIE_MASK;
+	}
+	else
+	{
+		UART0_C3 &= ~UART0_C3_PEIE_MASK;
+	}
+}
+		
+		
 // set I/O for switches and LEDs
 void InitGPIO()
 {

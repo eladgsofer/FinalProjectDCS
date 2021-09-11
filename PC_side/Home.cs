@@ -71,7 +71,7 @@ namespace TerminalPC
             if (ports != null)
             {
                 this.comboBoxCOM.Items.AddRange(ports);
-                comboBoxCOM.SelectedIndex = 1;
+                comboBoxCOM.SelectedIndex = 0;
 
             }
 
@@ -118,9 +118,9 @@ namespace TerminalPC
 
                 port.sendMessage("ConnectionParams"+ " "+
                     comboBoxBaud.SelectedItem.ToString()+" "+
-                    comboBoxParity.SelectedItem.ToString()+" "+
+                    comboBoxParity.SelectedItem.ToString() + " "+
                     comboBoxSTPBIT.SelectedItem.ToString());
-             }
+            }
             catch(Exception ex)
             {
                 MessageBox.Show(ex.ToString());
@@ -145,7 +145,8 @@ namespace TerminalPC
             SerialPortConn spConn = (SerialPortConn)sender;
 
             spConn.validateConn();
-            indata = spConn.ReadLine().TrimStart('\0');
+            indata = spConn.ReadLine().TrimStart('\0'); //spConn.ReadExisting(); //
+
 
             //ProcessMessage(indata);
 
@@ -217,7 +218,7 @@ namespace TerminalPC
                     
                 // Change connection parameters ack
                 case SerialPortConn.TYPE.CONN_ACK:
-                    refreshSerialPort();
+                    refreshSerialPort(comTemp, baudTemp, parityTemp, 8, stopbitsTemp);
                     Console.WriteLine("SerialPort is connected");
                     break;
 
@@ -230,9 +231,17 @@ namespace TerminalPC
                     });
                     break;
 
+                case SerialPortConn.TYPE.PARITY_ERR:
+                    port.resendMessage();
+                    break;
+
                 // Unknown
                 default:
+//<<<<<<< Updated upstream
                     Console.WriteLine("Unknown command type");
+//=======
+                    Console.WriteLine("unreccognized type:" + opCode);
+//>>>>>>> Stashed changes
                     break;
             }
 
@@ -349,17 +358,19 @@ namespace TerminalPC
             }
         }
         //public void ProcessMessage(){
-        private void refreshSerialPort()
+        private void refreshSerialPort(string COM, int baudRate, Parity parity, int dataBits, StopBits stopBits)
         {
             try
             {
                 // refresh the connection
                 port.Close();
-                port = new SerialPortConn(comTemp,
-                       baudTemp,
-                       parityTemp,
-                       8,
-                       stopbitsTemp);
+                port = new SerialPortConn(
+                        COM,
+                        baudRate,
+                        parity,
+                        dataBits,
+                        stopBits
+                    ); 
 
                 port.DataReceived += new SerialDataReceivedEventHandler(port_DataReceived);
 
@@ -428,7 +439,9 @@ namespace TerminalPC
         {
             this.displayOn = true;
             StatusDataLabel.Text = "Scan is on";
+            refreshSerialPort(comTemp, baudTemp, Parity.None, 8, stopbitsTemp);
             port.sendMessage("RadDec");
+            refreshSerialPort(comTemp, baudTemp, parityTemp, 8, stopbitsTemp);
         }
         private void stopButton_Click(object sender, EventArgs e)
         {
