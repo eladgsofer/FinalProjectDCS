@@ -117,9 +117,9 @@ namespace TerminalPC
                 baudTemp = int.Parse(comboBoxBaud.SelectedItem.ToString());
 
                 port.sendMessage("ConnectionParams"+ " "+
-                    comboBoxBaud.SelectedItem.ToString()+" "+
-                    comboBoxParity.SelectedItem.ToString() + " "+
-                    comboBoxSTPBIT.SelectedItem.ToString());
+                    comboBoxBaud.SelectedItem.ToString()[0]+
+                    comboBoxParity.SelectedItem.ToString()[0]+
+                    comboBoxSTPBIT.SelectedItem.ToString()[0]);
             }
             catch(Exception ex)
             {

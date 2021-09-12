@@ -217,7 +217,7 @@ void set_uart_configurations()
 	int j;
 	UARTprintf(UART0_BASE_PTR,"Cack\n");
 	for (j=10000; j>0; j--);
-
+	/*
 	int i,a,b,c;
 	i = 0;
 	a = 17;
@@ -233,8 +233,8 @@ void set_uart_configurations()
 		case 'N': c+=1 ; break;       // Parity = none
 		case 'E': c+=1 ; break;       // Parity = even
 	}
-
-	InitUARTConf(PC_msg[a], PC_msg[b], PC_msg[c]);
+	*/
+	InitUARTConf(PC_msg[17], PC_msg[18], PC_msg[19]);
 	exit_state();
 }
 

@@ -569,7 +569,7 @@ void lcd_strobe(){
 // Init UART Configuration
 //******************************************************************
 void InitUARTConf(char b, char p, char s){
-	UART0_C2 &= 0xF3;			   // stop bit only be changed when the transmitter(bit3) and receiver(bit2) are both disabled
+	UART0_C2 &= ~(UARTLP_C2_RE_MASK | UARTLP_C2_TE_MASK);			   // stop bit only be changed when the transmitter(bit3) and receiver(bit2) are both disabled
 	int baud = 9600;
 
 	switch (b){    //Check baud rate
@@ -580,16 +580,34 @@ void InitUARTConf(char b, char p, char s){
 	}
 
 	InitUARTs(baud);
-
-	switch (p){   //Check parity bit
-		case 'N': UART0_C1 &= 0xFD; break;                         // Parity = none  UART0_C1.PE = 0
-		case 'E': UART0_C1 |= 0x02; UART0_C1 &= 0xFE; break;       // Parity = even  UART0_C1.PE = 1 + UART0_C1.PT = 0
-		case 'O': UART0_C1 |= 0x02; UART0_C1 |= 0x01; break;	   // Parity = odd   UART0_C1.PE = 1 + UART0_C1.PT = 1
+	
+	if( p == 'N' )		// Parity = none  UART0_C1.PE = 0
+	{
+		UART0_C1 &= ~UART0_C1_PE_MASK;
 	}
+	else
+	{
+		UART0_C1 |= UART0_C1_PE_MASK;
+		
+		if( p == 'E' )
+		{
+			UART0_C1 &= ~UART0_C1_PT_MASK;	// Parity = even  UART0_C1.PE = 1 + UART0_C1.PT = 0
+		}
+		else if( p == 'O' )
+		{
+			UART0_C1 |= UART0_C1_PT_MASK;	// Parity = odd   UART0_C1.PE = 1 + UART0_C1.PT = 1
+		}
+	}
+	/*
+	switch (p){   //Check parity bit
+		case 'N': UART0_C1 &= ~UART0_C1_PE_MASK; break;                         // Parity = none  UART0_C1.PE = 0
+		case 'E': UART0_C1 |= UART0_C1_PE_MASK; UART0_C1 &= ~UART0_C1_PT_MASK; break;       // Parity = even  UART0_C1.PE = 1 + UART0_C1.PT = 0
+		case 'O': UART0_C1 |= UART0_C1_PE_MASK; UART0_C1 |= UART0_C1_PT_MASK; break;	   // Parity = odd   UART0_C1.PE = 1 + UART0_C1.PT = 1
+	}*/
 	
 	switch (s){	//Check stop bits									
-	   case '1': UART0_BDH &= 0xDF; break;							      // Stop bit = 1	UART0_BDH.SBNS = 0
-	   case '2': UART0_BDH |= 0x20; break;								  // Stop bit = 2   UART0_BDH.SBNS = 1
+	   case '1': UART0_BDH &= ~UART0_BDH_SBNS_MASK; break;							      // Stop bit = 1	UART0_BDH.SBNS = 0
+	   case '2': UART0_BDH |= UART0_BDH_SBNS_MASK; break;								  // Stop bit = 2   UART0_BDH.SBNS = 1
 	}
 	
 	UART0_C2 = UARTLP_C2_RE_MASK | UARTLP_C2_TE_MASK | UART_C2_RIE_MASK; // Enable Transmitter, Receiver, Receive interrupt	

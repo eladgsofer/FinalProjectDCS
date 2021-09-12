@@ -66,25 +66,28 @@ void UART0_IRQHandler(){
 		
 		received_char = UART0_D;
 		
-		if(UART0_S1 & UART_S1_PF_MASK){ // Parity Error
-			
-			DelayMs(5000);
-			
-			UARTprintf(UART0_BASE_PTR,"PErr\n"); //send flag to PC so it will resend the data
-			
-			UART0_S1 |= UART_S1_PF_MASK; //Clear PE Flag
-		}
-		else //If there is no error - continue
-		{
-			if (received_char != '\n'){         //insert chars to array until pressing Enter
-				PC_msg[char_idx] = received_char;   
-				char_idx ++;
-			}
-			else{
+		
+		if ((received_char & 0x7F) != '\n'){         //insert chars to array until pressing Enter
+			if(UART0_S1 & UART_S1_PF_MASK)
 				char_idx = 0;
-				dataready = 1;
-			}	
+			PC_msg[char_idx] = received_char & 0x7F;   
+			char_idx ++;
 		}
+		else{
+			char_idx = 0;
+			if(UART0_S1 & UART_S1_PF_MASK){ // Parity Error
+						
+				//for (j=1000000; j>0; j--);	  
+				
+				UARTprintf(UART0_BASE_PTR,"PErr\n"); //send flag to PC so it will resend the data
+				
+				UART0_S1 |= UART_S1_PF_MASK; //Clear PE Flag
+			}
+			else
+			{
+				dataready = 1;
+			}
+		}	
 	}
 }
 //-----------------------------------------------------------------
@@ -96,16 +99,24 @@ void UART0_IRQHandler(){
  * */
 void DMA0_IRQHandler(void)
 {
-	//disable_irq(INT_DMA0 - 16);
 	DMA_DSR_BCR0 |= DMA_DSR_BCR_DONE_MASK;			// Clear Done Flag
 	DMAMUX0_CHCFG0 &= ~DMAMUX_CHCFG_ENBL_MASK;	    // Disable DMA Channel 0
-	UART0_C5 &= ~UART0_C5_RDMAE_MASK; 				// Disabling DMA using UART
-	enable_irq(INT_UART0-16);						// Enable UART0 interrupt
-	RED_LED_ON;
-	int j;
-	for (j=1000000; j>0; j--);	                    // Delay
-	RED_LED_OFF;                   // Delay
-	dma_done = 1;
+	
+	if ( UART0_S1 & UART_S1_PF_MASK ) // if there was a parity error during the transmition, request to sent the file again
+	{
+		UART0_S1 |= UART_S1_PF_MASK; //Clear PE Flag
+		dma_file_trans();
+	}
+	else
+	{
+		UART0_C5 &= ~UART0_C5_RDMAE_MASK; 				// Disabling DMA using UART
+		enable_irq(INT_UART0-16);						// Enable UART0 interrupt
+		RED_LED_ON;
+		int j;
+		for (j=1000000; j>0; j--);	                    // Delay
+		RED_LED_OFF;                   // Delay
+		dma_done = 1;
+	}
 }
 
 //ToDo: assure we need only DMA0
