@@ -237,11 +237,7 @@ namespace TerminalPC
 
                 // Unknown
                 default:
-//<<<<<<< Updated upstream
                     Console.WriteLine("Unknown command type");
-//=======
-                    Console.WriteLine("unreccognized type:" + opCode);
-//>>>>>>> Stashed changes
                     break;
             }
 
@@ -440,9 +436,7 @@ namespace TerminalPC
         {
             this.displayOn = true;
             StatusDataLabel.Text = "Scan is on";
-            refreshSerialPort(comTemp, baudTemp, Parity.None, 8, stopbitsTemp);
             port.sendMessage("RadDec");
-            refreshSerialPort(comTemp, baudTemp, parityTemp, 8, stopbitsTemp);
         }
         private void stopButton_Click(object sender, EventArgs e)
         {
