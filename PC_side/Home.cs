@@ -205,7 +205,7 @@ namespace TerminalPC
 
                 // Finish executing script
                 case SerialPortConn.TYPE.SCRIPT_DONE:
-                    Console.WriteLine("Finished executing command script " + fileName);
+                    Console.WriteLine("Finished script execution");
                     displayOn = false;
                     this.Invoke((MethodInvoker)delegate
                     {
@@ -381,6 +381,7 @@ namespace TerminalPC
                     ConnectionStatus.Text = "   Connected";
                     ConnectionStatus.ForeColor = Color.Green;
                     buttonSend.Enabled = true;
+                    buttonChoose.Enabled = true;
                     buttonFilesLCD.Enabled = true;
                     scanButton.Enabled = true;
                     stopButton.Enabled = true;
