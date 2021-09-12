@@ -50,6 +50,7 @@ exit_state()
 	//Return Servo to starting point
 	WriteServo(MIN_DEG);
 	
+	
 	//Enter Idle Mode
 	state = IDLE_STATE_0;
 }
@@ -147,16 +148,18 @@ void telemeter(void){
 // Command Parser
 //---------------------------------------------------------------------------------------------------------------------
 int commandsParser(int fileIndex) {
-    char string[50];
-	//char* string = hd_file_Ptr[fileIndex];
     char leftDegree[3], rightDegree[3],  fullOperand[10];
     int operandVal =0, leftAngle, rightAngle, opcode;
+    
+    // size in bytes - file_size[fileIndex]*size(char)=file_size[file_Index]
+	char* scriptData = (char*)malloc(file_size[fileIndex]);
+	
 
-    //copy script from memory to temp val "string"
-    strcpy(string, hd_file_Ptr[fileIndex]);
+    //copy script from memory to temp val "scriptData"
+    strcpy(scriptData, hd_file_Ptr[fileIndex]);
     // Extract the first token
-    char * token = strtok(string, "\n");
-    // loop through the string to extract all other tokens
+    char * token = strtok(scriptData, "\n");
+    // loop through the scriptData to extract all other tokens
     while( token != NULL ) {
         // Extract opcode and operand
         sscanf(token, "%2d%s", &opcode, fullOperand);
@@ -205,7 +208,7 @@ int commandsParser(int fileIndex) {
             UARTprintf(UART0_BASE_PTR,"Gclr\n");
 
     }
-
+    free(scriptData);
     return 0;
 }
 
