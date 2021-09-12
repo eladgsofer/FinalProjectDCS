@@ -68,3 +68,13 @@ C:\Users\elads\workspace\FinalProjectWorkspace\PC_side\obj\Debug\TerminalPC.cspr
 C:\Users\elads\workspace\FinalProjectWorkspace\PC_side\obj\Debug\TerminalPC.csproj.CoreCompileInputs.cache
 C:\Users\elads\workspace\FinalProjectWorkspace\PC_side\obj\Debug\TerminalPC.exe
 C:\Users\elads\workspace\FinalProjectWorkspace\PC_side\obj\Debug\TerminalPC.pdb
+C:\Users\katri\OneDrive\workspace\FinalProjectDCS\PC_side\bin\Debug\TerminalPC.exe.config
+C:\Users\katri\OneDrive\workspace\FinalProjectDCS\PC_side\bin\Debug\TerminalPC.exe
+C:\Users\katri\OneDrive\workspace\FinalProjectDCS\PC_side\bin\Debug\TerminalPC.pdb
+C:\Users\katri\OneDrive\workspace\FinalProjectDCS\PC_side\obj\Debug\TerminalPC.csproj.AssemblyReference.cache
+C:\Users\katri\OneDrive\workspace\FinalProjectDCS\PC_side\obj\Debug\TerminalPC.Home.resources
+C:\Users\katri\OneDrive\workspace\FinalProjectDCS\PC_side\obj\Debug\TerminalPC.Properties.Resources.resources
+C:\Users\katri\OneDrive\workspace\FinalProjectDCS\PC_side\obj\Debug\TerminalPC.csproj.GenerateResource.cache
+C:\Users\katri\OneDrive\workspace\FinalProjectDCS\PC_side\obj\Debug\TerminalPC.csproj.CoreCompileInputs.cache
+C:\Users\katri\OneDrive\workspace\FinalProjectDCS\PC_side\obj\Debug\TerminalPC.exe
+C:\Users\katri\OneDrive\workspace\FinalProjectDCS\PC_side\obj\Debug\TerminalPC.pdb

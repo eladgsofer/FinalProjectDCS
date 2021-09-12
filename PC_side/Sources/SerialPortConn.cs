@@ -16,6 +16,8 @@ namespace TerminalPC.Sources
 
     public class SerialPortConn : SerialPort
     {
+        public static string LastMSG = "";
+
         // Message types
 
         public static class TYPE
@@ -27,6 +29,7 @@ namespace TerminalPC.Sources
             public const string FILE_ACK = "Fack";
             public const string CONN_ACK = "Cack";
             public const string GUI_CLEAR = "Gclr";
+            public const string PARITY_ERR = "PErr";
 
         }
 
@@ -53,13 +56,19 @@ namespace TerminalPC.Sources
         {
                 this.validateConn();
                 this.Write(message + "\n");
-
+                LastMSG = message;
         }
 
-/*        public List<object> receiveData()
+        public void resendMessage()
         {
-            List<object> Result = new List<object>(3);
-            return Result
-        }*/
+            this.validateConn();
+            this.Write(LastMSG + "\n");
+        }
+
+        /*        public List<object> receiveData()
+                {
+                    List<object> Result = new List<object>(3);
+                    return Result
+                }*/
     }
 }
