@@ -303,7 +303,6 @@ void servo_deg(int degree){
 	for(i=0; i<10; i++)
 	{
 		servo_dist_in_deg(degree);
-		Delay_Ms(50);
 	}
 }
 

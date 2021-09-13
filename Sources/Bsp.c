@@ -4,7 +4,6 @@
 
 #define TRIGGER_MODULO_REGISTER 0xC350 - 1 // 50,000
 
-char ready;
 
 //-----------------------------------------------------------------
 //  UART0 configuration
@@ -344,40 +343,6 @@ void ClockSetupTPM(){
 }
 
 
-//-----------------------------------------------------------------
-// PIT - Initialisation
-//-----------------------------------------------------------------
-void InitPIT(){
-	SIM_SCGC6 |= SIM_SCGC6_PIT_MASK; //Enable the Clock to the PIT Modules
-	// Timer 0
-	PIT_LDVAL0 = 0x00186A00; // setup timer 0 for 15hz counting period
-	//PIT_TCTRL0 = PIT_TCTRL_TEN_MASK | PIT_TCTRL_TIE_MASK; //enable PIT0 and its interrupt
-	PIT_MCR |= PIT_MCR_FRZ_MASK; // stop the pit when in debug mode
-	PIT_MCR &= ~PIT_MCR_MDIS_MASK;
-	
-	enable_irq(INT_PIT-16); //  //Enable PIT IRQ on the NVIC
-	set_irq_priority(INT_PIT-16,0);  // Interrupt priority = 0 = max
-}
-//------------------------------------------------------------------
-// PIT Config
-//------------------------------------------------------------------
-void set_PIT_max_val(int ms)
-{
-	unsigned int timer_val = ms*24000; //calc timer start value
-	PIT_LDVAL0 = timer_val;
-}
-
-void PIT_enable(int start)
-{
-	if(start)
-	{
-		PIT_TCTRL0 |= PIT_TCTRL_TIE_MASK | PIT_TCTRL_TEN_MASK;
-	}
-	else if(!start)
-	{
-		PIT_TCTRL0 &= ~(PIT_TCTRL_TIE_MASK | PIT_TCTRL_TEN_MASK);
-	}
-}
 
 //------------------------------------------------------------------
 //		DMA
@@ -430,140 +395,7 @@ void dma_init(void)
 	enable_irq(INT_DMA1 - 16);
 }
 
-//******************************************************************
-// send a command to the LCD
-//******************************************************************
-void lcd_cmd(unsigned char c){
-  
-	LCD_WAIT; // may check LCD busy flag, or just delay a little, depending on lcd.h
 
-	if (LCD_MODE == FOURBIT_MODE)
-	{
-		LCD_DATA_WRITE &= ~OUTPUT_DATA;// clear bits before new write
-				LCD_DATA_WRITE |= ((c >> 4) & 0x0F) << LCD_DATA_OFFSET;
-		lcd_strobe();
-				LCD_DATA_WRITE &= ~OUTPUT_DATA;
-			LCD_DATA_WRITE |= (c & (0x0F)) << LCD_DATA_OFFSET;
-		lcd_strobe();
-	}
-	else
-	{
-		LCD_DATA_WRITE = c;
-		lcd_strobe();
-	}
-}
-//******************************************************************
-// send data to the LCD
-//******************************************************************
-void lcd_data(unsigned char c){
-        
-	LCD_WAIT; // may check LCD busy flag, or just delay a little, depending on lcd.h
-
-	LCD_DATA_WRITE &= ~OUTPUT_DATA;       
-	LCD_RS(1);
-	if (LCD_MODE == FOURBIT_MODE)
-	{
-			LCD_DATA_WRITE &= ~OUTPUT_DATA;
-				LCD_DATA_WRITE |= ((c >> 4) & 0x0F) << LCD_DATA_OFFSET;  
-		lcd_strobe();		
-				LCD_DATA_WRITE &= ~OUTPUT_DATA;
-		LCD_DATA_WRITE |= (c & 0x0F) << LCD_DATA_OFFSET; 
-		lcd_strobe();
-	}
-	else
-	{
-		LCD_DATA_WRITE = c;
-		lcd_strobe();
-	}
-		  
-	LCD_RS(0); 
-}
-//******************************************************************
-// write a string of chars to the LCD
-//******************************************************************
-void lcd_puts(const char * s){
-  
-	while(*s)
-		lcd_data(*s++);
-}
-
-//******************************************************************
-// initialize the LCD
-//******************************************************************
-void lcd_init(){
-  
-	char init_value;
-
-	if (LCD_MODE == FOURBIT_MODE) init_value = 0x3 << LCD_DATA_OFFSET;
-		else init_value = 0x3F;
-	
-	LCD_RS_DDR(OUTPUT_PIN);
-	LCD_EN_DDR(OUTPUT_PIN);
-	LCD_RW_DDR(OUTPUT_PIN);
-	LCD_DATA_DDR |= OUTPUT_DATA;
-	LCD_RS(0);
-	LCD_EN(0);
-	LCD_RW(0);
-	LCD_RW_PCR;
-	LCD_RS_PCR;
-	LCD_EN_PCR;
-		
-	DelayMs(15*48);
-	LCD_DATA_WRITE &= ~OUTPUT_DATA;
-	LCD_DATA_WRITE |= init_value;
-	lcd_strobe();
-	DelayMs(5*48);
-	LCD_DATA_WRITE &= ~OUTPUT_DATA;
-	LCD_DATA_WRITE |= init_value;
-	lcd_strobe();
-	DelayUs(200*48);
-	LCD_DATA_WRITE &= ~OUTPUT_DATA;
-	LCD_DATA_WRITE |= init_value;
-	lcd_strobe();
-	
-	if (LCD_MODE == FOURBIT_MODE){
-		LCD_WAIT; // may check LCD busy flag, or just delay a little, depending on lcd.h
-		LCD_DATA_WRITE &= ~OUTPUT_DATA;
-		LCD_DATA_WRITE |= 0x2 << LCD_DATA_OFFSET; // Set 4-bit mode
-		lcd_strobe();
-		lcd_cmd(0x28); // Function Set
-	}
-		else lcd_cmd(0x3C); // 8bit,two lines,5x10 dots 
-	
-	lcd_cmd(0xF); //Display On, Cursor On, Cursor Blink
-	lcd_cmd(0x1); //Display Clear
-	lcd_cmd(0x6); //Entry Mode
-	lcd_cmd(0x80); //Initialize DDRAM address to zero
-}
-//******************************************************************
-// Delay usec functions
-//******************************************************************
-void DelayUs(unsigned int cnt){
-  
-	unsigned char i;
-        for(i=cnt ; i>0 ; i--) // tha command asm("nop") takes raphly 1usec
-        	asm("nop"); 
-	
-}
-//******************************************************************
-// Delay msec functions
-//******************************************************************
-void DelayMs(unsigned int cnt){
-  
-	unsigned char i;
-        for(i=cnt ; i>0 ; i--) // tha command asm("nop") takes raphly 1usec
-        	DelayUs(1000); 
-	
-}
-//******************************************************************
-// lcd strobe functions
-//******************************************************************
-void lcd_strobe(){
-  LCD_EN(1);
-  asm("nop");
-  asm("nop");
-  LCD_EN(0);
-}
 
 //******************************************************************
 // Init UART Configuration
@@ -584,26 +416,17 @@ void InitUARTConf(char b, char p, char s){
 	if( p == 'N' )		// Parity = none  UART0_C1.PE = 0
 	{
 		UART0_C1 &= ~UART0_C1_PE_MASK;
+		UART0_C1 &= ~UART0_C1_PT_MASK;
 	}
 	else
 	{
 		UART0_C1 |= UART0_C1_PE_MASK;
 		
-		if( p == 'E' )
-		{
-			UART0_C1 &= ~UART0_C1_PT_MASK;	// Parity = even  UART0_C1.PE = 1 + UART0_C1.PT = 0
-		}
-		else if( p == 'O' )
-		{
-			UART0_C1 |= UART0_C1_PT_MASK;	// Parity = odd   UART0_C1.PE = 1 + UART0_C1.PT = 1
+		switch (p){
+		case 'E': UART0_C1 &= ~UART0_C1_PT_MASK; break;		// Parity = even  UART0_C1.PE = 1 + UART0_C1.PT = 0
+		case 'O': UART0_C1 |= UART0_C1_PT_MASK;	break;		// Parity = odd   UART0_C1.PE = 1 + UART0_C1.PT = 1
 		}
 	}
-	/*
-	switch (p){   //Check parity bit
-		case 'N': UART0_C1 &= ~UART0_C1_PE_MASK; break;                         // Parity = none  UART0_C1.PE = 0
-		case 'E': UART0_C1 |= UART0_C1_PE_MASK; UART0_C1 &= ~UART0_C1_PT_MASK; break;       // Parity = even  UART0_C1.PE = 1 + UART0_C1.PT = 0
-		case 'O': UART0_C1 |= UART0_C1_PE_MASK; UART0_C1 |= UART0_C1_PT_MASK; break;	   // Parity = odd   UART0_C1.PE = 1 + UART0_C1.PT = 1
-	}*/
 	
 	switch (s){	//Check stop bits									
 	   case '1': UART0_BDH &= ~UART0_BDH_SBNS_MASK; break;							      // Stop bit = 1	UART0_BDH.SBNS = 0
