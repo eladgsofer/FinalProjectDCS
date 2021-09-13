@@ -360,7 +360,7 @@ int print_files_menu(int file_idx){
 		row += 1;
 	}while ((files_num > 1) && ( row < 2 ));	//Prints only 2 rows, or 1 in case it's the last file
 	
-	if( i > 0 )
+	if( file_idx > 0 )
 		next_idx = file_idx - 1;
 	else
 		next_idx = 2;
