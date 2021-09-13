@@ -13,8 +13,8 @@
 
 void InitServo();
 void InitSensors();
-void WriteServo(int deg);
-void SweepServo();
+void SetServoDeg(int deg);
+void enable_sensor(int enable);
 
 #define MOTOR_MUDULO_REGISTER  9373 //   40Hz = 24Mhz/(64x9375) 64 is the prescaler. 
 #define MIN_T_ON 0.6 // minimum Minimum Duty cycle in MS

@@ -24,6 +24,7 @@
 #include "Hal.h"
 #include "main_functions.h"
 #include "servo.h"
+#include "Commands.h"
 
 #define DELAY_DEF	50
 

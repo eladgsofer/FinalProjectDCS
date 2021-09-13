@@ -26,6 +26,21 @@ void InitSensors() {
 	InitTPMx(SENSOR_ECHO);
 }
 
+//---------------------------------------------------------------
+//		Sensor Enable
+//---------------------------------------------------------------
+void enable_sensor(int enable){
+	if (enable){
+		samp_cnt = 0x0;
+		clearTPMxCNT(SENSOR_TRIG);
+		StartTPMx(SENSOR_ECHO, TRUE);
+		StartTPMx(SENSOR_TRIG, TRUE);
+	} else {
+		StartTPMx(SENSOR_ECHO, FALSE);
+		StartTPMx(SENSOR_TRIG, FALSE);
+	}
+}
+
 //----------------------------------------------------------------------------------
 //	Change Servo's deg
 //----------------------------------------------------------------------------------

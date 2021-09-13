@@ -25,7 +25,7 @@ int main(void){
 		{
 			case Radar_Detector_1:
 				
-				rad_detect_sys();
+				rad_detect();
 				
 				break;
 				
