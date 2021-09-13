@@ -1,0 +1,44 @@
+//---------------
+//    Bsp.c  
+//---------------
+Board Support - Board Configuration functions
+
+//---------------
+//    Hal.c  
+//---------------
+Interrupt handlers + sub functions 
+
+//---------------
+//    LCD.c
+//---------------
+LCD configuration and functions
+
+//---------------
+//    PIT.c  
+//---------------
+PIT configuartion functions
+
+//---------------
+//    UART.c  
+//---------------
+UART communicaton functions
+
+//---------------
+//    arm_cm0.c
+//---------------
+Arm proccesor utilities
+
+//---------------
+//    main.c 
+//---------------
+Main App - Contains FSM
+
+//---------------
+//    main_functions.c  
+//---------------
+Mode's execution functions
+
+//---------------
+//    servo.c
+//---------------
+Servo's functions - Init and set deg
