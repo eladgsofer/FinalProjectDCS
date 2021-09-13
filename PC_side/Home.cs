@@ -153,60 +153,45 @@ namespace TerminalPC
         /// <param name="e"></param>
         public void port_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-            string indata = "";
-            string cmdVal;
-            char ch;
-            int b;
-            int res;
-
-            float dist;
-            int deg;
+            int degree;
+            float distance;
+            string cmdVal, opCode, inData = "";
+            
             SerialPortConn spConn = (SerialPortConn)sender;
 
-            spConn.validateConn();
-            ch = '\0';
-            while (ch != '\n')
-            {
-                while (spConn.BytesToRead == 0) ;
-                b = spConn.ReadByte();
-                res = b & (Convert.ToByte(127));
-                ch = (char)res;    
-                indata += ch;
-            }
-                indata = indata.TrimStart('\0'); //spConn.ReadExisting(); //
+            inData = spConn.readMessage();
 
+            opCode = inData.Substring(0, 4);
 
-            string opCode = indata.Substring(0, 4);
-
-            int cntDiff;
-            // Check opc
+            int tpmCntDelta;
+            // each opcode performs different action
             switch (opCode)
             {
-                // Recieve Scanner info
-                case SerialPortConn.TYPE.SCAN:
-                    deg = int.Parse(indata.Substring(4,3));
-                    cntDiff = int.Parse(indata.Substring(7,4), System.Globalization.NumberStyles.HexNumber);
-                    dist = calcDistsnce(cntDiff);
-                    Console.WriteLine("scan: deg- " + deg + " dist- " + dist + " cm");
+                // Recieve a scan info message
+                case SerialPortConn.MESSAGE_TYPE.SCAN:
+                    degree = int.Parse(inData.Substring(4,3));
+                    tpmCntDelta = int.Parse(inData.Substring(7,4), System.Globalization.NumberStyles.HexNumber);
+                    distance = calcDistsnce(tpmCntDelta);
+                    Console.WriteLine("scan: deg- " + degree + " dist- " + distance + " cm");
 
                     this.Invoke((MethodInvoker)delegate
                     {
                         if (displayOn)
                         {
-                            DisplayRadar(deg, dist);
-                            AngelDataLabel.Text = deg + "°";
-                            DistanceDataLabel.Text = dist.ToString("#.##") + " cm";
+                            DisplayRadar(degree, distance);
+                            AngelDataLabel.Text = degree + "°";
+                            DistanceDataLabel.Text = distance.ToString("#.##") + " cm";
                         }
                     });
                     break;
 
 
                 // Recieve Telemetry info
-                case SerialPortConn.TYPE.TELEMETRY:
-                    cmdVal = indata.Substring(4, 4);
-                    cntDiff = int.Parse(cmdVal, System.Globalization.NumberStyles.HexNumber);
-                    dist = calcDistsnce(cntDiff);
-                    string distanceString = dist > maskedDistance ? "Out of Range" : dist.ToString("#.##") + " cm";
+                case SerialPortConn.MESSAGE_TYPE.TELEMETRY:
+                    cmdVal = inData.Substring(4, 4);
+                    tpmCntDelta = int.Parse(cmdVal, System.Globalization.NumberStyles.HexNumber);
+                    distance = calcDistsnce(tpmCntDelta);
+                    string distanceString = distance > maskedDistance ? "Out of Range" : distance.ToString("#.##") + " cm";
                     Console.WriteLine("Telemetria: Distance- " + distanceString);
                     this.Invoke((MethodInvoker)delegate
                     {
@@ -215,13 +200,13 @@ namespace TerminalPC
 
                             DistanceDataLabel.Text = distanceString;
                             clearRadar();
-                            DisplayRadar(currTelDegree, dist);
+                            DisplayRadar(currTelDegree, distance);
                         }
                     });
                     break;
 
-                // File recieved ok 
-                case SerialPortConn.TYPE.FILE_ACK:
+                // File recieved successfully 
+                case SerialPortConn.MESSAGE_TYPE.FILE_ACK:
                     Console.WriteLine("Sending file");
                     displayOn = true;
                     sendSerialMessage(spConn, fileData);
@@ -229,8 +214,8 @@ namespace TerminalPC
 
                     break;
 
-                // Finish executing script
-                case SerialPortConn.TYPE.SCRIPT_DONE:
+                // Script finished execution status message
+                case SerialPortConn.MESSAGE_TYPE.SCRIPT_DONE:
                     Console.WriteLine("Finished script execution");
                     displayOn = false;
                     this.Invoke((MethodInvoker)delegate
@@ -239,17 +224,16 @@ namespace TerminalPC
                         clearGUI();
                     });
                     
-                    //sendSerialMessage(spConn, "SMExit");
                     break;
-                    
-                // Change connection parameters ack
-                case SerialPortConn.TYPE.CONN_ACK:
+
+                // SerialPort params update was finished successfully
+                case SerialPortConn.MESSAGE_TYPE.CONN_ACK:
                     refreshSerialPort(comTemp, baudTemp, parityTemp, 8, stopbitsTemp);
                     Console.WriteLine("SerialPort is connected");
                     break;
 
-                // Clear GUI
-                case SerialPortConn.TYPE.GUI_CLEAR:
+                // Clear GUI request
+                case SerialPortConn.MESSAGE_TYPE.GUI_CLEAR:
                     Console.WriteLine("Clearing GUI...");
                     this.Invoke((MethodInvoker)delegate
                     {
@@ -257,7 +241,8 @@ namespace TerminalPC
                     });
                     break;
 
-                case SerialPortConn.TYPE.PARITY_ERR:
+                // Parity Error occured, perform resend
+                case SerialPortConn.MESSAGE_TYPE.PARITY_ERR:
                     port.resendMessage();
                     break;
 
@@ -353,24 +338,24 @@ namespace TerminalPC
             // Convert deg to range [-90,90]
             handDegMain = -(deg - 90);
             // Convert dist relative to HAND & maskedDistance
-            float adjustedDist = dist > maskedDistance ? HAND : (dist / maskedDistance) * HAND;
+            float displayedDistance = dist > maskedDistance ? HAND : (dist / maskedDistance) * HAND;
 
 
             if (handDegMain >= 0 && handDegMain <= 90)
             {
-                handX = circleX + (int)(adjustedDist * Math.Sin(Math.PI * handDegMain / 180));
-                handY = circleY - (int)(adjustedDist * Math.Cos(Math.PI * handDegMain / 180));
+                handX = circleX + (int)(displayedDistance * Math.Sin(Math.PI * handDegMain / 180));
+                handY = circleY - (int)(displayedDistance * Math.Cos(Math.PI * handDegMain / 180));
             }
             else
             {
-                handX = circleX - (int)(adjustedDist * -Math.Sin(Math.PI * handDegMain / 180));
-                handY = circleY - (int)(adjustedDist * Math.Cos(Math.PI * handDegMain / 180));
+                handX = circleX - (int)(displayedDistance * -Math.Sin(Math.PI * handDegMain / 180));
+                handY = circleY - (int)(displayedDistance * Math.Cos(Math.PI * handDegMain / 180));
             }
 
             
             Point endHand = new Point(handX, handY);
 
-            if (adjustedDist == HAND) {
+            if (displayedDistance == HAND) {
                 graphics.DrawLine(greenPen, centerP, endHand);
             }
             else {
