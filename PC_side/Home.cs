@@ -226,7 +226,7 @@ namespace TerminalPC
                         clearGUI();
                     });
                     
-                    sendSerialMessage(spConn, "SMExit");
+                    //sendSerialMessage(spConn, "SMExit");
                     break;
                     
                 // Change connection parameters ack
@@ -455,7 +455,7 @@ namespace TerminalPC
         {
             this.displayOn = false;
             port.sendMessage("Exit");
-            StatusDataLabel.Text = "Scan Stopped";
+            StatusDataLabel.Text = "Opperation Stopped";
             clearGUI();
 
 

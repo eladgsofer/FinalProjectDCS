@@ -165,11 +165,12 @@ int commandsParser(int fileIndex) {
     // loop through the scriptData to extract all other tokens
     char_addr = hd_file_Ptr[fileIndex];
     
-    while((*char_addr) != '\0')
+    ch = (*char_addr) & 0x7F;
+    while( ch != '\0' )
     {
     	i = 0;
     	ch = (*char_addr++) & 0x7F;
-    	while(ch != '\n')
+    	while(ch != '\n' && ch != '\0' )
     	{
     		token[i++] = ch;
     		ch = (*char_addr++) & 0x7F;
@@ -188,10 +189,10 @@ int commandsParser(int fileIndex) {
 				blink_rgb(operandVal);
 				break;
 			case 2  :
-				lcd_count_down(operandVal);
+				lcd_count_up(operandVal);
 				break;
 			case 3:
-				lcd_count_up(operandVal);
+				lcd_count_down(operandVal);
 				break;
 			case 4:
 				set_delay(operandVal);
@@ -210,6 +211,8 @@ int commandsParser(int fileIndex) {
 				servo_scan(leftAngle, rightAngle);
 				break;
 			case 8:
+				clear_all_leds();
+				set_delay(50); //set delay default
 				UARTprintf(UART0_BASE_PTR,"fnsc\n");
 				exit_state();
 				break;
@@ -217,9 +220,6 @@ int commandsParser(int fileIndex) {
 			default : /* Optional */
 				break;
 		}
-		Delay_Ms(500);
-		if ( opcode == 6 )
-			Delay_Ms(500);
 		if ( opcode == 7 || opcode == 6 )
 			UARTprintf(UART0_BASE_PTR,"Gclr\n");
     }
@@ -264,16 +264,16 @@ void script_mode(void)
 {
 	int exit = 0;
 	
-	while(1)
+	while( state == Script_Mode_3 )
 	{
-		next_script_idx = 0;
+		next_script_idx = index_last;
 		start_script = scroll_pushed = 0;
 		while(!start_script)
 		{
 			//Check if PC exit Script Mode
 			if(dataready)
 			{
-				if(strncmp(PC_msg, "SMExit", 6) == 0)
+				if(strncmp(PC_msg, "Exit", 4) == 0)
 				{
 					exit_state();
 					
@@ -322,7 +322,7 @@ int print_files_menu(int file_idx){
 	char* temp_ptr;
 	char str_size[5];
 	int row = 0;
-	int i = file_idx; //index_last;
+	int next_idx, i_next, i = file_idx; //index_last;
 	int print_num;
 	
 	lcd_clear();
@@ -350,12 +350,22 @@ int print_files_menu(int file_idx){
 			lcd_new_line();        	      //second line
 		}
 		
-		i = (i == 0) ? index_last : ((i - 1)%3);
+		if( i > 0 )
+			i_next = i - 1;
+		else
+			i_next = 2;
+		
+		i = ((files_num < 3) && (i == 0)) ? index_last : i_next;
 			
 		row += 1;
 	}while ((files_num > 1) && ( row < 2 ));	//Prints only 2 rows, or 1 in case it's the last file
 	
-	return (file_idx == 0) ? index_last : ((file_idx - 1)%3);
+	if( i > 0 )
+		next_idx = file_idx - 1;
+	else
+		next_idx = 2;
+	
+	return ((files_num < 3) && (file_idx == 0)) ? index_last : next_idx;
 }
 
 
@@ -370,7 +380,7 @@ void receive_script(void){
 	
 	//calc current index
 	index = index_last + 1;
-	if ( index == 4 )
+	if ( index == 3 )
 	{
 		index = 0;
 	}
