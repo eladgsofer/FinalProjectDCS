@@ -29,27 +29,28 @@ namespace TerminalPC
 
         // Serial Port connection
         public static SerialPortConn port;
-        Boolean firstConnection = true;
         public static Parity parityTemp;
         public static StopBits stopbitsTemp;
         public static string comTemp;
         public static int baudTemp;
         public static int flag = 0;
 
+        // file system props
         public static string fileData = "";
-        public static string fileName;
+        // display arguments
         private bool displayOn = false;
         private int currTelDegree;
 
-
+        // masked distance
         private float maskedDistance = 100; // cm
 
+        // GUI Properties
         private int WIDTH, HEIGHT, HAND;
         private int handDegMain;
         private int handX, handY;
         private const int MAX_SERVO_ANGLE = 180;
         private int circleX, circleY;                                // center of the circle
-        private List<Point> pointsArr;
+        private List<Point> pointsArr; // pointsArr for future deletion
         Point centerP;
 
         // Radar graphic objects
@@ -68,31 +69,33 @@ namespace TerminalPC
         {
             InitializeComponent();
 
-            string[] ports = SerialPort.GetPortNames().Length > 0 ? SerialPort.GetPortNames() : null;
-            if (ports != null)
+            string[] availablePorts = SerialPort.GetPortNames().Length > 0 ? SerialPort.GetPortNames() : null;
+            if (availablePorts != null)
             {
-                this.comboBoxCOM.Items.AddRange(ports);
+                this.comboBoxCOM.Items.AddRange(availablePorts);
                 comboBoxCOM.SelectedIndex = 0;
 
             }
-
+            // default values for GUI object
             comboBoxBaud.SelectedIndex = 1;
-            
             comboBoxParity.SelectedIndex = 0;
             comboBoxSTPBIT.SelectedIndex = 0;
             WIDTH = radarPictureBox.Height * 2;
             HEIGHT = radarPictureBox.Height;
             HAND = radarPictureBox.Height;
+            // Init default SerailPort
             port = new SerialPortConn(comboBoxCOM.Text, 9600, Parity.None, 8, StopBits.One);
 
-            //center
+            // Radar center calculation
             circleX = radarPictureBox.Width / 2 ;
             circleY = radarPictureBox.Height;
             centerP = new Point(circleX, circleY);
 
+            // Radar Objects
             bmp = new Bitmap(WIDTH + 1, HEIGHT + 1);
             radarPictureBox.BackColor = Color.Black;
             pointsArr = new List<Point>();
+            // draw the radar
             drawRadarPicture(true, false);
 
             // create a dataReceived handler function
@@ -105,7 +108,11 @@ namespace TerminalPC
 
         }
 
-        // Connect + update parameters
+        /// <summary>
+        ///  Connect and update the parameters as specified in the GUI objects.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ButtonConnect_Click(object sender, EventArgs e)
         {
             Console.WriteLine("Connecting");
@@ -136,7 +143,14 @@ namespace TerminalPC
             return (float)(cntrDiff * 17.0 / 750.0);
         }
 
-        // Data recieved event
+        /// <summary>
+        /// Serial Port event handler - this function is the core in our app
+        /// whenever the buffer has more then 1 byte received in the serialPort
+        /// an interrupt occurs and we enter this function via new thread, the function
+        /// handles and process the messages and performs the corresponded action
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public void port_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
             string indata = "";
@@ -161,7 +175,6 @@ namespace TerminalPC
             }
                 indata = indata.TrimStart('\0'); //spConn.ReadExisting(); //
 
-            //ProcessMessage(indata);
 
             string opCode = indata.Substring(0, 4);
 
@@ -267,12 +280,14 @@ namespace TerminalPC
                 MessageBox.Show(ex.ToString());
             }
         }
+        /// <summary>
+        /// Radar display - a function which draws a radar emptry picture
+        /// </summary>
+        /// <param name="updatePicture"></param>
+        /// <param name="eraseLines"></param>
         private void drawRadarPicture(bool updatePicture, bool eraseLines)
         {
 
-            /////////////////////////////
-            //      Draw Radar
-            ////////////////////////////
             //graphics
             graphics = Graphics.FromImage(bmp);
 
@@ -304,6 +319,9 @@ namespace TerminalPC
                 radarPictureBox.Image = bmp;
             }
         }
+        /// <summary>
+        ///  Erase the Radar display current lines
+        /// </summary>
         private void eraseLines()
         {
             for (int i = 0; i < pointsArr.Count; i++)
@@ -320,6 +338,11 @@ namespace TerminalPC
             pointsArr.Clear();
         }
 
+        /// <summary>
+        /// Display the degree and distance as a line in the radar UI
+        /// </summary>
+        /// <param name="deg"></param>
+        /// <param name="dist"></param>
         private void DisplayRadar(int deg, float dist)
         {
             if (!displayOn)
@@ -366,7 +389,14 @@ namespace TerminalPC
                 radarPictureBox.Image = bmp;
             }
         }
-        //public void ProcessMessage(){
+        /// <summary>
+        /// Refresh the serialport connection parameters
+        /// </summary>
+        /// <param name="COM"></param>
+        /// <param name="baudRate"></param>
+        /// <param name="parity"></param>
+        /// <param name="dataBits"></param>
+        /// <param name="stopBits"></param>
         private void refreshSerialPort(string COM, int baudRate, Parity parity, int dataBits, StopBits stopBits)
         {
             try
@@ -424,7 +454,7 @@ namespace TerminalPC
                 drawRadarPicture(true, true);
             });
         }
-        // save masked distance
+        // Masked distrance button - saving a new masked distance
         private void button4_Click(object sender, EventArgs e)
         {
             string maskedStr = MaskedDistanceTextBox.Text;
@@ -433,7 +463,7 @@ namespace TerminalPC
             MessageBox.Show("Masked distance new value " + maskedStr);
         }
 
-        // telemetry button
+        // Send Telemetry button
         private void button3_Click_1(object sender, EventArgs e)
         {
             this.displayOn = true;
@@ -445,12 +475,14 @@ namespace TerminalPC
             port.sendMessage("Tele" + deg.ToString("D3"));
             StatusDataLabel.Text = "Telemetry is on";
         }
+        // perform a scan button
         private void scanButton_Click(object sender, EventArgs e)
         {
             this.displayOn = true;
             StatusDataLabel.Text = "Scan is on";
             port.sendMessage("RadDec");
         }
+        // stop a telmetry/scan procedure button
         private void stopButton_Click(object sender, EventArgs e)
         {
             this.displayOn = false;
@@ -470,6 +502,7 @@ namespace TerminalPC
         }
         private void Home_Load(object sender, EventArgs e)
         {
+            // allocate a console log window
             AllocConsole();
         }
         private void comboBoxBaud_SelectedIndexChanged(object sender, EventArgs e)
@@ -510,7 +543,11 @@ namespace TerminalPC
         {
 
         }
-
+        /// <summary>
+        /// Send a file to the MCU button
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void buttonSend_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(textBox1.Text))
@@ -536,6 +573,11 @@ namespace TerminalPC
             }
         }
 
+        /// <summary>
+        /// send a show files command to the MCU button
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void buttonFilesLCD_Click(object sender, EventArgs e)
         {
             try
@@ -548,7 +590,7 @@ namespace TerminalPC
             }
             displayOn = true;
         }
-
+        // browse files button
         private void buttonChoose_Click(object sender, EventArgs e)
         {
             openFileDialog1.ShowDialog();
