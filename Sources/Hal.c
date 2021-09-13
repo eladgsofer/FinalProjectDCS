@@ -138,7 +138,7 @@ void dma_file_trans(void)
 	DMAMUX0_CHCFG0 |= DMAMUX_CHCFG_ENBL_MASK; 				// Enable DMA channel 
 	disable_irq(INT_UART0-16);               			    // Disable UART0 interrupt
 	UART0_C5 |= UART0_C5_RDMAE_MASK;          				// Enable DMA request for UART0 receiver
-	UARTprintf(UART0_BASE_PTR,"Fack\n");
+	UARTprintf(UART0_BASE_PTR,message_type.FILE_ACK);
 }
 //-----------------------------------------------------------------
 // TPM0_C2 = Interrupt Service Routine
@@ -197,6 +197,7 @@ void enable_sensor(int enable){
 		StartTPMx(SENSOR_TRIG, FALSE);
 	}
 }
+
 //-------------------------------------
 //*********Commands********************
 //-------------------------------------
@@ -300,9 +301,10 @@ void servo_deg(int degree){
 	
 	WriteServo(degree);
 		
-	for(i=0; i<10; i++)
+	for(i=0; i<7; i++)
 	{
 		servo_dist_in_deg(degree);
+		Delay_Ms(5);
 	}
 }
 

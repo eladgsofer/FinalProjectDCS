@@ -263,7 +263,7 @@ namespace TerminalPC
 
                 // Unknown
                 default:
-                    Console.WriteLine("Unknown command type");
+                    Console.WriteLine("Unknown command type" + opCode);
                     break;
             }
 

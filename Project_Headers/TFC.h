@@ -25,10 +25,20 @@
 #include "main_functions.h"
 #include "servo.h"
 
+#define DELAY_DEF	50
+
 enum State {IDLE_STATE_0 = 0, Radar_Detector_1 = 1, Telemeter_2 = 2, Script_Mode_3 = 3, Script_Receive_4 = 4, UART_Configuration_5 = 5};
 enum State state;
 
-enum Acknowledge {FILE_ACK = "Fack\n", CONN_ACK = "Cack\n", GUI_CLEAR = "Gclr", SCRIPT_DONE = "fnsc", TELEMETRY = "tele", SCAN = "scan"};
+
+struct Message_Type {
+   char  FILE_ACK[6];
+   char  CONN_ACK[6];
+   char  GUI_CLEAR[6];
+   char  SCRIPT_DONE[6];
+};
+
+struct Message_Type message_type;
 
 
 //Global Variables

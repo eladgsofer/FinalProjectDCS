@@ -12,26 +12,34 @@
 //---------------------------------------------------------------------------------------------------------------------
 void InitApp(void)
 {
+	//Init Flags
 	char_idx = 0;
 	dataready = 0;
+	
+	//Init Board
 	InitGPIO();
 	InitPIT();
 	InitServo();
 	InitSensors();
-
 	lcd_init();
 	dma_init();
-	
 	InitUARTs(9600);
 	
+	//Init Visual
 	RGB_LED_OFF;
 	lcd_clear();
 	
+	//Init Global Vars
 	files_num = 0;
 	index_last = -1;
 	samp_cnt = 0;
-	delay = 50;
+	delay = DELAY_DEF;
 	state = IDLE_STATE_0;
+	
+	 strcpy( message_type.FILE_ACK, "Fack\n");
+	 strcpy( message_type.CONN_ACK, "Cack\n");
+	 strcpy( message_type.GUI_CLEAR, "Gclr\n");
+	 strcpy( message_type.SCRIPT_DONE, "fnsc\n");
 	
 }
 
@@ -54,9 +62,9 @@ exit_state()
 	//Enter Idle Mode
 	state = IDLE_STATE_0;
 }
-//////////////////////////////
+//------------------------------------------------------------------------------------------------------------------
 //           Scan
-//////////////////////////////
+//------------------------------------------------------------------------------------------------------------------
 void rad_detect_sys(){
 	int exit = 0;
 	int degree = MIN_DEG;
@@ -96,17 +104,12 @@ void rad_detect_sys(){
 		}
 	}
 }
-////////////////////////
+
+
+//------------------------------------------------------------------------------------------------------------------
 //   Telemetry
-///////////////////////
+//------------------------------------------------------------------------------------------------------------------
 void telemeter(void){
-	
-	// just servo_dist_in_degree
-	// Maybe use for telemetry?
-	/*	if(telemetryMode)
-			sprintf(str,"tele%4X",distance_avg);
-		else
-			sprintf(msg,"scan%3d%4X\n",degree,distance_avg);*/
 	
 	char str[16] = {0};
 	int degree;
@@ -153,15 +156,7 @@ int commandsParser(int fileIndex) {
     int i = 0;
     char ch;
     char token[7];
-    /*
-    // size in bytes - file_size[fileIndex]*size(char)=file_size[file_Index]
-	char* scriptData = (char*)malloc(file_size[fileIndex]);
-	
-
-    //copy script from memory to temp val "scriptData"
-    strcpy(scriptData, hd_file_Ptr[fileIndex]);
-    // Extract the first token
-    char * token = strtok(scriptData, "\n");*/
+    
     // loop through the scriptData to extract all other tokens
     char_addr = hd_file_Ptr[fileIndex];
     
@@ -176,9 +171,10 @@ int commandsParser(int fileIndex) {
     		ch = (*char_addr++) & 0x7F;
     	}
     	token[i] = '\0';
+    	
     	// Extract opcode and operand
 		sscanf(token, "%2d%s", &opcode, fullOperand);
-		//token = strtok(NULL, "\n"); ToDo
+		
 		// convert Hex string to int
 		operandVal = (int)strtol(fullOperand, NULL, 16);
 
@@ -212,8 +208,8 @@ int commandsParser(int fileIndex) {
 				break;
 			case 8:
 				clear_all_leds();
-				set_delay(50); //set delay default
-				UARTprintf(UART0_BASE_PTR,"fnsc\n");
+				set_delay(DELAY_DEF); //set delay default
+				UARTprintf(UART0_BASE_PTR,message_type.SCRIPT_DONE);
 				exit_state();
 				break;
 				/* you can have any number of case statements */
@@ -221,10 +217,9 @@ int commandsParser(int fileIndex) {
 				break;
 		}
 		if ( opcode == 7 || opcode == 6 )
-			UARTprintf(UART0_BASE_PTR,"Gclr\n");
+			UARTprintf(UART0_BASE_PTR,message_type.GUI_CLEAR);
     }
     
-    //free(scriptData); ToDo
     return 0;
 }
 
@@ -233,27 +228,14 @@ int commandsParser(int fileIndex) {
 //---------------------------------------------------------------------------------------------------------------------
 void set_uart_configurations()
 {
-	int j;
-	UARTprintf(UART0_BASE_PTR,"Cack\n");
+	int i,j;
+	
+	i = 17;
+	
+	UARTprintf(UART0_BASE_PTR,message_type.CONN_ACK);
 	for (j=10000; j>0; j--);
-	/*
-	int i,a,b,c;
-	i = 0;
-	a = 17;
-	b = 22;
-	c = 26;
-
-	switch (PC_msg[a]){    //Check baud rate
-		case '1': b+=1; c+=1; break;
-		case '3': b+=1; c+=1; break;
-	}
-
-	switch (PC_msg[b]){   //Check parity bit
-		case 'N': c+=1 ; break;       // Parity = none
-		case 'E': c+=1 ; break;       // Parity = even
-	}
-	*/
-	InitUARTConf(PC_msg[17], PC_msg[18], PC_msg[19]);
+	
+	InitUARTConf(PC_msg[i], PC_msg[i+1], PC_msg[i+2]);
 	exit_state();
 }
 
