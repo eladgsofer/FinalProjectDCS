@@ -29,7 +29,7 @@ void InitSensors() {
 //----------------------------------------------------------------------------------
 //	Change Servo's deg
 //----------------------------------------------------------------------------------
-void WriteServo(int deg) {
+void SetServoDeg(int deg) {
 	float T_on;
 	int dutyCycle;
 

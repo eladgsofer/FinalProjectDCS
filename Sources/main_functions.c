@@ -56,7 +56,7 @@ exit_state()
 	memset(PC_msg,0,40);
 	
 	//Return Servo to starting point
-	WriteServo(MIN_DEG);
+	SetServoDeg(MIN_DEG);
 	
 	
 	//Enter Idle Mode
@@ -119,7 +119,7 @@ void telemeter(void){
 	
 	lcd_puts("Telemetry");
 	
-	WriteServo(degree);
+	SetServoDeg(degree);
 	
 	while(1){
 		enable_sensor(TRUE);

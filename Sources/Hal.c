@@ -299,7 +299,7 @@ void clear_all_leds(void){
 void servo_deg(int degree){
 	volatile unsigned int i;
 	
-	WriteServo(degree);
+	SetServoDeg(degree);
 		
 	for(i=0; i<7; i++)
 	{
@@ -311,7 +311,7 @@ void servo_deg(int degree){
 void servo_dist_in_deg(int degree){
 	char msg[13] = {0};
 
-	WriteServo(degree);
+	SetServoDeg(degree);
 	enable_sensor(TRUE);
 	
 	while(!sample_ready);
