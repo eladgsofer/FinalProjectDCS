@@ -1,14 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-
-using System.IO;
-using System.Threading;
 using System.IO.Ports;
-using System.Text.RegularExpressions;
+
 
 namespace TerminalPC.Sources
 {
@@ -18,22 +10,20 @@ namespace TerminalPC.Sources
     {
         public static string LastMSG = "";
 
-        // Message types
+        // all available Message types which being received from the MCU.
 
-        public static class TYPE
+        public static class MESSAGE_TYPE
         {
-            // Messages
-            public const string TELEMETRY = "tele";
-            public const string SCAN = "scan";
-            public const string SCRIPT_DONE = "fnsc";
-            public const string FILE_ACK = "Fack";
-            public const string CONN_ACK = "Cack";
-            public const string GUI_CLEAR = "Gclr";
-            public const string PARITY_ERR = "PErr";
 
+            public const string TELEMETRY = "tele"; // telemetry info message
+            public const string SCAN = "scan"; // scan info message
+            public const string SCRIPT_DONE = "fnsc"; // end of script execution message
+            public const string FILE_ACK = "Fack"; // finish transfer a file
+            public const string CONN_ACK = "Cack"; // connection created successfully 
+            public const string GUI_CLEAR = "Gclr"; // GUI clear - command to reset the radar display
+            public const string PARITY_ERR = "PErr"; // parity error occured
         }
 
-        List<object> Result;
         public SerialPortConn(string COM, int baudRate, Parity parity, int dataBits, StopBits stopBits)
         {
             this.BaudRate = baudRate;
@@ -41,9 +31,12 @@ namespace TerminalPC.Sources
             this.DataBits = dataBits;
             this.StopBits = stopBits;
             this.PortName = COM;
-            
+
         }
 
+        /// <summary>
+        /// validate the port is open
+        /// </summary>
         public void validateConn()
         {
             if (!this.IsOpen)
@@ -51,24 +44,46 @@ namespace TerminalPC.Sources
                 this.Open();
             }
         }
-
+        /// <summary>
+        /// send a message with \n representing end of message
+        /// </summary>
+        /// <param name="message"></param>
         public void sendMessage(string message)
         {
-                this.validateConn();
-                this.Write(message + "\n");
-                LastMSG = message;
+            this.validateConn();
+            this.Write(message + "\n");
+            LastMSG = message;
         }
-
+        // resend a message
         public void resendMessage()
         {
             this.validateConn();
             this.Write(LastMSG + "\n");
         }
 
-        /*        public List<object> receiveData()
-                {
-                    List<object> Result = new List<object>(3);
-                    return Result
-                }*/
+        /// <summary>
+        /// Read a message defined in the MESSAGE_TYPE above one byte by another in order to apply parity mechanism.
+        /// a 7bit integer is supplied alongside parity
+        /// </summary>
+        /// <returns></returns>
+        public string readMessage()
+        {
+            string inData = "";
+            char ch = '\0'; ;
+            int b, res;
+
+            this.validateConn();
+
+            while (ch != '\n')
+            {
+                while (this.BytesToRead == 0) ;
+                b = this.ReadByte();
+                res = b & (Convert.ToByte(127));
+                ch = (char)res;
+                inData += ch;
+            }
+            return inData.TrimStart('\0'); //spConn.ReadExisting(); //
+        }
+
     }
 }
