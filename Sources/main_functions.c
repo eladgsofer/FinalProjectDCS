@@ -70,7 +70,7 @@ void rad_detect_sys(){
 		
 		while( degree <= MAX_DEG ){
 			
-			servo_deg(degree);
+			servo_dist_in_deg(degree);
 			
 			degree += DEG_DIFF;
 			
@@ -101,7 +101,7 @@ void rad_detect_sys(){
 ///////////////////////
 void telemeter(void){
 	
-	// just servo_degree
+	// just servo_dist_in_degree
 	// Maybe use for telemetry?
 	/*	if(telemetryMode)
 			sprintf(str,"tele%4X",distance_avg);
@@ -114,7 +114,6 @@ void telemeter(void){
 	sscanf(PC_msg,"Tele%d", &degree);
 	memset(PC_msg,0,40);
 	
-	enable_sensor(TRUE);
 	lcd_puts("Telemetry");
 	
 	WriteServo(degree);
@@ -150,7 +149,11 @@ void telemeter(void){
 int commandsParser(int fileIndex) {
     char leftDegree[3], rightDegree[3],  fullOperand[10];
     int operandVal =0, leftAngle, rightAngle, opcode;
-    
+    char* char_addr;
+    int i = 0;
+    char ch;
+    char token[7];
+    /*
     // size in bytes - file_size[fileIndex]*size(char)=file_size[file_Index]
 	char* scriptData = (char*)malloc(file_size[fileIndex]);
 	
@@ -158,57 +161,70 @@ int commandsParser(int fileIndex) {
     //copy script from memory to temp val "scriptData"
     strcpy(scriptData, hd_file_Ptr[fileIndex]);
     // Extract the first token
-    char * token = strtok(scriptData, "\n");
+    char * token = strtok(scriptData, "\n");*/
     // loop through the scriptData to extract all other tokens
-    while( token != NULL ) {
-        // Extract opcode and operand
-        sscanf(token, "%2d%s", &opcode, fullOperand);
-        token = strtok(NULL, "\n");
-        // convert Hex string to int
-        operandVal = (int)strtol(fullOperand, NULL, 16);
+    char_addr = hd_file_Ptr[fileIndex];
+    
+    while((*char_addr) != '\0')
+    {
+    	i = 0;
+    	ch = (*char_addr++) & 0x7F;
+    	while(ch != '\n')
+    	{
+    		token[i++] = ch;
+    		ch = (*char_addr++) & 0x7F;
+    	}
+    	token[i] = '\0';
+    	// Extract opcode and operand
+		sscanf(token, "%2d%s", &opcode, fullOperand);
+		//token = strtok(NULL, "\n"); ToDo
+		// convert Hex string to int
+		operandVal = (int)strtol(fullOperand, NULL, 16);
 
-        switch(opcode)
-        {
+		switch(opcode)
+		{
 
-            case 1  :
-            	blink_rgb(operandVal);
-                break;
-            case 2  :
-            	lcd_count_down(operandVal);
-                break;
-            case 3:
-            	lcd_count_up(operandVal);
-                break;
-            case 4:
-            	set_delay(operandVal);
-                break;
-            case 5:
-            	clear_all_leds();
-                break;
-            case 6:
-            	servo_deg(operandVal);
-                break;
-            case 7:
-                // Extract scanning range
-                sscanf(fullOperand, "%2c%2c", leftDegree, rightDegree);
-                leftAngle = (int)strtol(leftDegree, NULL, 16);
-                rightAngle = (int)strtol(rightDegree, NULL, 16);
-                servo_scan(leftAngle, rightAngle);
-                break;
-            case 8:
-                UARTprintf(UART0_BASE_PTR,"fnsc\n");
-                exit_state();
-                break;
-                /* you can have any number of case statements */
-            default : /* Optional */
-                break;
-        }
-        Delay_Ms(500);
-        if (opcode==7 || opcode==6)
-            UARTprintf(UART0_BASE_PTR,"Gclr\n");
-
+			case 1  :
+				blink_rgb(operandVal);
+				break;
+			case 2  :
+				lcd_count_down(operandVal);
+				break;
+			case 3:
+				lcd_count_up(operandVal);
+				break;
+			case 4:
+				set_delay(operandVal);
+				break;
+			case 5:
+				clear_all_leds();
+				break;
+			case 6:
+				servo_deg(operandVal);
+				break;
+			case 7:
+				// Extract scanning range
+				sscanf(fullOperand, "%2c%2c", leftDegree, rightDegree);
+				leftAngle = (int)strtol(leftDegree, NULL, 16);
+				rightAngle = (int)strtol(rightDegree, NULL, 16);
+				servo_scan(leftAngle, rightAngle);
+				break;
+			case 8:
+				UARTprintf(UART0_BASE_PTR,"fnsc\n");
+				exit_state();
+				break;
+				/* you can have any number of case statements */
+			default : /* Optional */
+				break;
+		}
+		Delay_Ms(500);
+		if ( opcode == 6 )
+			Delay_Ms(500);
+		if ( opcode == 7 || opcode == 6 )
+			UARTprintf(UART0_BASE_PTR,"Gclr\n");
     }
-    free(scriptData);
+    
+    //free(scriptData); ToDo
     return 0;
 }
 

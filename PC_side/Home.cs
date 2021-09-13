@@ -34,6 +34,7 @@ namespace TerminalPC
         public static StopBits stopbitsTemp;
         public static string comTemp;
         public static int baudTemp;
+        public static int flag = 0;
 
         public static string fileData = "";
         public static string fileName;
@@ -138,15 +139,27 @@ namespace TerminalPC
         // Data recieved event
         public void port_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-            string indata;
+            string indata = "";
             string cmdVal;
+            char ch;
+            int b;
+            int res;
+
             float dist;
             int deg;
             SerialPortConn spConn = (SerialPortConn)sender;
 
             spConn.validateConn();
-            indata = spConn.ReadLine().TrimStart('\0'); //spConn.ReadExisting(); //
-
+            ch = '\0';
+            while (ch != '\n')
+            {
+                while (spConn.BytesToRead == 0) ;
+                b = spConn.ReadByte();
+                res = b & (Convert.ToByte(127));
+                ch = (char)res;    
+                indata += ch;
+            }
+                indata = indata.TrimStart('\0'); //spConn.ReadExisting(); //
 
             //ProcessMessage(indata);
 

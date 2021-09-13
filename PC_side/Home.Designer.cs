@@ -143,9 +143,8 @@
             // 
             this.comboBoxParity.FormattingEnabled = true;
             this.comboBoxParity.Items.AddRange(new object[] {
-            "None",
-            "Even",
-            "Odd"});
+            "None", 
+            "Odd", "Even"});
             this.comboBoxParity.Location = new System.Drawing.Point(34, 462);
             this.comboBoxParity.Name = "comboBoxParity";
             this.comboBoxParity.Size = new System.Drawing.Size(237, 21);

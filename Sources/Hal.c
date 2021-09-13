@@ -68,8 +68,6 @@ void UART0_IRQHandler(){
 		
 		
 		if ((received_char & 0x7F) != '\n'){         //insert chars to array until pressing Enter
-			if(UART0_S1 & UART_S1_PF_MASK)
-				char_idx = 0;
 			PC_msg[char_idx] = received_char & 0x7F;   
 			char_idx ++;
 		}
@@ -212,6 +210,7 @@ void blink_rgb(int x){
 	
 	while(num_of_blinks > 0)
 	{
+		BLUE_LED_OFF;
 		RED_LED_ON;
 		
 		Delay_d();
@@ -225,8 +224,6 @@ void blink_rgb(int x){
 		BLUE_LED_ON;
 		
 		Delay_d();
-		
-		BLUE_LED_OFF;
 		
 		num_of_blinks--;
 	}
@@ -299,6 +296,18 @@ void clear_all_leds(void){
 }
 
 void servo_deg(int degree){
+	volatile unsigned int i;
+	
+	WriteServo(degree);
+		
+	for(i=0; i<10; i++)
+	{
+		servo_dist_in_deg(degree);
+		Delay_Ms(50);
+	}
+}
+
+void servo_dist_in_deg(int degree){
 	char msg[13] = {0};
 
 	WriteServo(degree);
@@ -317,7 +326,7 @@ void servo_scan(int left_angle,int right_angle){
 	
 	while(angle<right_angle){
 		
-		servo_deg(angle);
+		servo_dist_in_deg(angle);
 		
 		angle += DEG_DIFF;
 		
