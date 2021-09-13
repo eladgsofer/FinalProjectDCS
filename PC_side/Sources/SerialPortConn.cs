@@ -82,7 +82,7 @@ namespace TerminalPC.Sources
                 ch = (char)res;
                 inData += ch;
             }
-            return inData.TrimStart('\0'); //spConn.ReadExisting(); //
+            return inData.TrimStart('\0'); 
         }
 
     }
